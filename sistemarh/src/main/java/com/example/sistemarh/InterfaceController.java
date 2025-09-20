@@ -17,6 +17,7 @@ public class InterfaceController {
         return "paginaAdm";
     }
 
+<<<<<<< HEAD
     // == ROTAS DE CADASTRO (ALUNO 2) ==
     @GetMapping("/cadastro")
     public String menuCadastro() {return "cadastro/menu";
@@ -34,6 +35,8 @@ public class InterfaceController {
     public String statusCandidatura() {return "cadastro/statusCandidatura";
     }
 
+=======
+>>>>>>> 883a8c4 (✨feat: implentação das telas estáticas dos módulos de recrutamento e financeiro)
      // == ROTAS DE RECRUTAMENTO (ALUNO 3) ==
     @GetMapping("/recrutamento")
     public String menuRecrutamento() {
