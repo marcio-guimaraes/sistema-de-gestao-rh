@@ -12,9 +12,28 @@ public class InterfaceController {
         return "index";
     }
 
-    @GetMapping("/paginaAdm")
-    public String mostrarPagina2() {
-        return "paginaAdm";
+    // == ROTAS DE ADMINISTRAÇÃO E GESTÃO (ALUNO 1) ==
+    @GetMapping("/Administração")
+    public String menuAdministracao() {
+        return "adm/menu";
+    }
+
+    @GetMapping("/Administração/Gestão")
+    public String gestaoDeUsuarios() {
+        return "adm/admGestao";
+    }
+
+    @GetMapping("/Administração/Relatório")
+    public String gerarRelatorioAdm() {return "adm/admRelatorio";}
+
+    @GetMapping("/Login")
+    public String realizaLogin() {
+        return "adm/Login";
+    }
+
+    @GetMapping("/Cadastro")
+    public String cadastro() {
+        return "adm/cadastroNovoUsuario";
     }
 
     // == ROTAS DE CADASTRO (ALUNO 2) ==

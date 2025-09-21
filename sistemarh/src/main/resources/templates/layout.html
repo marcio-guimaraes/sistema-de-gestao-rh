@@ -20,18 +20,15 @@
 
         <nav class="nav">
             <ul>
-                <li><a th:href="@{/paginaAdm}">Administração</a></li>
-                <li><a th:href="@{/cadastro}">Cadastro</a></li>
+                <li><a th:href="@{/Administração}">Administração</a></li>
+                <li><a th:href="@{/candidatura}">Candidatura</a></li>
                 <li><a th:href="@{/recrutamento}">Recrutamento</a></li>
                 <li><a th:href="@{/financeiro}">Financeiro</a></li>
             </ul>
         </nav>
         
         <div class="actions">
-            <a href="#" class="demo-btn">Sair</a>
-            <div class="right-menu">
-                <span class="phone">👤 Olá, Usuário</span>
-            </div>
+            <a th:href="@{/Login}" class="demo-btn">Login</a>
         </div>
     </header>
 
