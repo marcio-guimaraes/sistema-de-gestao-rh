@@ -1,0 +1,143 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+.main-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 14px 40px;
+    background: #f8faff;
+    border-bottom: 1px solid #e5eaf2;
+    font-family: "Inter", sans-serif;
+}
+
+.logo-link {
+    display: flex;
+    align-items: center;
+    gap: 12px; 
+    text-decoration: none; 
+}
+
+.logo-img {
+    height: 32px; 
+    width: auto;
+}
+
+.logo-text {
+    font-size: 22px;
+    font-weight: 700;
+    color: #1a1a1a;
+}
+
+.nav ul {
+    display: flex;
+    gap: 24px;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.nav a {
+    text-decoration: none;
+    color: #2a2a2a;
+    font-weight: 500;
+    font-size: 15px;
+    transition: color 0.2s;
+}
+
+.nav a:hover {
+    color: #3f7bfc;
+}
+
+.actions {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.demo-btn {
+    background: #3f7bfc;
+    color: white;
+    padding: 10px 20px;
+    border-radius: 25px;
+    font-size: 15px;
+    font-weight: 600;
+    text-decoration: none;
+    transition: background 0.2s;
+}
+
+.demo-btn:hover {
+    background: #3163d9;
+}
+
+.right-menu {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    font-size: 14px;
+    color: #555;
+}
+
+.link {
+    text-decoration: none;
+    color: #555;
+    font-weight: 500;
+}
+
+.link:hover {
+    color: #3f7bfc;
+}
+
+.phone {
+    font-weight: 600;
+    color: #333;
+}
+
+.main-footer {
+    /* Centraliza o conteúdo e define o padding */
+    display: flex;
+    justify-content: center;
+    padding: 20px;
+    background: #f8faff;
+    border-top: 1px solid #e5eaf2;
+    font-family: "Inter", sans-serif;
+    font-size: 14px;
+    color: #555;
+}
+
+/* Estilos para o container do rodapé */
+.footer-container {
+    max-width: 1200px;
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.copyright {
+    margin-right: 20px;
+}
+
+/* Estilos para os links do rodapé */
+.footer-links {
+    /* Remove marcadores de lista e padding */
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    /* Exibe os links em linha com espaçamento */
+    display: flex;
+    gap: 20px;
+}
+
+/* Estilos para cada item da lista de links */
+.footer-links li a {
+    /* Remove sublinhado e define a cor */
+    text-decoration: none;
+    color: #555;
+    /* Transição suave para o efeito hover */
+    transition: color 0.2s;
+}
+
+/* Efeito hover para os links do rodapé */
+.footer-links li a:hover {
+    color: #3f7bfc;
+}
