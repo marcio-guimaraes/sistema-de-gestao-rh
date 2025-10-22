@@ -1,4 +1,6 @@
-package com.example.sistemarh;
+package com.example.sistemarh.candidatura;
+
+import com.example.sistemarh.recrutamento.Vaga;
 
 public class Candidatura {
     private String status;

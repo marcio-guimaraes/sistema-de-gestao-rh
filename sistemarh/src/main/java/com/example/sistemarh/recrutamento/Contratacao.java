@@ -1,4 +1,6 @@
-package com.example.sistemarh;
+package com.example.sistemarh.recrutamento;
+
+import com.example.sistemarh.candidatura.Candidato;
 
 public class Contratacao {
     private Vaga vaga;

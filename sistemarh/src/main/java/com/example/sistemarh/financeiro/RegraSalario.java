@@ -1,4 +1,4 @@
-package com.example.sistemarh;
+package com.example.sistemarh.financeiro;
 
 public class RegraSalario {
     private String regime;

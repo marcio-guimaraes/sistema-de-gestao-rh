@@ -1,4 +1,4 @@
-package com.example.sistemarh;
+package com.example.sistemarh.common.model;
 
 public class Pessoa {
     private String nome;

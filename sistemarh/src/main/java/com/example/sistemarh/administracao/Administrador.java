@@ -1,4 +1,4 @@
-package com.example.sistemarh;
+package com.example.sistemarh.administracao;
 
 public class Administrador {
     public boolean criarUsuario() {

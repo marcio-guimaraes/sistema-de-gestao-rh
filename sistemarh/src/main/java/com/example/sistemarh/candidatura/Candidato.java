@@ -1,4 +1,4 @@
-package com.example.sistemarh;
+package com.example.sistemarh.candidatura;
 
 public class Candidato {
     private String formacao;

@@ -1,4 +1,4 @@
-package com.example.sistemarh;
+package com.example.sistemarh.recrutamento;
 
 public class Vaga {
     private String nome;
