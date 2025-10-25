@@ -1,6 +1,6 @@
 package com.example.sistemarh.administracao;
 
-import com.example.sistemarh.recrutamento.Vaga;
+import com.example.sistemarh.recrutamento.model.Vaga;
 
 public class Gestor {
     public void gerarRelatorio() {

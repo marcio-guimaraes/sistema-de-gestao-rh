@@ -1,6 +1,6 @@
 package com.example.sistemarh.candidatura;
 
-import com.example.sistemarh.recrutamento.Vaga;
+import com.example.sistemarh.recrutamento.model.Vaga;
 
 public class Candidatura {
     private String status;
