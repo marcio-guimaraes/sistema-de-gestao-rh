@@ -1,10 +1,14 @@
 package com.example.sistemarh.administracao;
 
-public class Usuario {
-    private String senha;
-    private String login;
+import com.example.sistemarh.common.model.Pessoa;
 
-    Usuario(String senha, String login) {
+public class Usuario extends Pessoa {
+    protected String senha;
+    protected String login;
 
+    protected Usuario(String nome, String cpf, String login, String senha) {
+        super(nome, cpf);
+        this.login = login;
+        this.senha = senha;
     }
 }

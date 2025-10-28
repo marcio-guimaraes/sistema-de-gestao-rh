@@ -14,7 +14,7 @@ public class Vaga {
     private String requisitos;
     private LocalDate dataCriacao;
 
-    private Vaga(Builder builder) {
+    public Vaga(Builder builder) {
         this.id = builder.id;
         this.titulo = builder.titulo;
         this.descricao = builder.descricao;
