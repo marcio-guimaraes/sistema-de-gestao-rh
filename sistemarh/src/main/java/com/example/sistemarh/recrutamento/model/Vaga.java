@@ -27,6 +27,7 @@ public class Vaga {
         this.dataCriacao = (builder.dataCriacao != null) ? builder.dataCriacao : LocalDate.now();
     }
 
+    // Getters
     public long getId() {
         return id;
     }
@@ -66,6 +67,39 @@ public class Vaga {
     public LocalDate getDataCriacao() {
         return dataCriacao;
     }
+
+    public void setTitulo(String titulo) {
+        this.titulo = titulo;
+    }
+
+    public void setDescricao(String descricao) {
+        this.descricao = descricao;
+    }
+
+    public void setSalarioMin(double salarioMin) {
+        this.salarioMin = salarioMin;
+    }
+
+    public void setSalarioMax(double salarioMax) {
+        this.salarioMax = salarioMax;
+    }
+
+    public void setRegime(String regime) {
+        this.regime = regime;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    public void setDepartamento(String departamento) {
+        this.departamento = departamento;
+    }
+
+    public void setRequisitos(String requisitos) {
+        this.requisitos = requisitos;
+    }
+
 
     public static class Builder {
         private final long id;
@@ -124,7 +158,6 @@ public class Vaga {
             return this;
         }
 
-        // Método build
         public Vaga build() {
             return new Vaga(this);
         }

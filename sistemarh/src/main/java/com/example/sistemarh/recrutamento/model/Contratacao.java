@@ -1,6 +1,6 @@
 package com.example.sistemarh.recrutamento.model;
 
-import com.example.sistemarh.candidatura.model.Candidato;
+import com.example.sistemarh.candidatura.Candidato;
 import java.time.LocalDate;
 
 public class Contratacao {
@@ -10,6 +10,7 @@ public class Contratacao {
     private LocalDate dataAprovacaoGestor;
     private LocalDate dataEfetivacao;
     private String status;
+    private String regimeContratacao;
 
     private Contratacao(Builder builder) {
         this.vaga = builder.vaga;
@@ -18,29 +19,32 @@ public class Contratacao {
         this.dataAprovacaoGestor = builder.dataAprovacaoGestor;
         this.dataEfetivacao = builder.dataEfetivacao;
         this.status = builder.status;
+        this.regimeContratacao = builder.regimeContratacao;
     }
 
-    // --- GETTERS ---
     public Vaga getVaga() { return vaga; }
     public Candidato getCandidato() { return candidato; }
     public LocalDate getDataSolicitacao() { return dataSolicitacao; }
     public LocalDate getDataAprovacaoGestor() { return dataAprovacaoGestor; }
     public LocalDate getDataEfetivacao() { return dataEfetivacao; }
     public String getStatus() { return status; }
+    public String getRegimeContratacao() { return regimeContratacao; }
 
     public void setDataAprovacaoGestor(LocalDate dataAprovacaoGestor) { this.dataAprovacaoGestor = dataAprovacaoGestor; }
     public void setDataEfetivacao(LocalDate dataEfetivacao) { this.dataEfetivacao = dataEfetivacao; }
     public void setStatus(String status) { this.status = status; }
+    public void setRegimeContratacao(String regime) { this.regimeContratacao = regime; }
+
 
     public static class Builder {
-        // Atributos obrigatórios
         private final Vaga vaga;
         private final Candidato candidato;
 
         private LocalDate dataSolicitacao = null;
         private LocalDate dataAprovacaoGestor = null;
         private LocalDate dataEfetivacao = null;
-        private String status = "Solicitada"; // Status inicial padrão
+        private String status = "Solicitada";
+        private String regimeContratacao;
 
         public Builder(Vaga vaga, Candidato candidato) {
             if (vaga == null || candidato == null) {
@@ -48,12 +52,14 @@ public class Contratacao {
             }
             this.vaga = vaga;
             this.candidato = candidato;
+            this.regimeContratacao = vaga.getRegime();
         }
 
-        public Builder dataSolicitacao(LocalDate dataSolicitacao) { this.dataSolicitacao = dataSolicitacao; return this; }
-        public Builder dataAprovacaoGestor(LocalDate dataAprovacaoGestor) { this.dataAprovacaoGestor = dataAprovacaoGestor; return this; }
-        public Builder dataEfetivacao(LocalDate dataEfetivacao) { this.dataEfetivacao = dataEfetivacao; return this; }
+        public Builder dataSolicitacao(LocalDate data) { this.dataSolicitacao = data; return this; }
+        public Builder dataAprovacaoGestor(LocalDate data) { this.dataAprovacaoGestor = data; return this; }
+        public Builder dataEfetivacao(LocalDate data) { this.dataEfetivacao = data; return this; }
         public Builder status(String status) { this.status = status; return this; }
+        public Builder regimeContratacao(String regime) { this.regimeContratacao = regime; return this; }
 
         public Contratacao build() {
             return new Contratacao(this);

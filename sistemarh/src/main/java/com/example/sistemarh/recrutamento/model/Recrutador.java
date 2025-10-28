@@ -11,7 +11,9 @@ public class Recrutador extends Pessoa {
         this.idRecrutador = builder.idRecrutador;
     }
 
-    public long getIdRecrutador() { return idRecrutador; }
+    public long getIdRecrutador() {
+        return idRecrutador;
+    }
 
     public static class Builder {
         private final long idRecrutador;
