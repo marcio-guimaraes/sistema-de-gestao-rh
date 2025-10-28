@@ -1,19 +1,32 @@
 package com.example.sistemarh.administracao;
 
-public class Administrador {
-    public boolean criarUsuario() {
-        return true;
+import com.example.sistemarh.financeiro.Funcionario;
+
+import java.time.LocalDate;
+
+public class Administrador extends Funcionario {
+    public Administrador(String nome, String cpf, String login, String senha, String matricula, LocalDate dataAdmissao, Double baseSalario, String status) {
+        super(nome, cpf, login, senha, matricula, dataAdmissao, baseSalario, status);
     }
 
-    public boolean editarUsuario(Usuario usuario) {
-        return true;
+    public Usuario criarUsuario(String nome, String cpf, String login, String senha) {
+        Usuario usuario = new Usuario(nome, cpf, login, senha);
+        return usuario;
     }
 
-    public boolean excluirUsuario(Usuario usuario) {
-        return true;
+    public void editarUsuario(Usuario usuario) {
+
     }
 
-    public boolean atribuirPerfil(Usuario usuario) {
-        return true;
+    public void excluirUsuario(Usuario usuario) {
+
+    }
+
+    public void atribuirPerfil(Usuario usuario) {
+
+    }
+
+    public void configurarRegrasSalariais() {
+
     }
 }
