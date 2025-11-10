@@ -51,8 +51,8 @@ public class ContratacaoRepository {
     private String contratacaoParaLinha(Contratacao c) {
         return String.join(SEPARADOR,
                 String.valueOf(c.getId()),
-                c.getCandidato().getCpf(),
-                String.valueOf(c.getVaga().getId()),
+                c.getCpfCandidatoDoArquivo(),
+                String.valueOf(c.getIdVagaDoArquivo()),
                 c.getStatus(),
                 c.getDataSolicitacao().toString(),
                 c.getDataAprovacaoGestor() != null ? c.getDataAprovacaoGestor().toString() : "",
@@ -62,7 +62,24 @@ public class ContratacaoRepository {
     }
 
     private Contratacao linhaParaContratacao(String linha) {
-        return null;
+        String[] dados = linha.split(SEPARADOR);
+        if (dados.length < 8) return null;
+
+        try {
+            long id = Long.parseLong(dados[0]);
+            String cpfCandidato = dados[1];
+            long idVaga = Long.parseLong(dados[2]);
+            String status = dados[3];
+            LocalDate dataSolic = LocalDate.parse(dados[4]);
+            LocalDate dataAprov = dados[5].isEmpty() ? null : LocalDate.parse(dados[5]);
+            LocalDate dataEfetiv = dados[6].isEmpty() ? null : LocalDate.parse(dados[6]);
+            String regime = dados[7];
+
+            return Contratacao.fromRepository(id, cpfCandidato, idVaga, status, dataSolic, dataAprov, dataEfetiv, regime);
+        } catch (Exception e) {
+            System.err.println("Erro ao parsear linha de contratação: " + linha);
+            return null;
+        }
     }
 
     public Contratacao salvar(Contratacao contratacao) {

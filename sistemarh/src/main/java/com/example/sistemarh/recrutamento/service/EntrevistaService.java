@@ -28,10 +28,18 @@ public class EntrevistaService {
     @Autowired
     private UsuarioService usuarioService;
 
+    @Autowired
+    private CandidatoService candidatoService;
+
+    @Autowired
+    private VagaService vagaService;
+
     public Entrevista agendarEntrevista(long candidaturaId, String recrutadorLogin, LocalDateTime dataHora, String local) {
 
         Candidatura candidatura = candidaturaService.buscarPorId(candidaturaId)
                 .orElseThrow(() -> new RuntimeException("Candidatura não encontrada."));
+
+        candidaturaService.buscarEPreencher(candidatura);
 
         Usuario usuarioRecrutador = usuarioService.buscarPorLogin(recrutadorLogin)
                 .orElseThrow(() -> new RuntimeException("Recrutador não encontrado."));
@@ -55,6 +63,16 @@ public class EntrevistaService {
     }
 
     public List<Entrevista> listarTodas() {
-        return entrevistaRepository.buscarTodas();
+        List<Entrevista> entrevistas = entrevistaRepository.buscarTodas();
+        for (Entrevista e : entrevistas) {
+            candidatoService.buscarPorCpf(e.getCpfCandidatoDoArquivo())
+                    .ifPresent(e::setCandidato);
+            vagaService.buscarVagaPorId(e.getIdVagaDoArquivo())
+                    .ifPresent(e::setVaga);
+            // Corrigido para buscar por login (CPF não está no UsuarioService)
+            usuarioService.buscarPorLogin(e.getCpfRecrutadorDoArquivo()) // Assumindo que recrutador loga com CPF
+                    .ifPresent(u -> e.setRecrutador(new Recrutador.Builder(0, u.getNome(), u.getCpf()).build()));
+        }
+        return entrevistas;
     }
 }

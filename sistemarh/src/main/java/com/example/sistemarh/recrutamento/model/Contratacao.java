@@ -13,6 +13,9 @@ public class Contratacao {
     private String status;
     private String regimeContratacao;
 
+    private String cpfCandidatoDoArquivo;
+    private long idVagaDoArquivo;
+
     private Contratacao(Builder builder) {
         this.id = builder.id;
         this.vaga = builder.vaga;
@@ -22,6 +25,20 @@ public class Contratacao {
         this.dataEfetivacao = builder.dataEfetivacao;
         this.status = builder.status;
         this.regimeContratacao = builder.regimeContratacao;
+
+        if (candidato != null) this.cpfCandidatoDoArquivo = candidato.getCpf();
+        if (vaga != null) this.idVagaDoArquivo = vaga.getId();
+    }
+
+    private Contratacao(long id, String cpfCandidato, long idVaga, String status, LocalDate dataSolic, LocalDate dataAprov, LocalDate dataEfetiv, String regime) {
+        this.id = id;
+        this.cpfCandidatoDoArquivo = cpfCandidato;
+        this.idVagaDoArquivo = idVaga;
+        this.status = status;
+        this.dataSolicitacao = dataSolic;
+        this.dataAprovacaoGestor = dataAprov;
+        this.dataEfetivacao = dataEfetiv;
+        this.regimeContratacao = regime;
     }
 
     public long getId() { return id; }
@@ -33,11 +50,17 @@ public class Contratacao {
     public String getStatus() { return status; }
     public String getRegimeContratacao() { return regimeContratacao; }
 
+    public String getCpfCandidatoDoArquivo() { return cpfCandidatoDoArquivo; }
+    public long getIdVagaDoArquivo() { return idVagaDoArquivo; }
+
     public void setDataAprovacaoGestor(LocalDate dataAprovacaoGestor) { this.dataAprovacaoGestor = dataAprovacaoGestor; }
     public void setDataEfetivacao(LocalDate dataEfetivacao) { this.dataEfetivacao = dataEfetivacao; }
     public void setStatus(String status) { this.status = status; }
     public void setRegimeContratacao(String regime) { this.regimeContratacao = regime; }
     public void setId(long id) { this.id = id; }
+
+    public void setCandidato(Candidato c) { this.candidato = c; }
+    public void setVaga(Vaga v) { this.vaga = v; }
 
 
     public static class Builder {
@@ -70,5 +93,9 @@ public class Contratacao {
         public Contratacao build() {
             return new Contratacao(this);
         }
+    }
+
+    public static Contratacao fromRepository(long id, String cpfCandidato, long idVaga, String status, LocalDate dataSolic, LocalDate dataAprov, LocalDate dataEfetiv, String regime) {
+        return new Contratacao(id, cpfCandidato, idVaga, status, dataSolic, dataAprov, dataEfetiv, regime);
     }
 }

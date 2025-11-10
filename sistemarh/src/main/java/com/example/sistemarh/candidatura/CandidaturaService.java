@@ -22,6 +22,19 @@ public class CandidaturaService {
     @Autowired
     private VagaService vagaService;
 
+    public void buscarEPreencher(Candidatura candidatura) {
+        if (candidatura == null) return;
+
+        if (candidatura.getCandidato() == null) {
+            candidatoService.buscarPorCpf(candidatura.getCpfCandidatoDoArquivo())
+                    .ifPresent(candidatura::setCandidato);
+        }
+        if (candidatura.getVaga() == null) {
+            vagaService.buscarVagaPorId(candidatura.getIdVagaDoArquivo())
+                    .ifPresent(candidatura::setVaga);
+        }
+    }
+
     public Candidatura registrarCandidatura(String cpf, long vagaId) {
 
         Optional<Candidato> candidatoOpt = candidatoService.buscarPorCpf(cpf);
@@ -52,18 +65,19 @@ public class CandidaturaService {
 
     public List<Candidatura> listarTodas() {
         List<Candidatura> candidaturas = candidaturaRepository.buscarTodas();
-
         for (Candidatura c : candidaturas) {
-            candidatoService.buscarPorCpf(c.getCpfCandidatoDoArquivo())
-                    .ifPresent(c::setCandidato);
-            vagaService.buscarVagaPorId(c.getIdVagaDoArquivo())
-                    .ifPresent(c::setVaga);
+            buscarEPreencher(c);
         }
         return candidaturas;
     }
 
     public Optional<Candidatura> buscarPorId(long id) {
-        return candidaturaRepository.buscarPorId(id);
+        Optional<Candidatura> candidaturaOpt = candidaturaRepository.buscarPorId(id);
+
+        if (candidaturaOpt.isPresent()) {
+            buscarEPreencher(candidaturaOpt.get());
+        }
+        return candidaturaOpt;
     }
 
     public Candidatura atualizarStatus(long id, String novoStatus) {

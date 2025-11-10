@@ -53,9 +53,9 @@ public class EntrevistaRepository {
     private String entrevistaParaLinha(Entrevista entrevista) {
         return String.join(SEPARADOR,
                 String.valueOf(entrevista.getId()),
-                entrevista.getCandidato().getCpf(),
-                String.valueOf(entrevista.getVaga().getId()),
-                entrevista.getRecrutador().getCpf(),
+                entrevista.getCpfCandidatoDoArquivo(),
+                String.valueOf(entrevista.getIdVagaDoArquivo()),
+                entrevista.getCpfRecrutadorDoArquivo(),
                 entrevista.getDataHora().toString(),
                 entrevista.getLocal(),
                 entrevista.getFeedback() != null ? entrevista.getFeedback() : "",
@@ -64,7 +64,24 @@ public class EntrevistaRepository {
     }
 
     private Entrevista linhaParaEntrevista(String linha) {
-        return null;
+        String[] dados = linha.split(SEPARADOR);
+        if (dados.length < 8) return null;
+
+        try {
+            long id = Long.parseLong(dados[0]);
+            String cpfCandidato = dados[1];
+            long idVaga = Long.parseLong(dados[2]);
+            String cpfRecrutador = dados[3];
+            LocalDateTime dataHora = LocalDateTime.parse(dados[4]);
+            String local = dados[5];
+            String feedback = dados[6];
+            Double nota = dados[7].isEmpty() ? null : Double.parseDouble(dados[7]);
+
+            return Entrevista.fromRepository(id, cpfCandidato, idVaga, cpfRecrutador, dataHora, local, feedback, nota);
+        } catch (Exception e) {
+            System.err.println("Erro ao parsear linha de entrevista: " + linha);
+            return null;
+        }
     }
 
     public Entrevista salvar(Entrevista entrevista) {

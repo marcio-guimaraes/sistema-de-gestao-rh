@@ -6,9 +6,17 @@ public class Usuario extends Pessoa {
     protected String senha;
     protected String login;
 
-    protected Usuario(String nome, String cpf, String login, String senha) {
+    public Usuario(String nome, String cpf, String login, String senha) {
         super(nome, cpf);
         this.login = login;
         this.senha = senha;
+    }
+
+    public String getSenha() {
+        return senha;
+    }
+
+    public String getLogin() {
+        return login;
     }
 }
