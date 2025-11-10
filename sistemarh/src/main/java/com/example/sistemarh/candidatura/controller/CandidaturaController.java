@@ -30,7 +30,6 @@ public class CandidaturaController {
     }
 
     // --- Gestão de Candidatos ---
-
     @GetMapping("/candidato")
     public String cadastroCandidatoGet(Model model) {
         model.addAttribute("candidato", new Candidato.Builder("", "").build());
@@ -71,7 +70,7 @@ public class CandidaturaController {
                 .filter(c -> c.getCpfCandidatoDoArquivo().equals(cpf))
                 .forEach(c -> {
                     try {
-                        candidaturaService.excluirCandidatura(c.getId());
+                        candidaturaService.excluirCandidaturaSePendente(c.getId());
                     } catch (RuntimeException e) {
                         System.err.println("Não foi possível excluir candidatura pendente: " + e.getMessage());
                     }
@@ -80,9 +79,7 @@ public class CandidaturaController {
         return "redirect:/cadastro/gestao-candidatos";
     }
 
-
     // --- Gestão de Candidaturas ---
-
     @GetMapping("/candidatura")
     public String candidaturaVagaGet(Model model) {
         model.addAttribute("candidatos", candidatoService.listarTodos());
@@ -92,10 +89,10 @@ public class CandidaturaController {
 
     @PostMapping("/registrar-candidatura")
     public String candidaturaVagaPost(@RequestParam String candidatoCpf,
-                                      @RequestParam Long vagaId,
-                                      @RequestParam String status) {
+            @RequestParam Long vagaId,
+            @RequestParam String status) {
         try {
-            candidaturaService.registrarCandidatura(candidatoCpf, vagaId);
+            candidaturaService.registrarCandidatura(candidatoCpf, vagaId, status);
         } catch (RuntimeException e) {
             return "redirect:/cadastro/candidatura?error=" + e.getMessage();
         }
@@ -103,9 +100,11 @@ public class CandidaturaController {
     }
 
     @GetMapping("/status")
-    public String statusCandidatura(Model model) {
+    public String statusCandidatura(@RequestParam(required = false) Long vagaId,
+            @RequestParam(required = false) String status,
+            Model model) {
         model.addAttribute("vagas", vagaService.listarTodasVagas());
-        model.addAttribute("candidaturas", candidaturaService.listarTodas());
+        model.addAttribute("candidaturas", candidaturaService.listarComFiltros(vagaId, status));
         return "cadastro/statusCandidatura";
     }
 

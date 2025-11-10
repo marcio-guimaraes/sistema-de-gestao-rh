@@ -1,14 +1,15 @@
 package com.example.sistemarh.candidatura;
 
-import com.example.sistemarh.recrutamento.model.Vaga;
-import com.example.sistemarh.recrutamento.service.VagaService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.example.sistemarh.recrutamento.model.Vaga;
+import com.example.sistemarh.recrutamento.service.VagaService;
 
 @Service
 public class CandidaturaService {
@@ -23,7 +24,9 @@ public class CandidaturaService {
     private VagaService vagaService;
 
     public void buscarEPreencher(Candidatura candidatura) {
-        if (candidatura == null) return;
+        if (candidatura == null) {
+            return;
+        }
 
         if (candidatura.getCandidato() == null) {
             candidatoService.buscarPorCpf(candidatura.getCpfCandidatoDoArquivo())
@@ -35,7 +38,7 @@ public class CandidaturaService {
         }
     }
 
-    public Candidatura registrarCandidatura(String cpf, long vagaId) {
+    public Candidatura registrarCandidatura(String cpf, long vagaId, String status) {
 
         Optional<Candidato> candidatoOpt = candidatoService.buscarPorCpf(cpf);
         if (!candidatoOpt.isPresent()) {
@@ -55,10 +58,9 @@ public class CandidaturaService {
         }
 
         long novoId = Candidatura.getProximoId();
-        String statusInicial = "Pendente";
         LocalDate dataHoje = LocalDate.now();
 
-        Candidatura novaCandidatura = new Candidatura(novoId, cpf, vagaId, statusInicial, dataHoje);
+        Candidatura novaCandidatura = new Candidatura(novoId, cpf, vagaId, status, dataHoje);
 
         return candidaturaRepository.salvar(novaCandidatura);
     }
@@ -69,6 +71,14 @@ public class CandidaturaService {
             buscarEPreencher(c);
         }
         return candidaturas;
+    }
+
+    public List<Candidatura> listarComFiltros(Long vagaId, String status) {
+        List<Candidatura> candidaturas = listarTodas();
+        return candidaturas.stream()
+                .filter(c -> vagaId == null || c.getIdVagaDoArquivo() == vagaId)
+                .filter(c -> status == null || status.isEmpty() || c.getStatus().equalsIgnoreCase(status))
+                .collect(Collectors.toList());
     }
 
     public Optional<Candidatura> buscarPorId(long id) {
@@ -101,5 +111,13 @@ public class CandidaturaService {
         }
 
         candidaturaRepository.excluirPorId(id);
+    }
+
+    public void excluirCandidaturaSePendente(long id) {
+        buscarPorId(id).ifPresent(candidatura -> {
+            if ("Pendente".equalsIgnoreCase(candidatura.getStatus())) {
+                candidaturaRepository.excluirPorId(id);
+            }
+        });
     }
 }

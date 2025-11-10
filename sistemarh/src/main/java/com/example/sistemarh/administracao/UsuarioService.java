@@ -1,5 +1,6 @@
 package com.example.sistemarh.administracao;
 
+import com.example.sistemarh.candidatura.Candidato;
 import com.example.sistemarh.financeiro.Funcionario;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -18,7 +19,7 @@ public class UsuarioService {
         Optional<Usuario> usuarioOpt = usuarioRepository.buscarPorLogin(login);
         if (usuarioOpt.isPresent()) {
             Usuario usuario = usuarioOpt.get();
-            return usuario.senha.equals(senha);
+            return usuario.getSenha().equals(senha);
         }
         return false;
     }
@@ -75,6 +76,16 @@ public class UsuarioService {
         return usuarioRepository.salvar(novoUsuario);
     }
 
+    public Usuario criarUsuarioCandidato(Candidato candidato) {
+        Usuario novoUsuario = new Usuario(
+                candidato.getNome(),
+                candidato.getCpf(),
+                candidato.getCpf(), // Login é o CPF
+                "senhaPadrao123" // Senha padrão
+        );
+        return usuarioRepository.salvar(novoUsuario);
+    }
+
     public List<Usuario> listarTodos() {
         return usuarioRepository.buscarTodos();
     }
@@ -102,17 +113,17 @@ public class UsuarioService {
 
         // Esta lógica de atualização está incompleta, pois não preserva o tipo (Admin/Gestor)
         // Mas mantendo a lógica original por enquanto, apenas corrigindo o acesso:
-        Usuario usuarioAtualizado = new Usuario(
-                usuarioDTO.getNome(),
-                usuarioDTO.getCpf(),
-                usuarioDTO.getLogin(),
-                usuarioDTO.getSenha() != null && !usuarioDTO.getSenha().isEmpty() ? usuarioDTO.getSenha() : usuario.senha
-        );
+        usuario.setNome(usuarioDTO.getNome());
+        usuario.setCpf(usuarioDTO.getCpf());
+        usuario.setLogin(usuarioDTO.getLogin());
+        if (usuarioDTO.getSenha() != null && !usuarioDTO.getSenha().isEmpty()) {
+            usuario.setSenha(usuarioDTO.getSenha());
+        }
 
         if (!loginOriginal.equals(usuarioDTO.getLogin())) {
             usuarioRepository.excluirPorLogin(loginOriginal);
         }
 
-        usuarioRepository.salvar(usuarioAtualizado);
+        usuarioRepository.salvar(usuario);
     }
 }

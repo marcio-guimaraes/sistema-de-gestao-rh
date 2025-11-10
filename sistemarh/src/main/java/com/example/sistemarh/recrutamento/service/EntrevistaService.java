@@ -1,20 +1,19 @@
 package com.example.sistemarh.recrutamento.service;
 
+import java.time.LocalDateTime;
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
 import com.example.sistemarh.administracao.Usuario;
 import com.example.sistemarh.administracao.UsuarioService;
-import com.example.sistemarh.candidatura.Candidato;
 import com.example.sistemarh.candidatura.CandidatoService;
 import com.example.sistemarh.candidatura.Candidatura;
 import com.example.sistemarh.candidatura.CandidaturaService;
 import com.example.sistemarh.recrutamento.model.Entrevista;
 import com.example.sistemarh.recrutamento.model.Recrutador;
-import com.example.sistemarh.recrutamento.model.Vaga;
 import com.example.sistemarh.recrutamento.repository.EntrevistaRepository;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
-import java.time.LocalDateTime;
-import java.util.List;
 
 @Service
 public class EntrevistaService {
@@ -71,7 +70,7 @@ public class EntrevistaService {
                     .ifPresent(e::setVaga);
 
             // CORREÇÃO AQUI
-            usuarioService.buscarPorCpf(e.getCpfRecrutadorDoArquivo())
+            usuarioService.buscarPorLogin(e.getCpfRecrutadorDoArquivo()) // Supondo que o login do recrutador seja o CPF
                     .ifPresent(u -> e.setRecrutador(new Recrutador.Builder(0, u.getNome(), u.getCpf()).build()));
         }
         return entrevistas;

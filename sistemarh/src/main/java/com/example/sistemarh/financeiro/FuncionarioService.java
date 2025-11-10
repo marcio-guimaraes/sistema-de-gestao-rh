@@ -46,16 +46,16 @@ public class FuncionarioService {
             throw new RuntimeException("Funcionário já cadastrado com este CPF.");
         }
 
-        Usuario usuario = usuarioService.buscarPorLogin(candidato.getCpf())
-                .orElse(new Usuario(candidato.getNome(), candidato.getCpf(), candidato.getCpf(), "senhaPadrao123"));
+        Usuario usuario = usuarioService.buscarPorCpf(candidato.getCpf())
+                .orElseGet(() -> usuarioService.criarUsuarioCandidato(candidato));
 
         String matricula = "FUNC" + (funcionarioRepository.buscarTodos().size() + 100);
 
         Funcionario novoFuncionario = new Funcionario(
                 candidato.getNome(),
                 candidato.getCpf(),
-                usuario.getLogin(), // Correção de acesso
-                usuario.getSenha(), // Correção de acesso
+                usuario.getLogin(),
+                usuario.getSenha(),
                 matricula,
                 LocalDate.now(),
                 salarioBase,

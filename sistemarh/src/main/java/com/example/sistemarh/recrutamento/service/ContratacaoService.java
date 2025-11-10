@@ -1,15 +1,16 @@
 package com.example.sistemarh.recrutamento.service;
 
+import java.time.LocalDate;
+import java.util.List;
+import java.util.Optional;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
 import com.example.sistemarh.candidatura.Candidatura;
 import com.example.sistemarh.candidatura.CandidaturaService;
 import com.example.sistemarh.recrutamento.model.Contratacao;
 import com.example.sistemarh.recrutamento.repository.ContratacaoRepository;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
-import java.time.LocalDate;
-import java.util.List;
-import java.util.Optional;
 
 @Service
 public class ContratacaoService {
@@ -37,27 +38,12 @@ public class ContratacaoService {
 
     public List<Contratacao> listarTodas() {
         List<Contratacao> contratacoes = contratacaoRepository.buscarTodas();
-        for (Contratacao c : contratacoes) {
-            if (c.getCandidato() == null || c.getVaga() == null) {
-                // Preenche os objetos Candidato e Vaga que vêm nulos do repositório
-                candidaturaService.buscarEPreencher(c.getCandidaturaObj()); // Supondo que você tenha um getCandidatura
-            }
-        }
         return contratacoes;
     }
 
     public Optional<Contratacao> buscarPorId(long id) {
-        // Busca a contratação e preenche os dados faltantes
-        Optional<Contratacao> cOpt = contratacaoRepository.buscarPorId(id);
-        if (cOpt.isPresent()) {
-            Contratacao c = cOpt.get();
-            if (c.getCandidato() == null || c.getVaga() == null) {
-                candidaturaService.buscarEPreencher(c.getCandidaturaObj()); // Supondo que você tenha um getCandidatura
-            }
-        }
-        return cOpt;
+        return contratacaoRepository.buscarPorId(id);
     }
-
 
     public Contratacao aprovarContratacao(long id) {
         Contratacao c = buscarPorId(id)

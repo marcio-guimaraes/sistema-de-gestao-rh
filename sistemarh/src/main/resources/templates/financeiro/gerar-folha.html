@@ -15,7 +15,7 @@
             <h4 class="card-title">Gerar Folha de Pagamento</h4>
             <p>Selecione o mês e o ano para gerar a folha de pagamento para todos os funcionários ativos.</p>
 
-            <form th:action="@{/financeiro/gerar-folha/processar}" method="post">
+            <form th:action="@{/financeiro/gerar-folha/processar}" method="post" th:object="${folhaRequest}">
                 <div class="row">
                     <div class="col mb-3">
                         <label for="mes" class="form-label">Mês</label>
