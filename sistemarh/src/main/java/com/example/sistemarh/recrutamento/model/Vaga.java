@@ -27,7 +27,6 @@ public class Vaga {
         this.dataCriacao = (builder.dataCriacao != null) ? builder.dataCriacao : LocalDate.now();
     }
 
-    // Getters
     public long getId() {
         return id;
     }

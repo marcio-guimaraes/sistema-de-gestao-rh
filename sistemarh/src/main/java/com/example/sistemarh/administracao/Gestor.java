@@ -8,7 +8,7 @@ import com.example.sistemarh.recrutamento.model.Vaga;
 import java.time.LocalDate;
 
 public class Gestor extends Funcionario {
-    // CONSTRUTOR
+
     public Gestor(Funcionario funcionario) {
         super(funcionario.getNome(), funcionario.getCpf(), funcionario.login, funcionario.senha, funcionario.getMatricula(), funcionario.getDataAdmissao(), funcionario.getBaseSalario(), funcionario.getStatus(), funcionario.getDepartamento(), funcionario.getCargo());
     }

@@ -28,7 +28,6 @@ public class FolhaPagamento {
         this.funcionario = builder.funcionario;
     }
 
-    // Gets
     public long getId() {
         return id;
     }
@@ -51,7 +50,6 @@ public class FolhaPagamento {
         return valorTotalLiquido;
     }
 
-    // Métodos
     public static List<String> listarFuncionarios() {
         List<String> funcionarios = new ArrayList<>();
         try (BufferedReader reader = new BufferedReader(new FileReader(ARQUIVO_FUNCIONARIOS))) {
@@ -80,7 +78,7 @@ public class FolhaPagamento {
 
             double baseSalario = Double.parseDouble(dados[3]);
             totalBruto += baseSalario;
-            totalDescontos += baseSalario * 0.10; // Adicionar regras de calculo aqui
+            totalDescontos += baseSalario * 0.10;
             totalLiquido += baseSalario * 0.90;
         }
 
@@ -96,7 +94,6 @@ public class FolhaPagamento {
                 "Valor Total Bruto: R$ " + valorTotalBruto + "\n" +
                 "Total de Descontos: R$ " + valorTotalDescontos + "\n" +
                 "Valor Total Líquido: R$ " + valorTotalLiquido;
-        //adicionar uma tabela com todos os funcionarios, com nome e valores
     }
 
     public File exportarRelatorioArquivo() {
@@ -107,7 +104,6 @@ public class FolhaPagamento {
             writer.write("ID;Mês Referência;Ano Referência;Data Processamento;Valor Bruto;Valor Descontos;Valor Líquido");
             writer.newLine();
 
-            // Linha de dados
             writer.write(
                     id + ";" +
                             mesReferencia + ";" +
@@ -133,7 +129,7 @@ public class FolhaPagamento {
             String linha;
             while ((linha = reader.readLine()) != null) {
                 String[] campos = linha.split(";");
-                if (campos.length < 9) continue; // pula linhas incompletas
+                if (campos.length < 9) continue;
                 String matricula = campos[0];
                 String nome = campos[1];
                 String cpf = campos[2];
@@ -163,14 +159,12 @@ public class FolhaPagamento {
     }
 
     public static class Builder {
-        // Atributos obrigatórios
         private long id;
         private int mesReferencia;
         private int anoReferencia;
         private LocalDate dataProcessamento;
         private Funcionario funcionario;
 
-        // Atributos opcionais
         private double valorTotalBruto;
         private double valorTotalDescontos;
         private double valorTotalLiquido;

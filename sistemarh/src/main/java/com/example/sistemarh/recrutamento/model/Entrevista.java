@@ -5,6 +5,7 @@ import com.example.sistemarh.candidatura.Candidato;
 import java.time.LocalDateTime;
 
 public class Entrevista {
+    private long id;
     private LocalDateTime dataHora;
     private String local;
     private Recrutador recrutador;
@@ -14,6 +15,7 @@ public class Entrevista {
     private Double nota;
 
     private Entrevista(Builder builder) {
+        this.id = builder.id;
         this.dataHora = builder.dataHora;
         this.local = builder.local;
         this.recrutador = builder.recrutador;
@@ -23,7 +25,10 @@ public class Entrevista {
         this.nota = builder.nota;
     }
 
-    // Getters
+    public long getId() {
+        return id;
+    }
+
     public LocalDateTime getDataHora() {
         return dataHora;
     }
@@ -52,7 +57,6 @@ public class Entrevista {
         return nota;
     }
 
-    // Setters para registrar resultados
     public void setFeedback(String feedback) {
         this.feedback = feedback;
     }
@@ -69,14 +73,18 @@ public class Entrevista {
         this.local = local;
     }
 
+    public void setId(long id) {
+        this.id = id;
+    }
 
     public static class Builder {
+        private long id;
         private final LocalDateTime dataHora;
         private final Recrutador recrutador;
         private final Candidato candidato;
         private final Vaga vaga;
 
-        private String local = "Online"; // Valor padrão
+        private String local = "Online";
         private String feedback = null;
         private Double nota = null;
 
@@ -88,6 +96,11 @@ public class Entrevista {
             this.recrutador = recrutador;
             this.candidato = candidato;
             this.vaga = vaga;
+        }
+
+        public Builder id(long id) {
+            this.id = id;
+            return this;
         }
 
         public Builder local(String local) {

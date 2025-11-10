@@ -1,6 +1,7 @@
 package com.example.sistemarh.financeiro;
 
 import com.example.sistemarh.administracao.Usuario;
+import com.example.sistemarh.financeiro.RegraSalario;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -21,7 +22,7 @@ public class Funcionario extends Usuario {
 
     public Funcionario(String nome, String cpf, String login, String senha,
                        String matricula, LocalDate dataAdmissao, Double baseSalario, String status, String departamento, String cargo) {
-        super(nome, cpf, login, senha); // chama o construtor da superclasse Usuario
+        super(nome, cpf, login, senha);
         this.matricula = matricula;
         this.dataAdmissao = dataAdmissao;
         this.baseSalario = baseSalario;
@@ -31,7 +32,18 @@ public class Funcionario extends Usuario {
         salvarFuncionarioNoArquivo();
     }
 
-    // Gets
+    public Funcionario(String nome, String cpf, String login, String senha,
+                       String matricula, LocalDate dataAdmissao, Double baseSalario, String status) {
+        super(nome, cpf, login, senha);
+        this.matricula = matricula;
+        this.dataAdmissao = dataAdmissao;
+        this.baseSalario = baseSalario;
+        this.status = status;
+        this.departamento = "N/A";
+        this.cargo = "N/A";
+    }
+
+
     public String getMatricula() {
         return matricula;
     }
@@ -64,12 +76,10 @@ public class Funcionario extends Usuario {
         return cargo;
     }
 
-    // sets
     public void setRegraSalario(RegraSalario regraSalario) {
         this.regraSalario = regraSalario;
     }
 
-    // Metodos
     public double calcularSalario() {
         if (regraSalario == null) {
             System.err.println("Regra salarial não definida para o funcionário " + getNome());

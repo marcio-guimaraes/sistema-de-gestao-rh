@@ -26,13 +26,12 @@ public class Candidato extends Pessoa {
         this.disponibilidade = builder.disponibilidade;
         this.dataCadastro = builder.dataCadastro;
         this.documentosAdicionais = builder.documentosAdicionais;
-        salvarCandidatoNoArquivo();
     }
 
-    //metodo de salvar funcionario
+    // Este método será movido para o Repository, mas mantemos o builder
     public void salvarCandidatoNoArquivo() {
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(ARQUIVO_CANDIDATOS, true))) {
-            writer.write(toString());
+            writer.write(toLinhaArquivo());
             writer.newLine();
         } catch (IOException e) {
             System.err.println("Erro ao salvar Candidato: " + e.getMessage());
@@ -88,9 +87,7 @@ public class Candidato extends Pessoa {
     }
 
     //print
-    @Override
-    public String toString() {
-
+    public String toLinhaArquivo() {
         return String.join(";",
                 this.getNome(),
                 this.getCpf(),
@@ -101,6 +98,11 @@ public class Candidato extends Pessoa {
                 dataCadastro.toString(),
                 documentosAdicionais
         );
+    }
+
+    @Override
+    public String toString() {
+        return toLinhaArquivo();
     }
 
 
@@ -161,8 +163,5 @@ public class Candidato extends Pessoa {
         public Candidato build() {
             return new Candidato(this);
         }
-
     }
-
-
 }

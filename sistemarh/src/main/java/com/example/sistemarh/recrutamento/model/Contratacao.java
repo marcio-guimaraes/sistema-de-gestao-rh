@@ -4,6 +4,7 @@ import com.example.sistemarh.candidatura.Candidato;
 import java.time.LocalDate;
 
 public class Contratacao {
+    private long id;
     private Vaga vaga;
     private Candidato candidato;
     private LocalDate dataSolicitacao;
@@ -13,6 +14,7 @@ public class Contratacao {
     private String regimeContratacao;
 
     private Contratacao(Builder builder) {
+        this.id = builder.id;
         this.vaga = builder.vaga;
         this.candidato = builder.candidato;
         this.dataSolicitacao = (builder.dataSolicitacao != null) ? builder.dataSolicitacao : LocalDate.now();
@@ -22,6 +24,7 @@ public class Contratacao {
         this.regimeContratacao = builder.regimeContratacao;
     }
 
+    public long getId() { return id; }
     public Vaga getVaga() { return vaga; }
     public Candidato getCandidato() { return candidato; }
     public LocalDate getDataSolicitacao() { return dataSolicitacao; }
@@ -34,9 +37,11 @@ public class Contratacao {
     public void setDataEfetivacao(LocalDate dataEfetivacao) { this.dataEfetivacao = dataEfetivacao; }
     public void setStatus(String status) { this.status = status; }
     public void setRegimeContratacao(String regime) { this.regimeContratacao = regime; }
+    public void setId(long id) { this.id = id; }
 
 
     public static class Builder {
+        private long id;
         private final Vaga vaga;
         private final Candidato candidato;
 
@@ -55,6 +60,7 @@ public class Contratacao {
             this.regimeContratacao = vaga.getRegime();
         }
 
+        public Builder id(long id) { this.id = id; return this; }
         public Builder dataSolicitacao(LocalDate data) { this.dataSolicitacao = data; return this; }
         public Builder dataAprovacaoGestor(LocalDate data) { this.dataAprovacaoGestor = data; return this; }
         public Builder dataEfetivacao(LocalDate data) { this.dataEfetivacao = data; return this; }

@@ -1,9 +1,8 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-
 
     <link rel="stylesheet" th:href="@{/css/layout.css}">
     <link rel="stylesheet" th:href="@{/css/style.css}">
@@ -18,7 +17,7 @@
         <h3 class="mb-4">Gestão de Usuários</h3>
 
         <div class="mb-3">
-            <a th:href="@{/Cadastro}" class="btn btn-primary btn-add">+ Novo Usuário</a>
+            <a th:href="@{/Administração/Cadastro}" class="btn btn-primary btn-add">+ Novo Usuário</a>
         </div>
 
         <div class="card mb-4">
@@ -52,7 +51,6 @@
             </div>
         </div>
 
-        <!-- Tabela de usuários -->
         <div class="card">
             <div class="card-header">
                 Lista de Usuários
@@ -63,48 +61,25 @@
                     <tr>
                         <th>Nome</th>
                         <th>CPF</th>
-                        <th>Email</th>
-                        <th>Perfil</th>
+                        <th>Login (Email)</th>
                         <th>Status</th>
-                        <th>Departamento</th>
                         <th>Ações</th>
                     </tr>
                     </thead>
                     <tbody>
-                    <tr>
-                        <td>Jhonny Sousa</td>
-                        <td>123.456.789-00</td>
-                        <td>jhonny@email.com</td>
-                        <td>Administrador</td>
-                        <td>Ativo</td>
-                        <td>TI</td>
+                    <tr th:each="usuario : ${usuarios}">
+                        <td th:text="${usuario.nome}">Jhonny Sousa</td>
+                        <td th:text="${usuario.cpf}">123.456.789-00</td>
+                        <td th:text="${usuario.login}">jhonny@email.com</td>
+
+                        <td th:text="${usuario.class.simpleName == 'Administrador' ? ((Administrador)usuario).getStatus() : 'N/A'}">Ativo</td>
+
                         <td>
-                            <button class="btn btn-warning btn-edit">Editar</button>
-                            <button class="btn btn-danger btn-delete">Excluir</button>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>Ana Lima</td>
-                        <td>987.654.321-00</td>
-                        <td>ana@email.com</td>
-                        <td>Gestor</td>
-                        <td>Ativo</td>
-                        <td>RH</td>
-                        <td>
-                            <button class="btn btn-warning btn-edit">Editar</button>
-                            <button class="btn btn-danger btn-delete">Excluir</button>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>Carlos Souza</td>
-                        <td>111.222.333-44</td>
-                        <td>carlos@email.com</td>
-                        <td>Recrutador</td>
-                        <td>Inativo</td>
-                        <td>Administração</td>
-                        <td>
-                            <button class="btn btn-warning btn-edit">Editar</button>
-                            <button class="btn btn-danger btn-delete">Excluir</button>
+                            <a th:href="@{/Administração/Gestão/Editar/{login}(login=${usuario.login})}" class="btn btn-warning btn-edit">Editar</a>
+                            <a th:href="@{/Administração/Gestão/Excluir/{login}(login=${usuario.login})}"
+                               class="btn btn-danger btn-delete"
+                               th:if="${usuario.login != 'admin'}"
+                               onclick="return confirm('Tem certeza que deseja excluir este usuário?');">Excluir</a>
                         </td>
                     </tr>
                     </tbody>
