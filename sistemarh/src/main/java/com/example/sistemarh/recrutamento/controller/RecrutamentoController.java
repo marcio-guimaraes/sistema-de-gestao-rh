@@ -94,7 +94,7 @@ public class RecrutamentoController {
                 .collect(Collectors.toList()));
 
         model.addAttribute("recrutadores", usuarioService.listarTodos().stream()
-                .filter(u -> !"admin".equals(u.login))
+                .filter(u -> !"admin".equals(u.getLogin())) // CORREÇÃO AQUI
                 .collect(Collectors.toList()));
 
         return "recrutamento/marcar-entrevista";

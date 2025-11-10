@@ -52,8 +52,11 @@ public class UsuarioRepository {
         String status = dados[7];
         String perfil = dados[8];
 
+        // CORREÇÃO AQUI (if/else if)
         if ("ADMIN".equals(perfil)) {
             return new Administrador(nome, cpf, login, senha, matricula, dataAdmissao, baseSalario, status);
+        } else if ("GESTOR".equals(perfil)) {
+            return new Gestor(nome, cpf, login, senha, matricula, dataAdmissao, baseSalario, status);
         } else {
             return new Usuario(nome, cpf, login, senha);
         }
@@ -146,6 +149,13 @@ public class UsuarioRepository {
     public Optional<Usuario> buscarPorLogin(String login) {
         return buscarTodos().stream()
                 .filter(u -> u.login != null && u.login.equals(login))
+                .findFirst();
+    }
+
+    // NOVO MÉTODO ADICIONADO
+    public Optional<Usuario> buscarPorCpf(String cpf) {
+        return buscarTodos().stream()
+                .filter(u -> u.getCpf() != null && u.getCpf().equals(cpf))
                 .findFirst();
     }
 

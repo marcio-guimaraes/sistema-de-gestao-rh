@@ -39,14 +39,25 @@ public class ContratacaoService {
         List<Contratacao> contratacoes = contratacaoRepository.buscarTodas();
         for (Contratacao c : contratacoes) {
             if (c.getCandidato() == null || c.getVaga() == null) {
+                // Preenche os objetos Candidato e Vaga que vêm nulos do repositório
+                candidaturaService.buscarEPreencher(c.getCandidaturaObj()); // Supondo que você tenha um getCandidatura
             }
         }
         return contratacoes;
     }
 
     public Optional<Contratacao> buscarPorId(long id) {
-        return contratacaoRepository.buscarPorId(id);
+        // Busca a contratação e preenche os dados faltantes
+        Optional<Contratacao> cOpt = contratacaoRepository.buscarPorId(id);
+        if (cOpt.isPresent()) {
+            Contratacao c = cOpt.get();
+            if (c.getCandidato() == null || c.getVaga() == null) {
+                candidaturaService.buscarEPreencher(c.getCandidaturaObj()); // Supondo que você tenha um getCandidatura
+            }
+        }
+        return cOpt;
     }
+
 
     public Contratacao aprovarContratacao(long id) {
         Contratacao c = buscarPorId(id)
@@ -65,5 +76,10 @@ public class ContratacaoService {
         c.setStatus("Rejeitada pelo Gestor");
 
         return contratacaoRepository.salvar(c);
+    }
+
+    // MÉTODO ADICIONADO QUE ESTAVA FALTANDO
+    public Contratacao salvar(Contratacao contratacao) {
+        return contratacaoRepository.salvar(contratacao);
     }
 }

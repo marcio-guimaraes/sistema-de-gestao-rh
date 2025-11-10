@@ -13,6 +13,12 @@ public class Gestor extends Funcionario {
         super(funcionario.getNome(), funcionario.getCpf(), funcionario.login, funcionario.senha, funcionario.getMatricula(), funcionario.getDataAdmissao(), funcionario.getBaseSalario(), funcionario.getStatus(), funcionario.getDepartamento(), funcionario.getCargo());
     }
 
+    // NOVO CONSTRUTOR ADICIONADO
+    public Gestor(String nome, String cpf, String login, String senha, String matricula, LocalDate dataAdmissao, Double baseSalario, String status) {
+        super(nome, cpf, login, senha, matricula, dataAdmissao, baseSalario, status);
+    }
+
+
     public void gerarRelatorio() {
 
     }
@@ -21,7 +27,7 @@ public class Gestor extends Funcionario {
         matricula = "placeholder";
         baseSalario = 1000.0;
         status = "ativo";
-        Funcionario funcionario = new Funcionario(usuario.getNome(), usuario.getCpf(), usuario.login, usuario.senha, matricula, dataAdmissao, baseSalario, status, departamento, cargo);
+        Funcionario funcionario = new Funcionario(usuario.getNome(), usuario.getCpf(), usuario.getLogin(), usuario.getSenha(), matricula, dataAdmissao, baseSalario, status, departamento, cargo);
     }
 
     public void criarVaga(Vaga.Builder builder) {

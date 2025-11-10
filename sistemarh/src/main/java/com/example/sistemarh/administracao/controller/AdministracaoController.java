@@ -89,7 +89,7 @@ public class AdministracaoController {
             UsuarioDTO dto = new UsuarioDTO();
             dto.setNome(usuario.getNome());
             dto.setCpf(usuario.getCpf());
-            dto.setLogin(usuario.login);
+            dto.setLogin(usuario.getLogin()); // CORREÇÃO AQUI
 
             model.addAttribute("usuarioDTO", dto);
             model.addAttribute("editMode", true);

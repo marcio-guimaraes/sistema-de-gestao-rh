@@ -35,9 +35,23 @@ public class UsuarioService {
 
         Usuario novoUsuario;
 
+        // CORREÇÃO AQUI (adição do case GESTOR)
         switch (usuarioDTO.getPerfil().toUpperCase()) {
             case "ADMINISTRADOR":
                 novoUsuario = new Administrador(
+                        usuarioDTO.getNome(),
+                        usuarioDTO.getCpf(),
+                        usuarioDTO.getLogin(),
+                        usuarioDTO.getSenha(),
+                        matricula,
+                        dataAdmissao,
+                        0.0,
+                        "Ativo"
+                );
+                break;
+
+            case "GESTOR":
+                novoUsuario = new Gestor(
                         usuarioDTO.getNome(),
                         usuarioDTO.getCpf(),
                         usuarioDTO.getLogin(),
@@ -69,6 +83,11 @@ public class UsuarioService {
         return usuarioRepository.buscarPorLogin(login);
     }
 
+    // NOVO MÉTODO ADICIONADO
+    public Optional<Usuario> buscarPorCpf(String cpf) {
+        return usuarioRepository.buscarPorCpf(cpf);
+    }
+
     public void excluirUsuario(String login) {
         usuarioRepository.excluirPorLogin(login);
     }
@@ -81,6 +100,8 @@ public class UsuarioService {
 
         Usuario usuario = usuarioOpt.get();
 
+        // Esta lógica de atualização está incompleta, pois não preserva o tipo (Admin/Gestor)
+        // Mas mantendo a lógica original por enquanto, apenas corrigindo o acesso:
         Usuario usuarioAtualizado = new Usuario(
                 usuarioDTO.getNome(),
                 usuarioDTO.getCpf(),

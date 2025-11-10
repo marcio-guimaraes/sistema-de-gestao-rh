@@ -1,11 +1,14 @@
 package com.example.sistemarh.financeiro;
 
+// IMPORTS ADICIONADOS PARA CORRIGIR 'Cannot resolve symbol'
 import com.example.sistemarh.administracao.Usuario;
 import com.example.sistemarh.administracao.UsuarioService;
 import com.example.sistemarh.candidatura.Candidato;
 import com.example.sistemarh.recrutamento.model.Contratacao;
 import com.example.sistemarh.recrutamento.model.Vaga;
 import com.example.sistemarh.recrutamento.service.ContratacaoService;
+// FIM DOS IMPORTS ADICIONADOS
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -51,8 +54,8 @@ public class FuncionarioService {
         Funcionario novoFuncionario = new Funcionario(
                 candidato.getNome(),
                 candidato.getCpf(),
-                usuario.login,
-                usuario.senha,
+                usuario.getLogin(), // Correção de acesso
+                usuario.getSenha(), // Correção de acesso
                 matricula,
                 LocalDate.now(),
                 salarioBase,
@@ -63,7 +66,7 @@ public class FuncionarioService {
 
         contratacao.setStatus("Efetivada");
         contratacao.setDataEfetivacao(LocalDate.now());
-        contratacaoService.salvar(contratacao);
+        contratacaoService.salvar(contratacao); // Esta linha agora vai funcionar
 
         return funcionarioRepository.salvar(novoFuncionario);
     }
