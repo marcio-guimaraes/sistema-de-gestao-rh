@@ -8,43 +8,71 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body>
-    <header th:replace="~{layout :: header}"></header>
-    <main class="container py-5">
-        <div class="card">
-            <div class="card-header card-financeiro"><h4 class="mb-0">Admissão de Novo Funcionário</h4></div>
-            <div class="card-body">
-                <form>
-                    <div class="mb-3">
-                        <label class="form-label">Candidato Aprovado</label>
-                        <input type="text" class="form-control" disabled value="Ana Silva">
+<header th:replace="~{layout :: header}"></header>
+<main class="container py-5">
+    <div class="card">
+        <div class="card-header card-financeiro"><h4 class="mb-0">Admissão de Novo Funcionário</h4></div>
+        <div class="card-body">
+            <form th:action="@{/financeiro/cadastrar-funcionario}" method="post">
+
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label for="nome" class="form-label">Nome Completo</label>
+                        <input type="text" class="form-control" id="nome" name="nome" value="Candidato Aprovado" required>
                     </div>
-                    <div class="row">
-                        <div class="col-md-6 mb-3">
-                            <label for="cargo" class="form-label">Cargo</label>
-                            <input type="text" class="form-control" id="cargo" required>
-                        </div>
-                        <div class="col-md-6 mb-3">
-                            <label for="departamento" class="form-label">Departamento</label>
-                            <input type="text" class="form-control" id="departamento" required>
-                        </div>
+                    <div class="col-md-6 mb-3">
+                        <label for="cpf" class="form-label">CPF</label>
+                        <input type="text" class="form-control" id="cpf" name="cpf" value="123.456.789-00" required>
                     </div>
-                    <div class="row">
-                         <div class="col-md-6 mb-3">
-                            <label for="salario" class="form-label">Salário Base (R$)</label>
-                            <input type="number" step="0.01" class="form-control" id="salario" required>
-                        </div>
-                        <div class="col-md-6 mb-3">
-                            <label for="regime" class="form-label">Regime</label>
-                            <input type="text" class="form-control" id="regime" disabled value="CLT">
-                        </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label for="login" class="form-label">Login (Email)</label>
+                        <input type="text" class="form-control" id="login" name="login" value="candidato@email.com" required>
                     </div>
-                    <hr>
-                    <button type="submit" class="btn btn-info text-white">Efetivar Contratação</button>
-                    <a th:href="@{/financeiro}" class="btn btn-secondary">Voltar</a>
-                </form>
-            </div>
+                    <div class="col-md-6 mb-3">
+                        <label for="senha" class="form-label">Senha Padrão</label>
+                        <input type="password" class="form-control" id="senha" name="senha" value="mudar123" required>
+                    </div>
+                </div>
+                <hr>
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label for="matricula" class="form-label">Matrícula</label>
+                        <input type="text" class="form-control" id="matricula" name="matricula" required>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label for="dataAdmissao" class="form-label">Data de Admissão</label>
+                        <input type="date" class="form-control" id="dataAdmissao" name="dataAdmissao" th:value="${#temporals.format(#temporals.createNow(), 'yyyy-MM-dd')}" required>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label for="cargo" class="form-label">Cargo</label>
+                        <input type="text" class="form-control" id="cargo" name="cargo" value="Cargo" required>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label for="departamento" class="form-label">Departamento</label>
+                        <input type="text" class="form-control" id="departamento" name="departamento" value="Departamento" required>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label for="salario" class="form-label">Salário Base (R$)</label>
+                        <input type="number" step="0.01" class="form-control" id="salario" name="baseSalario" value="5000.00" required>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label for="status" class="form-label">Status</label>
+                        <input type="text" class="form-control" id="status" name="status" value="Ativo" required>
+                    </div>
+                </div>
+                <hr>
+                <button type="submit" class="btn btn-info text-white">Efetivar Contratação</button>
+                <a th:href="@{/financeiro}" class="btn btn-secondary">Voltar</a>
+            </form>
         </div>
-    </main>
-    <footer th:replace="~{layout :: footer}"></footer>
+    </div>
+</main>
+<footer th:replace="~{layout :: footer}"></footer>
 </body>
 </html>

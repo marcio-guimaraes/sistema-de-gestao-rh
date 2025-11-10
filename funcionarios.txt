@@ -1,0 +1,1 @@
+Teste;123.456.789-00;candidato@email.com;Teste;32123131;2025-11-10;5000,00;Ativo;Departamento;Cargo
