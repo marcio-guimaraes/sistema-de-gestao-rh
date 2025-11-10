@@ -51,49 +51,6 @@ public class FolhaPagamento {
         return valorTotalLiquido;
     }
 
-    // Métodos
-
-
-
-    public String exportarRelatórioTela() {
-        return "Folha de Pagamento - " + mesReferencia + "/" + anoReferencia + "\n" +
-                "Funcionários processados: " + listarFuncionarios().size() + "\n" +
-                "Valor Total Bruto: R$ " + valorTotalBruto + "\n" +
-                "Total de Descontos: R$ " + valorTotalDescontos + "\n" +
-                "Valor Total Líquido: R$ " + valorTotalLiquido;
-        //adicionar uma tabela com todos os funcionarios, com nome e valores
-    }
-
-    public File exportarRelatorioArquivo() {
-
-        File arquivo = new File("relatorio_folha_" + mesReferencia + "_" + anoReferencia + ".csv");
-
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter(arquivo))) {
-            writer.write("ID;Mês Referência;Ano Referência;Data Processamento;Valor Bruto;Valor Descontos;Valor Líquido");
-            writer.newLine();
-
-            // Linha de dados
-            writer.write(
-                    id + ";" +
-                            mesReferencia + ";" +
-                            anoReferencia + ";" +
-                            dataProcessamento + ";" +
-                            valorTotalBruto + ";" +
-                            valorTotalDescontos + ";" +
-                            valorTotalLiquido
-            );
-            writer.newLine();
-
-            System.out.println("Relatório CSV exportado com sucesso: " + arquivo.getAbsolutePath());
-        } catch (IOException e) {
-            System.err.println("Erro ao exportar relatório: " + e.getMessage());
-        }
-
-        return arquivo;
-    }
-
-
-
     public static class Builder {
         // Atributos obrigatórios
         private long id;

@@ -25,7 +25,6 @@ public class Funcionario extends Usuario {
         this.status = status;
         this.departamento = departamento;
         this.cargo = cargo;
-        salvar();
     }
 
     // Gets
@@ -65,7 +64,17 @@ public class Funcionario extends Usuario {
 
     @Override
     public String toString() {
-        return String.format("%s;%s;%s;%s;%.2f;%s",
-                getNome(), getCpf(), matricula, dataAdmissao, baseSalario, status);
+        return String.format("%s;%s;%s;%s;%s;%s;%.2f;%s;%s;%s",
+                getNome(),
+                getCpf(),
+                login,
+                senha,
+                matricula,
+                dataAdmissao,
+                baseSalario,
+                status,
+                departamento,
+                cargo
+        );
     }
 }
