@@ -38,6 +38,21 @@ public class CandidaturaService {
         }
     }
 
+    // SOBRECARGA (para preencher Contratacao)
+    public void buscarEPreencher(com.example.sistemarh.recrutamento.model.Contratacao contratacao) {
+        if (contratacao == null) {
+            return;
+        }
+        if (contratacao.getCandidato() == null) {
+            candidatoService.buscarPorCpf(contratacao.getCpfCandidatoDoArquivo())
+                    .ifPresent(contratacao::setCandidato);
+        }
+        if (contratacao.getVaga() == null) {
+            vagaService.buscarVagaPorId(contratacao.getIdVagaDoArquivo())
+                    .ifPresent(contratacao::setVaga);
+        }
+    }
+
     public Candidatura registrarCandidatura(String cpf, long vagaId, String status) {
 
         Optional<Candidato> candidatoOpt = candidatoService.buscarPorCpf(cpf);
@@ -89,6 +104,15 @@ public class CandidaturaService {
         }
         return candidaturaOpt;
     }
+
+    public List<Candidatura> buscarPorCpf(String cpf) {
+        List<Candidatura> candidaturas = candidaturaRepository.buscarPorCpf(cpf);
+        for (Candidatura c : candidaturas) {
+            buscarEPreencher(c);
+        }
+        return candidaturas;
+    }
+
 
     public Candidatura atualizarStatus(long id, String novoStatus) {
         Optional<Candidatura> candidaturaOpt = candidaturaRepository.buscarPorId(id);

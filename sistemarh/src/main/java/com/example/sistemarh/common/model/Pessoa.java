@@ -16,4 +16,14 @@ public class Pessoa {
     public String getCpf() {
         return cpf;
     }
+
+    // --- MÉTODOS ADICIONADOS ---
+    public void setNome(String nome) {
+        this.nome = nome;
+    }
+
+    public void setCpf(String cpf) {
+        this.cpf = cpf;
+    }
+    // --- FIM DOS MÉTODOS ADICIONADOS ---
 }

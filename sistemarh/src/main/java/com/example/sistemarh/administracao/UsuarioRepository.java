@@ -1,10 +1,13 @@
 package com.example.sistemarh.administracao;
 
+// Importe o Funcionario, pois ele agora é usado aqui
+import com.example.sistemarh.financeiro.Funcionario;
 import org.springframework.stereotype.Repository;
 
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -17,6 +20,7 @@ public class UsuarioRepository {
     private static final String SEPARADOR = ";";
 
     public UsuarioRepository() {
+        // Cria um usuário admin padrão se o arquivo não existir
         try {
             if (!Files.exists(Paths.get(ARQUIVO_USUARIOS))) {
                 Files.createFile(Paths.get(ARQUIVO_USUARIOS));
@@ -27,7 +31,7 @@ public class UsuarioRepository {
                         "admin",
                         "admin123",
                         "ADM001",
-                        java.time.LocalDate.now(),
+                        LocalDate.now(),
                         0.0,
                         "Ativo"
                 );
@@ -40,62 +44,82 @@ public class UsuarioRepository {
 
     private Usuario linhaParaUsuario(String linha) {
         String[] dados = linha.split(SEPARADOR);
-        if (dados.length < 9) return null;
+        // Um funcionário (Admin, Gestor, Func) tem 10 campos. Um usuário simples tem 4.
+        if (dados.length < 4) return null;
 
         String nome = dados[0];
         String cpf = dados[1];
         String login = dados[2];
         String senha = dados[3];
-        String matricula = dados[4];
-        java.time.LocalDate dataAdmissao = java.time.LocalDate.parse(dados[5]);
-        Double baseSalario = Double.parseDouble(dados[6]);
-        String status = dados[7];
-        String perfil = dados[8];
 
-        // CORREÇÃO AQUI (if/else if)
-        if ("ADMIN".equals(perfil)) {
-            return new Administrador(nome, cpf, login, senha, matricula, dataAdmissao, baseSalario, status);
-        } else if ("GESTOR".equals(perfil)) {
-            return new Gestor(nome, cpf, login, senha, matricula, dataAdmissao, baseSalario, status);
-        } else {
+        // Se não tiver mais dados, é um usuário simples
+        if (dados.length < 10) {
             return new Usuario(nome, cpf, login, senha);
+        }
+
+        try {
+            // Se tem mais dados, é um Funcionario ou subclasse
+            String matricula = dados[4];
+            LocalDate dataAdmissao = LocalDate.parse(dados[5]);
+            Double baseSalario = Double.parseDouble(dados[6]);
+            String status = dados[7];
+            String departamento = dados[8];
+            String cargoOuPerfil = dados[9]; // "ADMIN", "GESTOR", "RECRUTADOR", "FUNCIONÁRIO"
+
+            switch (cargoOuPerfil) {
+                case "ADMIN":
+                    return new Administrador(nome, cpf, login, senha, matricula, dataAdmissao, baseSalario, status);
+                case "GESTOR":
+                    return new Gestor(nome, cpf, login, senha, matricula, dataAdmissao, baseSalario, status);
+                case "RECRUTADOR":
+                case "FUNCIONÁRIO":
+                    return new Funcionario(nome, cpf, login, senha, matricula, dataAdmissao, baseSalario, status, departamento, cargoOuPerfil);
+                default:
+                    // Fallback para usuário simples se o perfil for desconhecido
+                    return new Usuario(nome, cpf, login, senha);
+            }
+        } catch (Exception e) {
+            System.err.println("Erro ao parsear linha de usuário/funcionário: " + linha);
+            return null;
         }
     }
 
     private String usuarioParaLinha(Usuario usuario) {
-        String perfil = "USUARIO";
-        String matricula = "N/A";
-        java.time.LocalDate dataAdmissao = java.time.LocalDate.now();
-        Double baseSalario = 0.0;
-        String status = "Ativo";
-
-        if (usuario instanceof Administrador) {
-            perfil = "ADMIN";
-            Administrador admin = (Administrador) usuario;
-            matricula = admin.getMatricula();
-            dataAdmissao = admin.getDataAdmissao();
-            baseSalario = admin.getBaseSalario();
-            status = admin.getStatus();
-        } else if (usuario instanceof Gestor) {
-            perfil = "GESTOR";
-            Gestor gestor = (Gestor) usuario;
-            matricula = gestor.getMatricula();
-            dataAdmissao = gestor.getDataAdmissao();
-            baseSalario = gestor.getBaseSalario();
-            status = gestor.getStatus();
-        }
-
-        return String.join(SEPARADOR,
+        // Campos base
+        String linhaBase = String.join(SEPARADOR,
                 usuario.getNome(),
                 usuario.getCpf(),
-                usuario.login,
-                usuario.senha,
-                matricula,
-                dataAdmissao.toString(),
-                baseSalario.toString(),
-                status,
-                perfil
+                usuario.getLogin(),
+                usuario.getSenha()
         );
+
+        // Se for um Funcionario (ou subclasse), adiciona os campos extras
+        if (usuario instanceof Funcionario) {
+            Funcionario f = (Funcionario) usuario;
+            String perfil;
+
+            // Define o perfil baseado na classe
+            if (f instanceof Administrador) {
+                perfil = "ADMIN";
+            } else if (f instanceof Gestor) {
+                perfil = "GESTOR";
+            } else {
+                perfil = f.getCargo(); // "RECRUTADOR" ou "FUNCIONÁRIO"
+            }
+
+            return String.join(SEPARADOR,
+                    linhaBase,
+                    f.getMatricula(),
+                    f.getDataAdmissao().toString(),
+                    f.getBaseSalario().toString(),
+                    f.getStatus(),
+                    f.getDepartamento(),
+                    perfil // Salva o perfil/cargo
+            );
+        }
+
+        // Se for só Usuario, retorna a linha base
+        return linhaBase;
     }
 
     private void salvarListaNoArquivo(List<Usuario> usuarios) {
@@ -113,7 +137,7 @@ public class UsuarioRepository {
         List<Usuario> usuarios = buscarTodos();
 
         Optional<Usuario> existente = usuarios.stream()
-                .filter(u -> u.login.equals(usuario.login))
+                .filter(u -> u.getLogin().equals(usuario.getLogin()))
                 .findFirst();
 
         if (existente.isPresent()) {
@@ -148,11 +172,10 @@ public class UsuarioRepository {
 
     public Optional<Usuario> buscarPorLogin(String login) {
         return buscarTodos().stream()
-                .filter(u -> u.login != null && u.login.equals(login))
+                .filter(u -> u.getLogin() != null && u.getLogin().equals(login))
                 .findFirst();
     }
 
-    // NOVO MÉTODO ADICIONADO
     public Optional<Usuario> buscarPorCpf(String cpf) {
         return buscarTodos().stream()
                 .filter(u -> u.getCpf() != null && u.getCpf().equals(cpf))
@@ -163,7 +186,7 @@ public class UsuarioRepository {
         List<Usuario> usuarios = buscarTodos();
 
         List<Usuario> usuariosFiltrados = usuarios.stream()
-                .filter(u -> u.login != null && !u.login.equals(login))
+                .filter(u -> u.getLogin() != null && !u.getLogin().equals(login))
                 .collect(Collectors.toList());
 
         salvarListaNoArquivo(usuariosFiltrados);

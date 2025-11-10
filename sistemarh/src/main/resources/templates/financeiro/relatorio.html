@@ -40,11 +40,14 @@
                 <td th:text="${f.departamento}"></td>
                 <td th:text="${'R$ ' + #numbers.formatDecimal(f.baseSalario, 1, 'POINT', 2, 'COMMA')}"></td>
 
-                <th:block th:with="bruto=${f.baseSalario + f.regraSalario.valorValeAlimentacao + f.regraSalario.valorValeTransporte},
+                <th:block th:if="${f.regraSalario != null}" th:with="bruto=${f.baseSalario + f.regraSalario.valorValeAlimentacao + f.regraSalario.valorValeTransporte},
                                            liquido=${f.calcularSalario()}">
                     <td th:text="${'R$ ' + #numbers.formatDecimal(bruto - f.baseSalario, 1, 'POINT', 2, 'COMMA')}"></td>
                     <td th:text="${'R$ ' + #numbers.formatDecimal(bruto - liquido, 1, 'POINT', 2, 'COMMA')}"></td>
                     <td th:text="${'R$ ' + #numbers.formatDecimal(liquido, 1, 'POINT', 2, 'COMMA')}"></td>
+                </th:block>
+                <th:block th:if="${f.regraSalario == null}">
+                    <td colspan="3" class="text-danger text-center">Regra salarial não definida</td>
                 </th:block>
             </tr>
             </tbody>

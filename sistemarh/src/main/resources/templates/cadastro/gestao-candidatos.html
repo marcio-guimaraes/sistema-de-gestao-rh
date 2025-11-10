@@ -34,6 +34,9 @@
                 </tr>
                 </thead>
                 <tbody>
+                <tr th:if="${#lists.isEmpty(candidatos)}">
+                    <td colspan="6" class="text-center">Nenhum candidato cadastrado.</td>
+                </tr>
                 <tr th:each="c : ${candidatos}">
                     <td th:text="${c.nome}"></td>
                     <td th:text="${c.cpf}"></td>

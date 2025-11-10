@@ -20,6 +20,7 @@
                 <div class="card-body">
                     <form th:action="@{/recrutamento/gestao-vagas/salvar}" th:object="${vaga}" method="post">
                         <input type="hidden" th:field="*{id}" />
+                        <input type="hidden" th:field="*{dataCriacao}" />
 
                         <div class="mb-3">
                             <label for="titulo" class="form-label">Título da Vaga</label>
@@ -91,6 +92,9 @@
                         </tr>
                         </thead>
                         <tbody>
+                        <tr th:if="${#lists.isEmpty(vagas)}">
+                            <td colspan="5" class="text-center">Nenhuma vaga cadastrada.</td>
+                        </tr>
                         <tr th:each="v : ${vagas}">
                             <td th:text="${v.titulo}"></td>
                             <td th:text="${v.status}"></td>

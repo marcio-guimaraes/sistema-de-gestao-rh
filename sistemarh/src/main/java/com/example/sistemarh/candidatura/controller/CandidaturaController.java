@@ -9,6 +9,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate; // Importar
 import java.util.Optional;
 
 @Controller
@@ -32,7 +33,11 @@ public class CandidaturaController {
     // --- Gestão de Candidatos ---
     @GetMapping("/candidato")
     public String cadastroCandidatoGet(Model model) {
-        model.addAttribute("candidato", new Candidato.Builder("", "").build());
+        // CORREÇÃO: Passar um objeto Candidato real, não o Builder
+        Candidato novoCandidato = new Candidato.Builder("", "")
+                .dataCadastro(LocalDate.now()) // Definir data padrão
+                .build();
+        model.addAttribute("candidato", novoCandidato);
         model.addAttribute("editMode", false);
         return "cadastro/cadastroCandidato";
     }
@@ -42,7 +47,10 @@ public class CandidaturaController {
         try {
             candidatoService.salvarCandidato(candidato);
         } catch (RuntimeException e) {
-            return "redirect:/cadastro/candidato?error=" + e.getMessage();
+            String redirect = (candidato.getNome() == null || candidato.getNome().isEmpty())
+                    ? "/cadastro/candidato"
+                    : "/cadastro/candidato/editar/" + candidato.getCpf();
+            return "redirect:" + redirect + "?error=" + e.getMessage();
         }
         return "redirect:/cadastro/gestao-candidatos";
     }
@@ -66,6 +74,7 @@ public class CandidaturaController {
 
     @GetMapping("/candidato/excluir/{cpf}")
     public String excluirCandidato(@PathVariable("cpf") String cpf) {
+        // Tenta excluir candidaturas pendentes associadas
         candidaturaService.listarTodas().stream()
                 .filter(c -> c.getCpfCandidatoDoArquivo().equals(cpf))
                 .forEach(c -> {
@@ -75,6 +84,7 @@ public class CandidaturaController {
                         System.err.println("Não foi possível excluir candidatura pendente: " + e.getMessage());
                     }
                 });
+        // Exclui o candidato
         candidatoService.excluirCandidato(cpf);
         return "redirect:/cadastro/gestao-candidatos";
     }
@@ -89,10 +99,9 @@ public class CandidaturaController {
 
     @PostMapping("/registrar-candidatura")
     public String candidaturaVagaPost(@RequestParam String candidatoCpf,
-            @RequestParam Long vagaId,
-            @RequestParam String status) {
+                                      @RequestParam Long vagaId) { // Status removido, será "Pendente"
         try {
-            candidaturaService.registrarCandidatura(candidatoCpf, vagaId, status);
+            candidaturaService.registrarCandidatura(candidatoCpf, vagaId, "Pendente"); // Status Padrão
         } catch (RuntimeException e) {
             return "redirect:/cadastro/candidatura?error=" + e.getMessage();
         }
@@ -101,8 +110,8 @@ public class CandidaturaController {
 
     @GetMapping("/status")
     public String statusCandidatura(@RequestParam(required = false) Long vagaId,
-            @RequestParam(required = false) String status,
-            Model model) {
+                                    @RequestParam(required = false) String status,
+                                    Model model) {
         model.addAttribute("vagas", vagaService.listarTodasVagas());
         model.addAttribute("candidaturas", candidaturaService.listarComFiltros(vagaId, status));
         return "cadastro/statusCandidatura";

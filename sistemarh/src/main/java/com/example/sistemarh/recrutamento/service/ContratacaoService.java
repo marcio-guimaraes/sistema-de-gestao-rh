@@ -21,6 +21,19 @@ public class ContratacaoService {
     @Autowired
     private CandidaturaService candidaturaService;
 
+    // ADICIONADO (necessário para o buscarEPreencher)
+    @Autowired
+    private VagaService vagaService;
+
+    // NOVO MÉTODO HELPER ADICIONADO
+    public void buscarEPreencher(Contratacao contratacao) {
+        if (contratacao == null) {
+            return;
+        }
+        // Usa o serviço de candidatura para preencher os dados
+        candidaturaService.buscarEPreencher(contratacao);
+    }
+
     public Contratacao solicitarContratacao(long candidaturaId) {
         Candidatura candidatura = candidaturaService.buscarPorId(candidaturaId)
                 .orElseThrow(() -> new RuntimeException("Candidatura não encontrada."));
@@ -28,6 +41,8 @@ public class ContratacaoService {
         if (!"Aprovado".equalsIgnoreCase(candidatura.getStatus())) {
             throw new RuntimeException("Somente candidaturas Aprovadas podem ser solicitadas.");
         }
+
+        candidaturaService.buscarEPreencher(candidatura);
 
         Contratacao contratacao = new Contratacao.Builder(candidatura.getVaga(), candidatura.getCandidato())
                 .status("Pendente de aprovação do Gestor")
@@ -38,11 +53,18 @@ public class ContratacaoService {
 
     public List<Contratacao> listarTodas() {
         List<Contratacao> contratacoes = contratacaoRepository.buscarTodas();
+        for (Contratacao c : contratacoes) {
+            this.buscarEPreencher(c);
+        }
         return contratacoes;
     }
 
     public Optional<Contratacao> buscarPorId(long id) {
-        return contratacaoRepository.buscarPorId(id);
+        Optional<Contratacao> cOpt = contratacaoRepository.buscarPorId(id);
+        if (cOpt.isPresent()) {
+            this.buscarEPreencher(cOpt.get());
+        }
+        return cOpt;
     }
 
     public Contratacao aprovarContratacao(long id) {

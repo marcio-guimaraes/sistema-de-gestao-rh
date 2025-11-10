@@ -78,13 +78,18 @@ public class FolhaPagamentoRepository {
     }
 
     public FolhaPagamento salvar(FolhaPagamento folha) {
-        if (folha.getId() == 0) {
-            folha = new FolhaPagamento.Builder(gerarNovoId(), folha.getMesReferencia(), folha.getAnoReferencia(), folha.getDataProcessamento(), null)
-                    .valorTotalBruto(folha.getValorTotalBruto())
-                    .valorTotalDescontos(folha.getValorTotalDescontos())
-                    .valorTotalLiquido(folha.getValorTotalLiquido())
-                    .build();
+        // CORREÇÃO: IDs não podem ser 0 no builder, mas o ID 0 indica "novo"
+        long id = folha.getId();
+        if (id == 0) {
+            id = gerarNovoId();
         }
+
+        folha = new FolhaPagamento.Builder(id, folha.getMesReferencia(), folha.getAnoReferencia(), folha.getDataProcessamento(), null)
+                .valorTotalBruto(folha.getValorTotalBruto())
+                .valorTotalDescontos(folha.getValorTotalDescontos())
+                .valorTotalLiquido(folha.getValorTotalLiquido())
+                .build();
+
 
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(ARQUIVO_FOLHAS, true))) {
             writer.write(folhaParaLinha(folha));

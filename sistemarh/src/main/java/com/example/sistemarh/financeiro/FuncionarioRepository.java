@@ -21,6 +21,7 @@ public class FuncionarioRepository {
 
     private Funcionario linhaParaFuncionario(String linha) {
         String[] dados = linha.split(SEPARADOR);
+        // Um funcionário sempre terá 10 campos
         if (dados.length < 10) return null;
 
         try {
@@ -33,8 +34,10 @@ public class FuncionarioRepository {
             Double baseSalario = Double.parseDouble(dados[6]);
             String status = dados[7];
             String departamento = dados[8];
-            String cargo = dados[9];
+            String cargo = dados[9]; // Perfil (ADMIN, GESTOR) ou Cargo (RECRUTADOR, FUNCIONARIO)
 
+            // Instancia a classe correta com base no cargo/perfil
+            // (Usamos o construtor de Funcionario, mas a lógica de usuário diferencia)
             return new Funcionario(nome, cpf, login, senha, matricula, dataAdmissao, baseSalario, status, departamento, cargo);
 
         } catch (Exception e) {
@@ -47,8 +50,8 @@ public class FuncionarioRepository {
         return String.join(SEPARADOR,
                 f.getNome(),
                 f.getCpf(),
-                f.login,
-                f.senha,
+                f.getLogin(),
+                f.getSenha(),
                 f.getMatricula(),
                 f.getDataAdmissao().toString(),
                 f.getBaseSalario().toString(),
@@ -92,7 +95,9 @@ public class FuncionarioRepository {
             return funcionarios;
         }
         try {
+            // Filtra apenas linhas que são de Funcionários (e não usuários simples)
             funcionarios = Files.lines(Paths.get(ARQUIVO_FUNCIONARIOS))
+                    .filter(linha -> linha.split(SEPARADOR).length >= 10)
                     .map(this::linhaParaFuncionario)
                     .filter(f -> f != null)
                     .collect(Collectors.toList());

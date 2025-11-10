@@ -28,17 +28,6 @@ public class Candidato extends Pessoa {
         this.documentosAdicionais = builder.documentosAdicionais;
     }
 
-    // Este método será movido para o Repository, mas mantemos o builder
-    public void salvarCandidatoNoArquivo() {
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter(ARQUIVO_CANDIDATOS, true))) {
-            writer.write(toLinhaArquivo());
-            writer.newLine();
-        } catch (IOException e) {
-            System.err.println("Erro ao salvar Candidato: " + e.getMessage());
-        }
-    }
-
-
     //sets
     public void setFormacao(String formacao) {
         this.formacao = formacao;

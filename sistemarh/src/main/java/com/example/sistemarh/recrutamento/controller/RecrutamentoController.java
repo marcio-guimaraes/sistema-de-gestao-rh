@@ -1,5 +1,6 @@
 package com.example.sistemarh.recrutamento.controller;
 
+import com.example.sistemarh.administracao.Usuario; // Importar
 import com.example.sistemarh.administracao.UsuarioService;
 import com.example.sistemarh.candidatura.CandidaturaService;
 import com.example.sistemarh.recrutamento.model.Vaga;
@@ -12,6 +13,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate; // Importar
 import java.time.LocalDateTime;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -42,7 +44,11 @@ public class RecrutamentoController {
 
     @GetMapping("/gestao-vagas")
     public String gestaoVagas(Model model) {
-        model.addAttribute("vaga", new Vaga.Builder(0, "").build());
+        // CORREÇÃO: Passar um Vaga real, não o builder
+        Vaga novaVaga = new Vaga.Builder(0, "")
+                .dataCriacao(LocalDate.now())
+                .build();
+        model.addAttribute("vaga", novaVaga);
         model.addAttribute("vagas", vagaService.listarTodasVagas());
         model.addAttribute("editMode", false);
         return "recrutamento/gestao-vagas";
@@ -76,16 +82,11 @@ public class RecrutamentoController {
         return "redirect:/recrutamento/gestao-vagas";
     }
 
-    @GetMapping("/cadastrar-candidato")
-    public String cadastrarCandidato() {
-        return "recrutamento/cadastro-candidato";
-    }
+    // Rota removida, pois /cadastrar-candidato agora é parte do Módulo de Cadastro
+    // @GetMapping("/cadastrar-candidato") ...
 
-    @GetMapping("/realizar-candidatura")
-    public String realizarCandidatura(Model model) {
-        model.addAttribute("vagas", vagaService.filtrarVagas("Aberta", null, null));
-        return "recrutamento/realizar-candidatura";
-    }
+    // Rota removida, pois /realizar-candidatura agora é parte do Módulo de Cadastro
+    // @GetMapping("/realizar-candidatura") ...
 
     @GetMapping("/marcar-entrevista")
     public String marcarEntrevista(Model model) {
@@ -93,8 +94,12 @@ public class RecrutamentoController {
                 .filter(c -> "Pendente".equalsIgnoreCase(c.getStatus()) || "Em Análise".equalsIgnoreCase(c.getStatus()))
                 .collect(Collectors.toList()));
 
+        // Filtra para mostrar apenas perfis de Gestor e Recrutador
         model.addAttribute("recrutadores", usuarioService.listarTodos().stream()
-                .filter(u -> !"admin".equals(u.getLogin())) // CORREÇÃO AQUI
+                .filter(u -> u instanceof com.example.sistemarh.administracao.Gestor ||
+                        (u instanceof com.example.sistemarh.financeiro.Funcionario &&
+                                "Recrutador".equals(((com.example.sistemarh.financeiro.Funcionario)u).getCargo()))
+                )
                 .collect(Collectors.toList()));
 
         return "recrutamento/marcar-entrevista";

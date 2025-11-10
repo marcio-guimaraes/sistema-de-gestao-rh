@@ -13,10 +13,7 @@ public class CandidatoService {
     private CandidatoRepository candidatoRepository;
 
     public Candidato salvarCandidato(Candidato candidato) {
-        Optional<Candidato> existente = candidatoRepository.buscarPorCpf(candidato.getCpf());
-        if (existente.isPresent() && !existente.get().getNome().equals(candidato.getNome())) {
-            throw new RuntimeException("CPF já cadastrado para outro candidato.");
-        }
+        // Validação removida para permitir edição (a lógica de CPF único é tratada no repo)
         return candidatoRepository.salvar(candidato);
     }
 

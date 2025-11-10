@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
+import java.util.Optional; // Importar
 import java.util.stream.Collectors;
 
 @Controller
@@ -28,6 +29,11 @@ public class FinanceiroController {
 
     @Autowired
     private FolhaPagamentoService folhaPagamentoService;
+
+    // REGRA PADRÃO (simplificação)
+    private RegraSalario getRegraPadrao() {
+        return new RegraSalario(1, "CLT", 0.0, 6.0, 500.0, 14.0, 27.5);
+    }
 
     @GetMapping
     public String menuFinanceiro() {
@@ -78,7 +84,7 @@ public class FinanceiroController {
     @GetMapping("/relatorio")
     public String relatorioFinanceiro(Model model) {
         List<Funcionario> funcionarios = funcionarioService.listarAtivos();
-        RegraSalario regraPadrao = new RegraSalario(1, "CLT", 0.0, 6.0, 500.0, 14.0, 27.5);
+        RegraSalario regraPadrao = getRegraPadrao();
 
         for(Funcionario f : funcionarios) {
             f.setRegraSalario(regraPadrao);
@@ -89,24 +95,30 @@ public class FinanceiroController {
     }
 
     @GetMapping("/contracheques")
-    public String contracheques(Model model) {
+    public String contracheques(@RequestParam(required = false) String cpf, Model model) {
         List<Funcionario> funcionarios = funcionarioService.listarAtivos();
-        RegraSalario regraPadrao = new RegraSalario(1, "CLT", 0.0, 6.0, 500.0, 14.0, 27.5);
+        model.addAttribute("funcionarios", funcionarios);
 
-        if (!funcionarios.isEmpty()) {
-            Funcionario f = funcionarios.get(0);
-            f.setRegraSalario(regraPadrao);
-            model.addAttribute("funcionario", f);
+        Funcionario fSelecionado = null;
 
-            double salarioBruto = f.getBaseSalario() + f.getRegraSalario().getValorValeAlimentacao() + f.getRegraSalario().getValorValeTransporte();
-            double descontos = salarioBruto - f.calcularSalario();
+        if (cpf != null && !cpf.isEmpty()) {
+            fSelecionado = funcionarioService.buscarPorCpf(cpf).orElse(null);
+        } else if (!funcionarios.isEmpty()) {
+            fSelecionado = funcionarios.get(0); // Pega o primeiro como padrão
+        }
+
+        if (fSelecionado != null) {
+            fSelecionado.setRegraSalario(getRegraPadrao());
+            model.addAttribute("funcionario", fSelecionado);
+
+            double salarioBruto = fSelecionado.getBaseSalario() + fSelecionado.getRegraSalario().getValorValeAlimentacao() + fSelecionado.getRegraSalario().getValorValeTransporte();
+            double descontos = salarioBruto - fSelecionado.calcularSalario();
 
             model.addAttribute("salarioBruto", salarioBruto);
             model.addAttribute("totalDescontos", descontos);
-            model.addAttribute("salarioLiquido", f.calcularSalario());
+            model.addAttribute("salarioLiquido", fSelecionado.calcularSalario());
         }
 
-        model.addAttribute("funcionarios", funcionarios);
         return "financeiro/contracheques";
     }
 }

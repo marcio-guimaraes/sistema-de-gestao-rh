@@ -1,8 +1,7 @@
 package com.example.sistemarh.administracao.controller;
 
-import com.example.sistemarh.administracao.Usuario;
-import com.example.sistemarh.administracao.UsuarioDTO;
-import com.example.sistemarh.administracao.UsuarioService;
+import com.example.sistemarh.administracao.*;
+import com.example.sistemarh.financeiro.Funcionario; // Importar
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -47,6 +46,11 @@ public class AdministracaoController {
 
     @PostMapping("/Login")
     public String realizaLoginPost(@RequestParam String username, @RequestParam String password) {
+        // Correção: Adicionado tratamento para senha nula/vazia
+        if (password == null || password.isEmpty()) {
+            return "redirect:/Administração/Login?error=true";
+        }
+
         boolean loginValido = usuarioService.validarLogin(username, password);
 
         if (loginValido) {
@@ -86,14 +90,32 @@ public class AdministracaoController {
         Optional<Usuario> usuarioOpt = usuarioService.buscarPorLogin(login);
         if (usuarioOpt.isPresent()) {
             Usuario usuario = usuarioOpt.get();
+
+            // CORREÇÃO: Preencher o DTO completamente
             UsuarioDTO dto = new UsuarioDTO();
             dto.setNome(usuario.getNome());
             dto.setCpf(usuario.getCpf());
-            dto.setLogin(usuario.getLogin()); // CORREÇÃO AQUI
+            dto.setLogin(usuario.getLogin());
+            // Não enviamos a senha para o formulário
+
+            if (usuario instanceof Funcionario) {
+                Funcionario f = (Funcionario) usuario;
+                dto.setDepartamento(f.getDepartamento());
+
+                if (f instanceof Administrador) {
+                    dto.setPerfil("Administrador");
+                } else if (f instanceof Gestor) {
+                    dto.setPerfil("Gestor");
+                } else {
+                    dto.setPerfil(f.getCargo()); // "RECRUTADOR" ou "FUNCIONÁRIO"
+                }
+            } else {
+                dto.setPerfil("Usuario"); // Perfil genérico
+                dto.setDepartamento("N/A");
+            }
 
             model.addAttribute("usuarioDTO", dto);
             model.addAttribute("editMode", true);
-            model.addAttribute("loginOriginal", login);
             return "adm/cadastroNovoUsuario";
         }
         return "redirect:/Administração/Gestão";

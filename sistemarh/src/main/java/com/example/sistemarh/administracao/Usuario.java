@@ -19,4 +19,14 @@ public class Usuario extends Pessoa {
     public String getLogin() {
         return login;
     }
+
+    // --- MÉTODOS ADICIONADOS ---
+    public void setSenha(String senha) {
+        this.senha = senha;
+    }
+
+    public void setLogin(String login) {
+        this.login = login;
+    }
+    // --- FIM DOS MÉTODOS ADICIONADOS ---
 }

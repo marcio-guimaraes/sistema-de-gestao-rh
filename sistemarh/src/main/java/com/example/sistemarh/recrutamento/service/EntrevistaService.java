@@ -69,8 +69,8 @@ public class EntrevistaService {
             vagaService.buscarVagaPorId(e.getIdVagaDoArquivo())
                     .ifPresent(e::setVaga);
 
-            // CORREÇÃO AQUI
-            usuarioService.buscarPorLogin(e.getCpfRecrutadorDoArquivo()) // Supondo que o login do recrutador seja o CPF
+            // CORREÇÃO: Buscar pelo CPF, não pelo login (que é o email)
+            usuarioService.buscarPorCpf(e.getCpfRecrutadorDoArquivo())
                     .ifPresent(u -> e.setRecrutador(new Recrutador.Builder(0, u.getNome(), u.getCpf()).build()));
         }
         return entrevistas;

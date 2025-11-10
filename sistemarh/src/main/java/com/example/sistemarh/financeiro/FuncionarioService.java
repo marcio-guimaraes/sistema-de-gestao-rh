@@ -1,13 +1,11 @@
 package com.example.sistemarh.financeiro;
 
-// IMPORTS ADICIONADOS PARA CORRIGIR 'Cannot resolve symbol'
 import com.example.sistemarh.administracao.Usuario;
 import com.example.sistemarh.administracao.UsuarioService;
 import com.example.sistemarh.candidatura.Candidato;
 import com.example.sistemarh.recrutamento.model.Contratacao;
 import com.example.sistemarh.recrutamento.model.Vaga;
 import com.example.sistemarh.recrutamento.service.ContratacaoService;
-// FIM DOS IMPORTS ADICIONADOS
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -38,8 +36,17 @@ public class FuncionarioService {
             throw new RuntimeException("Contratação não foi aprovada pelo gestor.");
         }
 
+        // Garante que os dados de candidato e vaga estão carregados
+        if (contratacao.getCandidato() == null || contratacao.getVaga() == null) {
+            contratacaoService.buscarEPreencher(contratacao);
+        }
+
         Candidato candidato = contratacao.getCandidato();
         Vaga vaga = contratacao.getVaga();
+
+        if (candidato == null) {
+            throw new RuntimeException("Falha ao carregar dados do candidato para a contratação.");
+        }
 
         Optional<Funcionario> existente = funcionarioRepository.buscarPorCpf(candidato.getCpf());
         if (existente.isPresent()) {
@@ -66,7 +73,7 @@ public class FuncionarioService {
 
         contratacao.setStatus("Efetivada");
         contratacao.setDataEfetivacao(LocalDate.now());
-        contratacaoService.salvar(contratacao); // Esta linha agora vai funcionar
+        contratacaoService.salvar(contratacao);
 
         return funcionarioRepository.salvar(novoFuncionario);
     }

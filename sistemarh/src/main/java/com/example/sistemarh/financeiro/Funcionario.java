@@ -9,7 +9,6 @@ import java.util.List;
 import java.time.LocalDate;
 
 public class Funcionario extends Usuario {
-    private static final String ARQUIVO_FUNCIONARIOS = "funcionarios.txt";
 
     protected String matricula;
     protected LocalDate dataAdmissao;
@@ -29,9 +28,10 @@ public class Funcionario extends Usuario {
         this.status = status;
         this.departamento = departamento;
         this.cargo = cargo;
-        salvarFuncionarioNoArquivo();
+        // O salvamento no arquivo foi REMOVIDO daqui.
     }
 
+    // Construtor simplificado
     public Funcionario(String nome, String cpf, String login, String senha,
                        String matricula, LocalDate dataAdmissao, Double baseSalario, String status) {
         super(nome, cpf, login, senha);
@@ -43,42 +43,42 @@ public class Funcionario extends Usuario {
         this.cargo = "N/A";
     }
 
-
+    // Getters
     public String getMatricula() {
         return matricula;
     }
-
     public LocalDate getDataAdmissao() {
         return dataAdmissao;
     }
-
     public String getStatus() {
         return status;
     }
-
-    public void setStatus(String status) {
-        this.status = status;
-    }
-
     public Double getBaseSalario() {
         return baseSalario;
     }
-
     public RegraSalario getRegraSalario() {
         return regraSalario;
     }
-
     public String getDepartamento() {
         return departamento;
     }
-
     public String getCargo() {
         return cargo;
     }
 
+    // Setters
+    public void setStatus(String status) {
+        this.status = status;
+    }
     public void setRegraSalario(RegraSalario regraSalario) {
         this.regraSalario = regraSalario;
     }
+    public void setMatricula(String matricula) { this.matricula = matricula; }
+    public void setDataAdmissao(LocalDate dataAdmissao) { this.dataAdmissao = dataAdmissao; }
+    public void setBaseSalario(Double baseSalario) { this.baseSalario = baseSalario; }
+    public void setDepartamento(String departamento) { this.departamento = departamento; }
+    public void setCargo(String cargo) { this.cargo = cargo; }
+
 
     public double calcularSalario() {
         if (regraSalario == null) {
@@ -95,20 +95,5 @@ public class Funcionario extends Usuario {
                 + (regraSalario.getValorValeTransporte() * regraSalario.getPercentualDescVT() / 100);
 
         return bruto - descontos;
-    }
-
-    private void salvarFuncionarioNoArquivo() {
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter(ARQUIVO_FUNCIONARIOS, true))) {
-            writer.write(toString());
-            writer.newLine();
-        } catch (IOException e) {
-            System.err.println("Erro ao salvar funcionário: " + e.getMessage());
-        }
-    }
-
-    @Override
-    public String toString() {
-        return String.format("%s;%s;%s;%s;%.2f;%s",
-                getNome(), getCpf(), matricula, dataAdmissao, baseSalario, status);
     }
 }

@@ -32,7 +32,8 @@
             <td>
                         <span th:switch="${c.status}" class="badge"
                               th:classappend="${c.status == 'Aprovada pelo Gestor' ? 'bg-success' :
-                                               (c.status == 'Rejeitada pelo Gestor' ? 'bg-danger' : 'bg-warning text-dark')}">
+                                               (c.status == 'Rejeitada pelo Gestor' ? 'bg-danger' :
+                                               (c.status == 'Efetivada' ? 'bg-info' : 'bg-warning text-dark'))}">
                             <span th:case="'Pendente de aprovação do Gestor'">Pendente de aprovação</span>
                             <span th:case="*" th:text="${c.status}"></span>
                         </span>

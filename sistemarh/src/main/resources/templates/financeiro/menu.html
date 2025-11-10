@@ -8,58 +8,58 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body>
-    <header th:replace="~{layout :: header}"></header>
-    <main class="container py-5">
-        <h1 class="mb-4">Módulo Financeiro</h1>
-        <div class="row">
-            <div class="col-md-6 col-lg-4 mb-4">
-                <div class="card h-100 card-financeiro">
-                    <div class="card-body d-flex flex-column">
-                        <h5 class="card-title">Admitir Funcionário</h5>
-                        <p class="card-text">Cadastre um novo funcionário no sistema após a aprovação do RH.</p>
-                        <a th:href="@{/financeiro/cadastrar-funcionario}" class="btn btn-info text-white mt-auto">Admitir Novo</a>
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-md-6 col-lg-4 mb-4">
-                <div class="card h-100">
-                    <div class="card-body d-flex flex-column">
-                        <h5 class="card-title">Folha de Pagamento</h5>
-                        <p class="card-text">Gere a folha de pagamento do mês e consulte relatórios.</p>
-                        <a th:href="@{/financeiro/gerar-folha}" class="btn btn-outline-secondary mt-auto">Gerar Folha</a>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-6 col-lg-4 mb-4">
-                <div class="card h-100">
-                    <div class="card-body d-flex flex-column">
-                        <h5 class="card-title">Relatórios</h5>
-                        <p class="card-text">Visualize o relatório da folha de pagamento e exporte os dados.</p>
-                        <a th:href="@{/financeiro/relatorio}" class="btn btn-outline-secondary mt-auto">Ver Relatório</a>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-6 col-lg-4 mb-4">
-                <div class="card h-100">
-                    <div class="card-body d-flex flex-column">
-                        <h5 class="card-title">Contracheques</h5>
-                        <p class="card-text">Consulte os contracheques individuais dos funcionários.</p>
-                        <a th:href="@{/financeiro/contracheques}" class="btn btn-outline-secondary mt-auto">Consultar</a>
-                    </div>
-                </div>
-            </div>
-             <div class="col-md-6 col-lg-4 mb-4">
-                <div class="card h-100">
-                    <div class="card-body d-flex flex-column">
-                        <h5 class="card-title">Configurações</h5>
-                        <p class="card-text">Ajuste as regras de cálculo, benefícios e impostos.</p>
-                        <a th:href="@{/financeiro/configurar-regras}" class="btn btn-outline-secondary mt-auto">Configurar Regras</a>
-                    </div>
+<header th:replace="~{layout :: header}"></header>
+<main class="container py-5">
+    <h1 class="mb-4">Módulo Financeiro</h1>
+    <div class="row">
+        <div class="col-md-6 col-lg-4 mb-4">
+            <div class="card h-100 card-financeiro">
+                <div class="card-body d-flex flex-column">
+                    <h5 class="card-title">Admitir Funcionário</h5>
+                    <p class="card-text">Cadastre um novo funcionário no sistema após a aprovação do RH.</p>
+                    <a th:href="@{/financeiro/cadastrar-funcionario}" class="btn btn-info text-white mt-auto">Admitir Novo</a>
                 </div>
             </div>
         </div>
-    </main>
-    <footer th:replace="~{layout :: footer}"></footer>
+
+        <div class="col-md-6 col-lg-4 mb-4">
+            <div class="card h-100">
+                <div class="card-body d-flex flex-column">
+                    <h5 class="card-title">Folha de Pagamento</h5>
+                    <p class="card-text">Gere a folha de pagamento do mês e consulte relatórios.</p>
+                    <a th:href="@{/financeiro/gerar-folha}" class="btn btn-outline-secondary mt-auto">Gerar Folha</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6 col-lg-4 mb-4">
+            <div class="card h-100">
+                <div class="card-body d-flex flex-column">
+                    <h5 class="card-title">Relatórios</h5>
+                    <p class="card-text">Visualize o relatório da folha de pagamento e exporte os dados.</p>
+                    <a th:href="@{/financeiro/relatorio}" class="btn btn-outline-secondary mt-auto">Ver Relatório</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6 col-lg-4 mb-4">
+            <div class="card h-100">
+                <div class="card-body d-flex flex-column">
+                    <h5 class="card-title">Contracheques</h5>
+                    <p class="card-text">Consulte os contracheques individuais dos funcionários.</p>
+                    <a th:href="@{/financeiro/contracheques}" class="btn btn-outline-secondary mt-auto">Consultar</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6 col-lg-4 mb-4">
+            <div class="card h-100">
+                <div class="card-body d-flex flex-column">
+                    <h5 class="card-title">Configurações</h5>
+                    <p class="card-text">Ajuste as regras de cálculo, benefícios e impostos.</p>
+                    <a th:href="@{/financeiro/configurar-regras}" class="btn btn-outline-secondary mt-auto">Configurar Regras</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+<footer th:replace="~{layout :: footer}"></footer>
 </body>
 </html>

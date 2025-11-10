@@ -19,6 +19,7 @@ public class FolhaPagamentoService {
 
         List<Funcionario> funcionariosAtivos = funcionarioService.listarAtivos();
 
+        // Regra hardcoded para simplificar
         RegraSalario regraPadrao = new RegraSalario(1, "CLT", 0.0, 6.0, 500.0, 14.0, 27.5);
 
         double totalBruto = 0.0;
