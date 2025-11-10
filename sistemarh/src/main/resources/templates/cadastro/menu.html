@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="pt-br" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Cadastro - MeuRH</title>
+    <link rel="stylesheet" th:href="@{/css/layout.css}">
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <link rel="stylesheet" th:href="@{/css/cadastro.css}">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+<header th:replace="~{layout :: header}"></header>
+
+<main class="container py-5">
+    <h1 class="mb-4">Módulo de Cadastro</h1>
+    <div class="row">
+        <div class="col-md-6 col-lg-4 mb-4">
+            <div class="card h-100 card-cadastro">
+                <div class="card-body d-flex flex-column">
+                    <h5 class="card-title">Cadastro de Candidato</h5>
+                    <p class="card-text">Registre os dados pessoais e profissionais de um novo candidato.</p>
+                    <a th:href="@{/cadastro/candidato}" class="btn btn-outline-secondary mt-auto" >Cadastrar</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6 col-lg-4 mb-4">
+            <div class="card h-100">
+                <div class="card-body d-flex flex-column">
+                    <h5 class="card-title">Candidatura à Vaga</h5>
+                    <p class="card-text">Associe um candidato a uma vaga disponível no sistema.</p>
+                    <a th:href="@{/cadastro/candidatura}" class="btn btn-outline-secondary mt-auto">Candidatar</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6 col-lg-4 mb-4">
+            <div class="card h-100">
+                <div class="card-body d-flex flex-column">
+                    <h5 class="card-title">Status da Candidatura</h5>
+                    <p class="card-text">Acompanhe o andamento e resultado das candidaturas realizadas.</p>
+                    <a th:href="@{/cadastro/status}" class="btn btn-outline-secondary mt-auto">Ver Status</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+<footer th:replace="~{layout :: footer}"></footer>
+</body>
+</html>

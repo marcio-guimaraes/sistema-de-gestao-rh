@@ -1,0 +1,134 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+
+    <link rel="stylesheet" th:href="@{/css/layout.css}">
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <title>Administração - Cadastrar Usúario</title>
+</head>
+<body>
+<header th:replace="~{layout :: header}"></header>
+<main class="container mt-5">
+
+    <h3 class="mb-4">Gerenciar Solicitações de Contratação</h3>
+
+    <div class="row">
+        <!-- Lista de solicitações -->
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header bg-dark text-white">
+                    Solicitações Pendentes
+                </div>
+                <div class="card-body">
+                    <ul class="list-group">
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            João Silva
+                            <div>
+                                <button class="btn btn-sm btn-success me-2 iniciar-btn">Iniciar Cadastro</button>
+                                <button class="btn btn-sm btn-danger">Rejeitar</button>
+                            </div>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            Maria Souza
+                            <div>
+                                <button class="btn btn-sm btn-success me-2 iniciar-btn">Iniciar Cadastro</button>
+                                <button class="btn btn-sm btn-danger">Rejeitar</button>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Formulário de cadastro (fixo mas inicialmente bloqueado) -->
+        <div class="col-md-6">
+            <div id="formCadastro" class="card">
+                <div class="card-header bg-primary text-white">
+                    Cadastro de Novo Usuário
+                </div>
+                <div class="card-body">
+                    <form>
+                        <fieldset id="cadastroFields" disabled>
+                            <div class="mb-3">
+                                <label class="form-label">Nome Completo</label>
+                                <input type="text" class="form-control" placeholder="Digite o nome">
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">CPF</label>
+                                <input type="text" class="form-control" placeholder="000.000.000-00">
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Email</label>
+                                <input type="email" class="form-control" placeholder="exemplo@email.com">
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Perfil de Acesso</label>
+                                <select class="form-select">
+                                    <option>Administrador</option>
+                                    <option>Gestor</option>
+                                    <option>Recrutador</option>
+                                    <option>Funcionário</option>
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Departamento</label>
+                                <select class="form-select">
+                                    <option>Administração</option>
+                                    <option>RH</option>
+                                    <option>TI</option>
+                                </select>
+                            </div>
+                        </fieldset>
+                        <button type="submit" class="btn btn-success" disabled id="salvarBtn">Salvar</button>
+                        <button type="button" class="btn btn-secondary" disabled id="cancelarBtn">Cancelar</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</main>
+
+<script>
+    const iniciarBtns = document.querySelectorAll(".iniciar-btn");
+    const cadastroFields = document.getElementById("cadastroFields");
+    const salvarBtn = document.getElementById("salvarBtn");
+    const cancelarBtn = document.getElementById("cancelarBtn");
+
+    iniciarBtns.forEach(btn => {
+        btn.addEventListener("click", () => {
+            // habilita o cadastro
+            cadastroFields.disabled = false;
+            salvarBtn.disabled = false;
+            cancelarBtn.disabled = false;
+
+            // desativa todos os "iniciar cadastro" até finalizar/cancelar
+            iniciarBtns.forEach(b => b.disabled = true);
+
+            btn.textContent = "Cadastro em andamento...";
+        });
+    });
+
+    cancelarBtn.addEventListener("click", () => {
+        // limpa e desabilita o cadastro
+        cadastroFields.disabled = true;
+        salvarBtn.disabled = true;
+        cancelarBtn.disabled = true;
+
+        // reativa os botões de iniciar
+        iniciarBtns.forEach(b => {
+            b.disabled = false;
+            b.textContent = "Iniciar Cadastro";
+        });
+    });
+</script>
+
+<footer th:replace="~{layout :: footer}"></footer>
+
+</body>
+</html>

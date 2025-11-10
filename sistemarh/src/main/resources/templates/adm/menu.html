@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+
+    <link rel="stylesheet" th:href="@{/css/layout.css}">
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <title>Administração</title>
+</head>
+<body>
+<header th:replace="~{layout :: header}"></header>
+<main class="container py-5">
+    <h1 class="mb-4">Módulo de Administração e Gestão</h1>
+    <div class="row">
+        <div class="col-md-6 col-lg-4 mb-4">
+            <div class="card h-100">
+                <div class="card-body d-flex flex-column">
+                    <h5 class="card-title">Administrar Usúarios</h5>
+                    <p class="card-text">Cadastre novos usuários, edite dados existentes, exclua contas inativas e visualize a lista completa de usuários do sistema.</p>
+                    <a th:href="@{/Administração/Gestão}" class="btn btn-outline-primary mt-auto">Acessar</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6 col-lg-4 mb-4">
+            <div class="card h-100">
+                <div class="card-body d-flex flex-column">
+                    <h5 class="card-title">Relatórios Gestão</h5>
+                    <p class="card-text">Gere relatórios consolidados sobre usuários e departamentos para auxiliar na tomada de decisão.</p>
+                    <a th:href="@{/Administração/Relatório}" class="btn btn-outline-primary mt-auto">Acessar</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+<footer th:replace="~{layout :: footer}"></footer>
+
+</body>
+</html>

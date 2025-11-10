@@ -1,0 +1,20 @@
+body {
+    background: white; /* Cor de fundo padrão, caso queira mudar */
+}
+
+/* Garante que o body possa ocupar a tela inteira */
+html, body {
+    height: 100%;
+    margin: 0;
+}
+
+/* Transforma o body em um container flexível */
+body {
+    display: flex;
+    flex-direction: column;
+}
+
+/* Faz o conteúdo principal (main) crescer e empurrar o footer para baixo */
+main {
+    flex: 1 0 auto;
+}
