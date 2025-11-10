@@ -14,6 +14,13 @@ public class Vaga {
     private String requisitos;
     private LocalDate dataCriacao;
 
+    // ADICIONADO: Construtor público sem argumentos para o Spring
+    public Vaga() {
+        this.dataCriacao = LocalDate.now(); // Padrões
+        this.status = "Aberta";
+        this.regime = "CLT";
+    }
+
     public Vaga(Builder builder) {
         this.id = builder.id;
         this.titulo = builder.titulo;
@@ -27,6 +34,7 @@ public class Vaga {
         this.dataCriacao = (builder.dataCriacao != null) ? builder.dataCriacao : LocalDate.now();
     }
 
+    // Getters
     public long getId() {
         return id;
     }
@@ -67,6 +75,7 @@ public class Vaga {
         return dataCriacao;
     }
 
+    // Setters
     public void setTitulo(String titulo) {
         this.titulo = titulo;
     }

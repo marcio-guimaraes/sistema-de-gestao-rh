@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="pt-br" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -18,11 +18,15 @@
             <a th:href="@{/Administração/Cadastro}" class="btn btn-primary btn-add">+ Novo Usuário</a>
         </div>
 
-        <div class.card mb-4>
+        <div class="card mb-4">
             <div class="card-body">
                 <form class="row g-3">
-                    <div class="col-md-3"><input type="text" class="form-control" placeholder="Nome"></div>
-                    <div class="col-md-3"><input type="text" class="form-control" placeholder="CPF/CNPJ"></div>
+                    <div class="col-md-3">
+                        <input type="text" class="form-control" placeholder="Nome">
+                    </div>
+                    <div class="col-md-3">
+                        <input type="text" class="form-control" placeholder="CPF/CNPJ">
+                    </div>
                     <div class="col-md-3">
                         <select class="form-select">
                             <option selected>Status</option>
@@ -65,23 +69,28 @@
                         <td th:text="${usuario.cpf}"></td>
                         <td th:text="${usuario.login}"></td>
 
+                        <!-- Perfil -->
                         <td>
-  <span th:if="${usuario.class.simpleName == 'Funcionario'}"
-        th:text="${usuario.cargo}"></span>
-                            <span th:unless="${usuario.class.simpleName == 'Funcionario'}"
-                                  th:text="${usuario.class.simpleName}"></span>
+                            <span th:if="${T(com.example.sistemarh.financeiro.Funcionario).isInstance(usuario)}"
+                                  th:text="${usuario.cargo}"></span>
+                            <span th:unless="${T(com.example.sistemarh.financeiro.Funcionario).isInstance(usuario)}"
+                                  th:text="'Outro'"></span>
                         </td>
 
+                        <!-- Status -->
                         <td>
-  <span th:if="${usuario.class.simpleName == 'Funcionario'}"
-        th:text="${usuario.status}"></span>
-                            <span th:unless="${usuario.class.simpleName == 'Funcionario'}">N/A</span>
+                            <span th:if="${T(com.example.sistemarh.financeiro.Funcionario).isInstance(usuario)}"
+                                  th:text="${usuario.status}"></span>
+                            <span th:unless="${T(com.example.sistemarh.financeiro.Funcionario).isInstance(usuario)}">
+                                  N/A
+                            </span>
                         </td>
 
-
+                        <!-- Ações -->
                         <td>
                             <a th:href="@{/Administração/Gestão/Editar/{login}(login=${usuario.login})}"
                                class="btn btn-warning btn-edit btn-sm">Editar</a>
+
                             <a th:href="@{/Administração/Gestão/Excluir/{login}(login=${usuario.login})}"
                                class="btn btn-danger btn-delete btn-sm"
                                th:if="${usuario.login != 'admin'}"

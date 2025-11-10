@@ -4,6 +4,9 @@ public class Pessoa {
     private String nome;
     private String cpf;
 
+    // ADICIONADO: Construtor público sem argumentos para o Spring
+    public Pessoa() {}
+
     protected Pessoa(String nome, String cpf) {
         this.nome = nome;
         this.cpf = cpf;
@@ -17,7 +20,6 @@ public class Pessoa {
         return cpf;
     }
 
-    // --- MÉTODOS ADICIONADOS ---
     public void setNome(String nome) {
         this.nome = nome;
     }
@@ -25,5 +27,4 @@ public class Pessoa {
     public void setCpf(String cpf) {
         this.cpf = cpf;
     }
-    // --- FIM DOS MÉTODOS ADICIONADOS ---
 }

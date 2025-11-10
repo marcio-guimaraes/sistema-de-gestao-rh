@@ -1,6 +1,6 @@
 package com.example.sistemarh.recrutamento.controller;
 
-import com.example.sistemarh.administracao.Usuario; // Importar
+import com.example.sistemarh.administracao.Usuario;
 import com.example.sistemarh.administracao.UsuarioService;
 import com.example.sistemarh.candidatura.CandidaturaService;
 import com.example.sistemarh.recrutamento.model.Vaga;
@@ -13,7 +13,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDate; // Importar
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -44,11 +44,8 @@ public class RecrutamentoController {
 
     @GetMapping("/gestao-vagas")
     public String gestaoVagas(Model model) {
-        // CORREÇÃO: Passar um Vaga real, não o builder
-        Vaga novaVaga = new Vaga.Builder(0, "")
-                .dataCriacao(LocalDate.now())
-                .build();
-        model.addAttribute("vaga", novaVaga);
+        // CORREÇÃO: Usar o construtor vazio
+        model.addAttribute("vaga", new Vaga());
         model.addAttribute("vagas", vagaService.listarTodasVagas());
         model.addAttribute("editMode", false);
         return "recrutamento/gestao-vagas";
@@ -82,19 +79,12 @@ public class RecrutamentoController {
         return "redirect:/recrutamento/gestao-vagas";
     }
 
-    // Rota removida, pois /cadastrar-candidato agora é parte do Módulo de Cadastro
-    // @GetMapping("/cadastrar-candidato") ...
-
-    // Rota removida, pois /realizar-candidatura agora é parte do Módulo de Cadastro
-    // @GetMapping("/realizar-candidatura") ...
-
     @GetMapping("/marcar-entrevista")
     public String marcarEntrevista(Model model) {
         model.addAttribute("candidaturas", candidaturaService.listarTodas().stream()
                 .filter(c -> "Pendente".equalsIgnoreCase(c.getStatus()) || "Em Análise".equalsIgnoreCase(c.getStatus()))
                 .collect(Collectors.toList()));
 
-        // Filtra para mostrar apenas perfis de Gestor e Recrutador
         model.addAttribute("recrutadores", usuarioService.listarTodos().stream()
                 .filter(u -> u instanceof com.example.sistemarh.administracao.Gestor ||
                         (u instanceof com.example.sistemarh.financeiro.Funcionario &&

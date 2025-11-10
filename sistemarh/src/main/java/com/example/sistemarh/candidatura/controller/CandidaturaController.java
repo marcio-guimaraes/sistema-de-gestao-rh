@@ -9,7 +9,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDate; // Importar
+import java.time.LocalDate;
 import java.util.Optional;
 
 @Controller
@@ -27,17 +27,15 @@ public class CandidaturaController {
 
     @GetMapping
     public String menuCadastro() {
+        // CORREÇÃO: Redirecionar para a nova página de gestão
         return "cadastro/menu";
     }
 
     // --- Gestão de Candidatos ---
     @GetMapping("/candidato")
     public String cadastroCandidatoGet(Model model) {
-        // CORREÇÃO: Passar um objeto Candidato real, não o Builder
-        Candidato novoCandidato = new Candidato.Builder("", "")
-                .dataCadastro(LocalDate.now()) // Definir data padrão
-                .build();
-        model.addAttribute("candidato", novoCandidato);
+        // CORREÇÃO: Usar o construtor vazio
+        model.addAttribute("candidato", new Candidato());
         model.addAttribute("editMode", false);
         return "cadastro/cadastroCandidato";
     }
