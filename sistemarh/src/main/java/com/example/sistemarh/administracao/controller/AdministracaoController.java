@@ -2,7 +2,6 @@ package com.example.sistemarh.administracao.controller;
 import com.example.sistemarh.financeiro.model.Funcionario;
 
 import com.example.sistemarh.administracao.*;
-import com.example.sistemarh.financeiro.model.Funcionario; // Importar
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -32,6 +31,12 @@ import com.lowagie.text.pdf.PdfPCell;
 import com.lowagie.text.pdf.PdfPTable;
 import com.lowagie.text.pdf.PdfWriter;
 import java.awt.Color;
+
+import com.example.sistemarh.administracao.UsuarioDTO;
+
+import com.example.sistemarh.administracao.UsuarioService;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 @RequestMapping("/Administração")
@@ -343,7 +348,7 @@ public class AdministracaoController {
         // 7. Cria a Tabela (6 colunas, como no seu HTML)
         PdfPTable table = new PdfPTable(6);
         table.setWidthPercentage(100f);
-        table.setWidths(new float[] {3f, 2f, 3f, 2f, 1.5f, 2.5f}); // Largura relativa das colunas
+        table.setWidths(new float[]{3f, 2f, 3f, 2f, 1.5f, 2.5f}); // Largura relativa das colunas
 
         // 8. Cria o Cabeçalho da Tabela
         String[] headers = {"Nome", "CPF", "Email", "Perfil", "Status", "Departamento"};
@@ -409,73 +414,91 @@ public class AdministracaoController {
     }
 
     @GetMapping("/Cadastro")
-    public String cadastroGet(Model model) {
+    public String mostrarFormularioCadastro(Model model) {
         model.addAttribute("usuarioDTO", new UsuarioDTO());
         model.addAttribute("editMode", false);
+        // Retorna o nome do seu arquivo HTML (sem .html)
         return "adm/cadastroNovoUsuario";
     }
 
-    @PostMapping("/Cadastro/Salvar")
-    public String cadastroPost(@ModelAttribute UsuarioDTO usuarioDTO) {
+    /**
+     * 2. GET (EDITAR): Mostra o formulário preenchido
+     */
+    @GetMapping("/Gestão/Editar/{cpf}")
+    public String mostrarFormularioEdicao(@PathVariable("cpf") String cpf, Model model) {
+
+        // 1. Busca o usuário no seu service/repository
+        Optional<Usuario> usuarioOpt = usuarioService.buscarPorCpf(cpf);
+
+        if (usuarioOpt.isEmpty()) {
+            // Se não achar, volta para a lista
+            return "redirect:/Administração/Gestão";
+        }
+
+        Usuario usuario = usuarioOpt.get();
+        UsuarioDTO dto = new UsuarioDTO();
+
+        // 2. Converte a Entidade para o DTO
+        dto.setNome(usuario.getNome());
+        dto.setCpf(usuario.getCpf());
+        dto.setLogin(usuario.getLogin());
+        // (Não enviamos a senha para o HTML)
+
+        // 3. Se for um Funcionário, preenche os campos extras
+        if (usuario instanceof Funcionario) {
+            Funcionario f = (Funcionario) usuario;
+            dto.setMatricula(f.getMatricula());
+            dto.setDataAdmissao(f.getDataAdmissao());
+            dto.setBaseSalario(f.getBaseSalario());
+            dto.setStatus(f.getStatus());
+            dto.setDepartamento(f.getDepartamento());
+            dto.setPerfil(f.getCargo());
+        }
+
+        // 4. Envia o DTO e o 'editMode' para o HTML
+        model.addAttribute("usuarioDTO", dto);
+        model.addAttribute("editMode", true);
+
+        // 5. Retorna o nome do seu arquivo de formulário
+        return "adm/cadastroNovoUsuario";
+    }
+
+    @GetMapping("/Gestão/Excluir/{cpf}")
+    public String handleDelete(@PathVariable("cpf") String cpf) {
+
         try {
-            usuarioService.criarUsuario(usuarioDTO);
-        } catch (RuntimeException e) {
-            return "redirect:/Administração/Cadastro?error=" + e.getMessage();
+            usuarioService.excluirUsuario(cpf); // Chama o repository
+        } catch (Exception e) {
+            System.err.println("Erro ao excluir usuário: " + e.getMessage());
+            // (Você pode adicionar uma mensagem de erro na tela aqui)
         }
+
+        // Volta para a lista de gestão
         return "redirect:/Administração/Gestão";
     }
 
-    @GetMapping("/Gestão/Excluir/{login}")
-    public String excluirUsuario(@PathVariable("login") String login) {
-        if (!login.equals("admin")) {
-            usuarioService.excluirUsuario(login);
-        }
-        return "redirect:/Administração/Gestão";
-    }
+    /**
+     * 3. POST (SALVAR / ATUALIZAR): Recebe os dados do formulário
+     */
+    @PostMapping("/Salvar")
+    public String salvar(@ModelAttribute("usuarioDTO") UsuarioDTO dto,
+                         RedirectAttributes ra) {
+        try {
+            // ✅ A lógica complexa foi movida para o Service!
+            // O Controller apenas chama o service.
+            usuarioService.salvarDto(dto);
 
-    @GetMapping("/Gestão/Editar/{login}")
-    public String editarUsuarioGet(@PathVariable("login") String login, Model model) {
-        Optional<Usuario> usuarioOpt = usuarioService.buscarPorLogin(login);
-        if (usuarioOpt.isPresent()) {
-            Usuario usuario = usuarioOpt.get();
+        } catch (Exception e) {
+            // Em caso de erro, volta ao formulário com uma mensagem
+            ra.addFlashAttribute("error", "Erro ao salvar: " + e.getMessage());
+            ra.addFlashAttribute("usuarioDTO", dto); // Manda o DTO de volta
 
-            // CORREÇÃO: Preencher o DTO completamente
-            UsuarioDTO dto = new UsuarioDTO();
-            dto.setNome(usuario.getNome());
-            dto.setCpf(usuario.getCpf());
-            dto.setLogin(usuario.getLogin());
-            // Não enviamos a senha para o formulário
-
-            if (usuario instanceof Funcionario) {
-                Funcionario f = (Funcionario) usuario;
-                dto.setDepartamento(f.getDepartamento());
-
-                if (f instanceof Administrador) {
-                    dto.setPerfil("Administrador");
-                } else if (f instanceof Gestor) {
-                    dto.setPerfil("Gestor");
-                } else {
-                    dto.setPerfil(f.getCargo()); // "RECRUTADOR" ou "FUNCIONÁRIO"
-                }
-            } else {
-                dto.setPerfil("Usuario"); // Perfil genérico
-                dto.setDepartamento("N/A");
+            if (usuarioService.buscarPorCpf(dto.getCpf()).isPresent()) {
+                return "redirect:/Administração/Gestão/Editar/" + dto.getCpf();
             }
-
-            model.addAttribute("usuarioDTO", dto);
-            model.addAttribute("editMode", true);
-            return "adm/cadastroNovoUsuario";
+            return "redirect:/Administração/Cadastro";
         }
-        return "redirect:/Administração/Gestão";
-    }
 
-    @PostMapping("/Gestão/Editar/Salvar")
-    public String editarUsuarioPost(@RequestParam("loginOriginal") String loginOriginal, @ModelAttribute UsuarioDTO usuarioDTO) {
-        try {
-            usuarioService.atualizarUsuario(loginOriginal, usuarioDTO);
-        } catch (RuntimeException e) {
-            return "redirect:/Administração/Gestão/Editar/" + loginOriginal + "?error=" + e.getMessage();
-        }
-        return "redirect:/Administração/Gestão";
+        return "redirect:/Administração/Gestão"; // Sucesso!
     }
 }

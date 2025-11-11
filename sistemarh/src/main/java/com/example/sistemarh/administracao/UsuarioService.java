@@ -25,56 +25,33 @@ public class UsuarioService {
         return false;
     }
 
-    public Usuario criarUsuario(UsuarioDTO usuarioDTO) {
-
-        Optional<Usuario> existenteLogin = usuarioRepository.buscarPorLogin(usuarioDTO.getLogin());
-        if (existenteLogin.isPresent()) {
-            throw new RuntimeException("Login já cadastrado.");
+    public Usuario salvarDto(UsuarioDTO dto) {
+        // Pega a senha: ou a nova (se digitada) ou a antiga (se editando)
+        String senha = dto.getSenha();
+        if (senha == null || senha.isEmpty()) {
+            // Se a senha veio vazia (em modo de edição), busca a original
+            usuarioRepository.buscarPorCpf(dto.getCpf())
+                    .ifPresent(user -> dto.setSenha(user.getSenha()));
         }
 
-        Optional<Usuario> existenteCpf = usuarioRepository.buscarPorCpf(usuarioDTO.getCpf());
-        if (existenteCpf.isPresent()) {
-            throw new RuntimeException("CPF já cadastrado.");
-        }
+        Usuario usuarioParaSalvar;
+        String perfil = dto.getPerfil();
 
-        String matricula = "M" + (usuarioRepository.buscarTodos().size() + 1);
-        LocalDate dataAdmissao = LocalDate.now();
-
-        Usuario novoUsuario;
-        String perfil = usuarioDTO.getPerfil().toUpperCase();
-
+        // Cria a Entidade correta com base no Perfil
+        // Esta lógica usa TODOS os campos do DTO
         switch (perfil) {
-            case "ADMINISTRADOR":
-                novoUsuario = new Administrador(
-                        usuarioDTO.getNome(), usuarioDTO.getCpf(), usuarioDTO.getLogin(),
-                        usuarioDTO.getSenha(), matricula, dataAdmissao, 0.0, "Ativo"
-                );
+            case "Administrador":
+                usuarioParaSalvar = new Administrador(dto.getNome(), dto.getCpf(), dto.getLogin(), dto.getSenha(), dto.getMatricula(), dto.getDataAdmissao(), dto.getBaseSalario(), dto.getStatus());
                 break;
-
-            case "GESTOR":
-                novoUsuario = new Gestor(
-                        usuarioDTO.getNome(), usuarioDTO.getCpf(), usuarioDTO.getLogin(),
-                        usuarioDTO.getSenha(), matricula, dataAdmissao, 0.0, "Ativo"
-                );
+            case "Gestor":
+                usuarioParaSalvar = new Gestor(dto.getNome(), dto.getCpf(), dto.getLogin(), dto.getSenha(), dto.getMatricula(), dto.getDataAdmissao(), dto.getBaseSalario(), dto.getStatus());
                 break;
-
-            case "RECRUTADOR":
-            case "FUNCIONÁRIO":
-                novoUsuario = new Funcionario(
-                        usuarioDTO.getNome(), usuarioDTO.getCpf(), usuarioDTO.getLogin(),
-                        usuarioDTO.getSenha(), matricula, dataAdmissao, 0.0, "Ativo",
-                        usuarioDTO.getDepartamento(), perfil, 1 // Salva "RECRUTADOR" ou "FUNCIONÁRIO" como cargo
-                );
-                break;
-
-            default: // Usuário simples
-                novoUsuario = new Usuario(
-                        usuarioDTO.getNome(), usuarioDTO.getCpf(),
-                        usuarioDTO.getLogin(), usuarioDTO.getSenha()
-                );
+            default: // Recrutador, Funcionário, etc.
+                usuarioParaSalvar = new Funcionario(dto.getNome(), dto.getCpf(), dto.getLogin(), dto.getSenha(), dto.getMatricula(), dto.getDataAdmissao(), dto.getBaseSalario(), dto.getStatus(), dto.getDepartamento(), perfil, 1L /* regraId default */);
         }
 
-        return usuarioRepository.salvar(novoUsuario);
+        // O seu 'salvar' do Repository já lida com criar OU atualizar
+        return usuarioRepository.salvar(usuarioParaSalvar);
     }
 
     public Usuario criarUsuarioCandidato(Candidato candidato) {
@@ -104,53 +81,8 @@ public class UsuarioService {
         return usuarioRepository.buscarPorCpf(cpf);
     }
 
-    public void excluirUsuario(String login) {
-        usuarioRepository.excluirPorLogin(login);
-    }
-
-    public void atualizarUsuario(String loginOriginal, UsuarioDTO usuarioDTO) {
-        Optional<Usuario> usuarioOpt = usuarioRepository.buscarPorLogin(loginOriginal);
-        if (!usuarioOpt.isPresent()) {
-            throw new RuntimeException("Usuário não encontrado para atualizar.");
-        }
-
-        Usuario usuario = usuarioOpt.get();
-
-        // Atualiza dados básicos
-        usuario.setNome(usuarioDTO.getNome());
-        usuario.setCpf(usuarioDTO.getCpf());
-
-        // Só atualiza a senha se uma nova foi fornecida
-        if (usuarioDTO.getSenha() != null && !usuarioDTO.getSenha().isEmpty()) {
-            usuario.setSenha(usuarioDTO.getSenha());
-        }
-
-        // Se for um funcionário, atualiza os campos de funcionário
-        if (usuario instanceof Funcionario) {
-            Funcionario f = (Funcionario) usuario;
-            f.setDepartamento(usuarioDTO.getDepartamento());
-
-            // Lógica para atualizar o "Cargo" (Perfil)
-            String perfil = usuarioDTO.getPerfil().toUpperCase();
-            if (perfil.equals("RECRUTADOR") || perfil.equals("FUNCIONÁRIO")) {
-                f.setCargo(perfil);
-            }
-            // OBS: Não estamos tratando a mudança de perfil de/para Admin/Gestor aqui
-        }
-
-        // Se o login mudou, precisa remover o antigo e salvar o novo
-        if (!loginOriginal.equals(usuarioDTO.getLogin())) {
-            // Verifica se o novo login já existe
-            Optional<Usuario> existenteLogin = usuarioRepository.buscarPorLogin(usuarioDTO.getLogin());
-            if (existenteLogin.isPresent()) {
-                throw new RuntimeException("O novo login já está em uso.");
-            }
-
-            usuario.setLogin(usuarioDTO.getLogin());
-            usuarioRepository.excluirPorLogin(loginOriginal);
-        }
-
-        usuarioRepository.salvar(usuario);
+    public void excluirUsuario(String cpf) {
+        usuarioRepository.excluirPorCpf(cpf);
     }
 
     public Usuario salvar(Usuario usuario) {

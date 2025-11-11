@@ -1,13 +1,20 @@
 package com.example.sistemarh.administracao;
 
-// Importe o Funcionario, pois ele agora é usado aqui
+import com.example.sistemarh.administracao.Administrador; // Assumindo o import
 import com.example.sistemarh.financeiro.model.Funcionario;
+import com.example.sistemarh.administracao.Gestor; // Assumindo o import
+import com.example.sistemarh.administracao.Usuario; // Assumindo o import
 import org.springframework.stereotype.Repository;
 
-import java.io.*;
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDate;
+import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -16,14 +23,18 @@ import java.util.stream.Collectors;
 @Repository
 public class UsuarioRepository {
 
-    private static final String ARQUIVO_USUARIOS = "sistema-de-gestao-rh/usuarios.txt";
+    // <-- MODIFICADO: Caminho mais padrão e robusto
+    private static final String ARQUIVO_USUARIOS = "src/main/resources/usuarios.txt";
     private static final String SEPARADOR = ";";
 
     public UsuarioRepository() {
         // Cria um usuário admin padrão se o arquivo não existir
         try {
-            if (!Files.exists(Paths.get(ARQUIVO_USUARIOS))) {
-                Files.createFile(Paths.get(ARQUIVO_USUARIOS));
+            Path path = Paths.get(ARQUIVO_USUARIOS); // <-- MODIFICADO
+            if (!Files.exists(path)) {
+                // Cria diretórios pais se não existirem
+                Files.createDirectories(path.getParent());
+                Files.createFile(path);
 
                 Administrador admin = new Administrador(
                         "Administrador",
@@ -42,6 +53,7 @@ public class UsuarioRepository {
         }
     }
 
+    // (linhaParaUsuario e usuarioParaLinha parecem corretos, sem modificações)
     private Usuario linhaParaUsuario(String linha) {
         String[] dados = linha.split(SEPARADOR);
         // Um funcionário (Admin, Gestor, Func) tem 10 campos. Um usuário simples tem 4.
@@ -140,14 +152,17 @@ public class UsuarioRepository {
     public Usuario salvar(Usuario usuario) {
         List<Usuario> usuarios = buscarTodos();
 
+        // <-- MODIFICADO: Lógica de atualização agora usa CPF, não login
         Optional<Usuario> existente = usuarios.stream()
-                .filter(u -> u.getLogin().equals(usuario.getLogin()))
+                .filter(u -> u.getCpf().equals(usuario.getCpf()))
                 .findFirst();
 
         if (existente.isPresent()) {
+            // Se existe, atualiza na lista
             int index = usuarios.indexOf(existente.get());
             usuarios.set(index, usuario);
         } else {
+            // Se não existe, adiciona
             usuarios.add(usuario);
         }
 
@@ -186,11 +201,13 @@ public class UsuarioRepository {
                 .findFirst();
     }
 
-    public void excluirPorLogin(String login) {
+    // <-- MODIFICADO: Renomeado de "excluirPorLogin" para "excluirPorCpf"
+    public void excluirPorCpf(String cpf) {
         List<Usuario> usuarios = buscarTodos();
 
+        // <-- MODIFICADO: Filtra por CPF, não por login
         List<Usuario> usuariosFiltrados = usuarios.stream()
-                .filter(u -> u.getLogin() != null && !u.getLogin().equals(login))
+                .filter(u -> u.getCpf() != null && !u.getCpf().equals(cpf))
                 .collect(Collectors.toList());
 
         salvarListaNoArquivo(usuariosFiltrados);
