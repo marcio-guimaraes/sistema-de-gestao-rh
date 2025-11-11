@@ -67,8 +67,10 @@ public class VagaService {
         List<Vaga> todas = vagaRepository.buscarTodas();
 
         return todas.stream()
-                .filter(v -> status == null || status.isEmpty() || v.getStatus().equalsIgnoreCase(status))
-                .filter(v -> departamento == null || departamento.isEmpty() || v.getDepartamento().equalsIgnoreCase(departamento))
+                .filter(v -> status == null || status.isEmpty() ||
+                        (v.getStatus() != null && v.getStatus().equalsIgnoreCase(status)))
+                .filter(v -> departamento == null || departamento.isEmpty() ||
+                        (v.getDepartamento() != null && v.getDepartamento().equalsIgnoreCase(departamento)))
                 .filter(v -> salarioMin == null || v.getSalarioMin() >= salarioMin)
                 .collect(Collectors.toList());
     }
