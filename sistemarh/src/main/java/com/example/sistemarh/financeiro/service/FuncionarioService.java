@@ -21,7 +21,7 @@ import java.util.stream.Collectors;
 public class FuncionarioService {
 
     @Autowired
-    private FuncionarioRepository funcionarioRepository; // Mantido, mas não usado para I/O
+    private FuncionarioRepository funcionarioRepository;
 
     @Autowired
     private ContratacaoService contratacaoService;
@@ -47,12 +47,13 @@ public class FuncionarioService {
             throw new RuntimeException("Falha ao carregar dados do candidato para a contratação.");
         }
 
-        Optional<Usuario> existente = usuarioService.buscarPorCpf(candidato.getCpf());
-        if (existente.isPresent() && existente.get() instanceof Funcionario) {
-            throw new RuntimeException("Funcionário já cadastrado com este CPF.");
+        Optional<Funcionario> existenteFunc = funcionarioRepository.buscarPorCpf(candidato.getCpf());
+        if (existenteFunc.isPresent()) {
+            throw new RuntimeException("Funcionário já cadastrado com este CPF no funcionarios.txt.");
         }
 
-        Usuario usuario = existente.orElseGet(() -> usuarioService.criarUsuarioCandidato(candidato));
+        Optional<Usuario> existenteUser = usuarioService.buscarPorCpf(candidato.getCpf());
+        Usuario usuario = existenteUser.orElseGet(() -> usuarioService.criarUsuarioCandidato(candidato));
 
         String matricula = "FUNC" + (this.listarTodos().size() + 100);
 
@@ -73,15 +74,12 @@ public class FuncionarioService {
         contratacao.setStatus("Efetivada");
         contratacao.setDataEfetivacao(LocalDate.now());
         contratacaoService.salvar(contratacao);
-
-        return (Funcionario) usuarioService.salvar(novoFuncionario);
+        usuarioService.salvar(novoFuncionario);
+        return funcionarioRepository.salvar(novoFuncionario);
     }
 
     public List<Funcionario> listarTodos() {
-        return usuarioService.listarTodos().stream()
-                .filter(u -> u instanceof Funcionario)
-                .map(u -> (Funcionario) u)
-                .collect(Collectors.toList());
+        return funcionarioRepository.buscarTodos();
     }
 
     public List<Funcionario> listarAtivos() {
@@ -91,8 +89,6 @@ public class FuncionarioService {
     }
 
     public Optional<Funcionario> buscarPorCpf(String cpf) {
-        return usuarioService.buscarPorCpf(cpf)
-                .filter(u -> u instanceof Funcionario)
-                .map(u -> (Funcionario) u);
+        return funcionarioRepository.buscarPorCpf(cpf);
     }
 }
