@@ -14,7 +14,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Repository
-public class CandidatoRepository {
+public class    CandidatoRepository {
 
     private static final String ARQUIVO_CANDIDATOS = "candidatos.txt";
     private static final String SEPARADOR = ";";

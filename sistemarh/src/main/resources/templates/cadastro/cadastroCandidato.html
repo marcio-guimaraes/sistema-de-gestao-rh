@@ -20,6 +20,8 @@
 
     <form method="post" th:action="@{/cadastro/candidato/salvar}" th:object="${candidato}">
 
+        <input type="hidden" name="isEditMode" th:value="${editMode}" />
+
         <div class="mb-3">
             <label for="nome" class="form-label">Nome Completo</label>
             <input type="text" class="form-control" id="nome" th:field="*{nome}" required>

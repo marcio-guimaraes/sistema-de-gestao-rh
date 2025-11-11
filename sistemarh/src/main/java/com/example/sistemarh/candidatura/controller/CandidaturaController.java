@@ -27,28 +27,37 @@ public class CandidaturaController {
 
     @GetMapping
     public String menuCadastro() {
-        // CORREÇÃO: Redirecionar para a nova página de gestão
         return "cadastro/menu";
     }
 
     // --- Gestão de Candidatos ---
     @GetMapping("/candidato")
     public String cadastroCandidatoGet(Model model) {
-        // CORREÇÃO: Usar o construtor vazio
         model.addAttribute("candidato", new Candidato());
         model.addAttribute("editMode", false);
         return "cadastro/cadastroCandidato";
     }
 
+    /**
+     * ATUALIZADO:
+     * 1. Recebe o @RequestParam "isEditMode" do formulário.
+     * 2. Repassa o "isEditMode" para o service.
+     * 3. Corrige o bloco catch para redirecionar com base no "isEditMode".
+     */
     @PostMapping("/candidato/salvar")
-    public String cadastroCandidatoPost(@ModelAttribute Candidato candidato) {
+    public String cadastroCandidatoPost(@ModelAttribute Candidato candidato,
+                                        @RequestParam(defaultValue = "false") boolean isEditMode) {
         try {
-            candidatoService.salvarCandidato(candidato);
+            // Passa o flag de edição para o service
+            candidatoService.salvarCandidato(candidato, isEditMode);
         } catch (RuntimeException e) {
-            String redirect = (candidato.getNome() == null || candidato.getNome().isEmpty())
-                    ? "/cadastro/candidato"
-                    : "/cadastro/candidato/editar/" + candidato.getCpf();
-            return "redirect:" + redirect + "?error=" + e.getMessage();
+
+            // Redireciona corretamente em caso de erro
+            String redirectUrl = isEditMode
+                    ? "/cadastro/candidato/editar/" + candidato.getCpf()
+                    : "/cadastro/candidato";
+
+            return "redirect:" + redirectUrl + "?error=" + e.getMessage();
         }
         return "redirect:/cadastro/gestao-candidatos";
     }
@@ -64,7 +73,7 @@ public class CandidaturaController {
         Optional<Candidato> candidatoOpt = candidatoService.buscarPorCpf(cpf);
         if (candidatoOpt.isPresent()) {
             model.addAttribute("candidato", candidatoOpt.get());
-            model.addAttribute("editMode", true);
+            model.addAttribute("editMode", true); // <-- Envia "true" para o HTML
             return "cadastro/cadastroCandidato";
         }
         return "redirect:/cadastro/gestao-candidatos";
@@ -72,7 +81,6 @@ public class CandidaturaController {
 
     @GetMapping("/candidato/excluir/{cpf}")
     public String excluirCandidato(@PathVariable("cpf") String cpf) {
-        // Tenta excluir candidaturas pendentes associadas
         candidaturaService.listarTodas().stream()
                 .filter(c -> c.getCpfCandidatoDoArquivo().equals(cpf))
                 .forEach(c -> {
@@ -82,7 +90,6 @@ public class CandidaturaController {
                         System.err.println("Não foi possível excluir candidatura pendente: " + e.getMessage());
                     }
                 });
-        // Exclui o candidato
         candidatoService.excluirCandidato(cpf);
         return "redirect:/cadastro/gestao-candidatos";
     }
@@ -97,9 +104,9 @@ public class CandidaturaController {
 
     @PostMapping("/registrar-candidatura")
     public String candidaturaVagaPost(@RequestParam String candidatoCpf,
-                                      @RequestParam Long vagaId) { // Status removido, será "Pendente"
+                                      @RequestParam Long vagaId) {
         try {
-            candidaturaService.registrarCandidatura(candidatoCpf, vagaId, "Pendente"); // Status Padrão
+            candidaturaService.registrarCandidatura(candidatoCpf, vagaId, "Pendente");
         } catch (RuntimeException e) {
             return "redirect:/cadastro/candidatura?error=" + e.getMessage();
         }
