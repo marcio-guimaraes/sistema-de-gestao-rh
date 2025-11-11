@@ -171,14 +171,37 @@ public class FinanceiroController {
     }
 
     @GetMapping("/relatorio")
-    public String relatorioFinanceiro(Model model) {
-        List<Funcionario> funcionarios = funcionarioService.listarAtivos();
+    public String relatorioFinanceiro(
+            @RequestParam(required = false) String departamento,
+            @RequestParam(required = false) String cargo,
+            @RequestParam(required = false) Long regraSalarialId,
+            @RequestParam(required = false) String status,
+            Model model) {
+
+        List<Funcionario> funcionarios = funcionarioService.listarTodos();
 
         for(Funcionario f : funcionarios) {
             carregarRegraSalarialDoFuncionario(f);
         }
 
-        model.addAttribute("funcionarios", funcionarios);
+        List<Funcionario> funcionariosFiltrados = funcionarios.stream()
+                .filter(f -> status == null || status.isEmpty() || f.getStatus().equalsIgnoreCase(status))
+                .filter(f -> departamento == null || departamento.isEmpty() || f.getDepartamento().equalsIgnoreCase(departamento))
+                .filter(f -> cargo == null || cargo.isEmpty() || f.getCargo().equalsIgnoreCase(cargo))
+                .filter(f -> regraSalarialId == null || (f.getRegraSalario() != null && f.getRegraSalarialId() == regraSalarialId))
+                .collect(Collectors.toList());
+
+        model.addAttribute("funcionarios", funcionariosFiltrados);
+
+        model.addAttribute("departamentos", funcionarios.stream().map(Funcionario::getDepartamento).distinct().sorted().collect(Collectors.toList()));
+        model.addAttribute("cargos", funcionarios.stream().map(Funcionario::getCargo).distinct().sorted().collect(Collectors.toList()));
+        model.addAttribute("regrasSalariais", regraSalarialRepository.buscarTodas()); // Já estava injetado
+
+        model.addAttribute("deptoFiltro", departamento);
+        model.addAttribute("cargoFiltro", cargo);
+        model.addAttribute("regraFiltro", regraSalarialId);
+        model.addAttribute("statusFiltro", status);
+
         return "financeiro/relatorio";
     }
 
@@ -369,4 +392,99 @@ public class FinanceiroController {
             }
         }
     }
+
+    @GetMapping("/relatorio/txt")
+    public void exportarRelatorioTXT(
+            @RequestParam(required = false) String departamento,
+            @RequestParam(required = false) String cargo,
+            @RequestParam(required = false) Long regraSalarialId,
+            @RequestParam(required = false) String status,
+            HttpServletResponse response) {
+
+        try {
+            List<Funcionario> funcionarios = funcionarioService.listarTodos();
+
+            for(Funcionario f : funcionarios) {
+                carregarRegraSalarialDoFuncionario(f);
+            }
+
+            List<Funcionario> funcionariosFiltrados = funcionarios.stream()
+                    .filter(f -> status == null || status.isEmpty() || f.getStatus().equalsIgnoreCase(status))
+                    .filter(f -> departamento == null || departamento.isEmpty() || f.getDepartamento().equalsIgnoreCase(departamento))
+                    .filter(f -> cargo == null || cargo.isEmpty() || f.getCargo().equalsIgnoreCase(cargo))
+                    .filter(f -> regraSalarialId == null || (f.getRegraSalario() != null && f.getRegraSalarialId() == regraSalarialId))
+                    .collect(Collectors.toList());
+
+            response.setContentType("text/plain; charset=UTF-8");
+            String nomeArquivo = "relatorio_financeiro.txt";
+            response.setHeader("Content-Disposition", "attachment; filename=\"" + nomeArquivo + "\"");
+
+            java.util.function.Function<Double, String> fMoeda = (v) -> String.format(new Locale("pt", "BR"), "R$ %,.2f", v);
+
+            try (java.io.PrintWriter writer = response.getWriter()) {
+
+                writer.println("+------------------------------------------------------------------------------------------------------------------------+");
+                writer.println("|                                            RELATÓRIO FINANCEIRO (FILTRADO)                                             |");
+                writer.println("+---------------------------+---------+---------------------+-----------------+--------------+-------------+-------------+");
+                writer.printf("| %-25s | %-7s | %-19s | %-15s | %-12s | %-11s | %-11s |%n", "Funcionário", "Status", "Cargo", "Departamento", "Sal. Base", "Benefícios", "Líquido");
+                writer.println("+---------------------------+---------+---------------------+-----------------+--------------+-------------+-------------+");
+
+                if (funcionariosFiltrados.isEmpty()) {
+                    writer.println("|                                     Nenhum funcionário encontrado com os filtros aplicados.                                |");
+                }
+
+                double totalBruto = 0.0;
+                double totalDescontos = 0.0;
+                double totalLiquido = 0.0;
+
+                for (Funcionario f : funcionariosFiltrados) {
+                    if (f.getRegraSalario() != null) {
+                        double base = f.getBaseSalario();
+                        RegraSalario r = f.getRegraSalario();
+                        double beneficios = r.getValorValeAlimentacao() + r.getValorValeTransporte();
+                        double brutoFunc = base + beneficios;
+                        double liquidoFunc = f.calcularSalario();
+                        double descontosFunc = brutoFunc - liquidoFunc;
+
+                        totalBruto += brutoFunc;
+                        totalDescontos += descontosFunc;
+                        totalLiquido += liquidoFunc;
+
+                        writer.printf("| %-25.25s | %-7s | %-19.19s | %-15.15s | %12s | %10s | %11s |%n",
+                                f.getNome(),
+                                f.getStatus(),
+                                f.getCargo(),
+                                f.getDepartamento(),
+                                fMoeda.apply(base),
+                                fMoeda.apply(beneficios),
+                                fMoeda.apply(liquidoFunc));
+                    } else {
+                        writer.printf("| %-25.25s | %-7s | %-19.19s | %-15.15s | %-38s |%n",
+                                f.getNome(),
+                                f.getStatus(),
+                                f.getCargo(),
+                                f.getDepartamento(),
+                                "Regra Salarial não encontrada!");
+                    }
+                }
+
+                writer.println("+---------------------------+---------+---------------------+-----------------+--------------+-------------+-------------+");
+                writer.println();
+                writer.println("TOTAIS DO RELATÓRIO (FILTRADO):");
+                writer.println("+----------------------------------+");
+                writer.printf("| Total Bruto:     %15s |%n", fMoeda.apply(totalBruto));
+                writer.printf("| Total Descontos: %15s |%n", fMoeda.apply(totalDescontos));
+                writer.printf("| Total Líquido:   %15s |%n", fMoeda.apply(totalLiquido));
+                writer.println("+----------------------------------+");
+            }
+
+        } catch (Exception e) {
+            response.setContentType("text/plain");
+            try {
+                response.sendError(500, "Erro ao gerar TXT do relatório: " + e.getMessage());
+            } catch (IOException ioException) {
+            }
+        }
+    }
+
 }
