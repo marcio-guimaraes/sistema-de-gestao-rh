@@ -5,8 +5,8 @@ import com.example.sistemarh.financeiro.Funcionario;
 import java.time.LocalDate;
 
 public class Administrador extends Funcionario {
-    public Administrador(String nome, String cpf, String login, String senha, String matricula, LocalDate dataAdmissao, Double baseSalario, String status) {
-        super(nome, cpf, login, senha, matricula, dataAdmissao, baseSalario, status);
+    public Administrador(String nome, String cpf, String login, String senha, String matricula, LocalDate dataAdmissao, Double baseSalario, String status, String departamento, String cargo) {
+        super(nome, cpf, login, senha, matricula, dataAdmissao, baseSalario, status, departamento, cargo);
     }
 
     public Usuario criarUsuario(String nome, String cpf, String login, String senha) {

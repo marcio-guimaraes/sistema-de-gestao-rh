@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+ <!DOCTYPE html>
 <html lang="pt-br" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
@@ -16,16 +16,16 @@
     <form method="post" th:action="@{/cadastro/registrar-candidatura}">
         <div class="mb-3">
             <label for="candidato" class="form-label">Candidato</label>
-            <select class="form-select" id="candidato" name="candidatoId" required>
+            <select class="form-select" id="candidato" name="cpfCandidato" required>
                 <option value="">Selecione um candidato</option>
-                <!-- Exemplo de preenchimento dinâmico -->
-                <option th:each="c : ${candidatos}" th:value="${c.id}" th:text="${c.nome}"></option>
+
+                <option th:each="c : ${candidatos}" th:value="${c.cpf}" th:text="${c.nome}"></option>
             </select>
         </div>
 
         <div class="mb-3">
             <label for="vaga" class="form-label">Vaga</label>
-            <select class="form-select" id="vaga" name="vagaId" required>
+            <select class="form-select" id="vaga" name="idVaga" required>
                 <option value="">Selecione uma vaga</option>
                 <option th:each="v : ${vagas}" th:value="${v.id}" th:text="${v.titulo}"></option>
             </select>
