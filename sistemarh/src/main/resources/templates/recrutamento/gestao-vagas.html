@@ -100,8 +100,7 @@
                         </div>
                         <div class="col-md-4">
                             <label for="filtroSalario" class="form-label">Salário Mín. (R$)</label>
-                            <input type="number" step="100" class="form-control form-control-sm" name="salarioMin" id="filtroSalario" th:value="${filtros['salarioMin']}">
-                        </div>
+                            <input type="number" step="0.01" class="form-control form-control-sm" name="salarioMin" id="filtroSalario" th:value="${filtros['salarioMin']}">                        </div>
                         <div class="col-12 text-end">
                             <a th:href="@{/recrutamento/gestao-vagas}" class="btn btn-secondary btn-sm">Limpar</a>
                             <button type="submit" class="btn btn-primary btn-sm">Filtrar</button>
