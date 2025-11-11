@@ -1,5 +1,6 @@
 package com.example.sistemarh.financeiro.controller;
 
+import com.example.sistemarh.financeiro.model.FolhaPagamento;
 import com.example.sistemarh.financeiro.model.Funcionario;
 import com.example.sistemarh.financeiro.repository.RegraSalarialRepository;
 import com.example.sistemarh.financeiro.service.FuncionarioService;
@@ -140,14 +141,33 @@ public class FinanceiroController {
     }
 
     @GetMapping("/gerar-folha")
-    public String gerarFolha() {
+    public String gerarFolha(@RequestParam(required = false) Integer mes,
+                             @RequestParam(required = false) Integer ano,
+                             Model model) {
+
+        LocalDate hoje = LocalDate.now();
+        int mesSelecionado = (mes != null) ? mes : hoje.getMonthValue();
+        int anoSelecionado = (ano != null) ? ano : hoje.getYear();
+
+        model.addAttribute("mesSelecionado", mesSelecionado);
+        model.addAttribute("anoSelecionado", anoSelecionado);
+
+        if (mes != null && ano != null) {
+            try {
+                FolhaPagamento folha = folhaPagamentoService.calcularFolhaPagamento(mes, ano);
+                model.addAttribute("folha", folha);
+            } catch (Exception e) {
+                model.addAttribute("error", e.getMessage());
+            }
+        }
+
         return "financeiro/gerar-folha";
     }
 
     @PostMapping("/gerar-folha/processar")
     public String processarFolha(@RequestParam int mes, @RequestParam int ano) {
         folhaPagamentoService.gerarFolhaPagamento(mes, ano);
-        return "redirect:/financeiro/relatorio";
+        return "redirect:/financeiro/gerar-folha?mes=" + mes + "&ano=" + ano;
     }
 
     @GetMapping("/relatorio")
@@ -284,6 +304,68 @@ public class FinanceiroController {
             try {
                 response.sendError(500, "Erro ao gerar contracheque: " + e.getMessage());
             } catch (IOException ioException) {
+            }
+        }
+    }
+
+    @GetMapping("/gerar-folha/txt")
+    public void exportarFolhaTXT(@RequestParam Integer mes,
+                                 @RequestParam Integer ano,
+                                 HttpServletResponse response) {
+        try {
+            // 1. Calcula (sem salvar)
+            FolhaPagamento folha = folhaPagamentoService.calcularFolhaPagamento(mes, ano);
+
+            // 2. Configura a resposta
+            response.setContentType("text/plain; charset=UTF-8");
+            String nomeArquivo = String.format("folha_pagamento_%d_%d.txt", mes, ano);
+            response.setHeader("Content-Disposition", "attachment; filename=\"" + nomeArquivo + "\"");
+
+            java.util.function.Function<Double, String> fMoeda = (v) -> String.format(new Locale("pt", "BR"), "R$ %,.2f", v);
+
+            // 3. Escreve o arquivo formatado
+            try (java.io.PrintWriter writer = response.getWriter()) {
+
+                writer.println("+---------------------------------------------------------------------------------+");
+                writer.printf("| FOLHA DE PAGAMENTO - Referência: %-39s / %d |%n", folha.getMesPorExtenso().toUpperCase(), folha.getAnoReferencia());
+                writer.println("+---------------------------------------------------------------------------------+");
+                writer.println();
+                writer.println("DETALHAMENTO POR FUNCIONÁRIO:");
+                writer.println("+---------------------------+-----------------+--------------+------------+-------------+");
+                writer.printf("| %-25s | %-15s | %-12s | %-11s | %-10s |%n", "Funcionário", "Sal. Base", "Benefícios", "Descontos", "Líquido");
+                writer.println("+---------------------------+-----------------+--------------+------------+-------------+");
+
+                if (folha.getFuncionarios() == null || folha.getFuncionarios().isEmpty()) {
+                    writer.println("| Nenhum funcionário ativo encontrado para este período.                          |");
+                } else {
+                    for (Funcionario f : folha.getFuncionarios()) {
+                        double base = f.getBaseSalario();
+                        RegraSalario r = f.getRegraSalario();
+                        double beneficios = r.getValorValeAlimentacao() + r.getValorValeTransporte();
+                        double brutoFunc = base + beneficios;
+                        double liquidoFunc = f.calcularSalario();
+                        double descontosFunc = brutoFunc - liquidoFunc;
+
+                        writer.printf("| %-25.25s | %15s | %12s | %10s | %10s |%n",
+                                f.getNome(), fMoeda.apply(base), fMoeda.apply(beneficios), fMoeda.apply(descontosFunc), fMoeda.apply(liquidoFunc));
+                    }
+                }
+                writer.println("+---------------------------+-----------------+--------------+------------+-------------+");
+                writer.println();
+                writer.println("TOTAIS DA FOLHA:");
+                writer.println("+----------------------------------+");
+                writer.printf("| Total Bruto:     %15s |%n", fMoeda.apply(folha.getValorTotalBruto()));
+                writer.printf("| Total Descontos: %15s |%n", fMoeda.apply(folha.getValorTotalDescontos()));
+                writer.printf("| Total Líquido:   %15s |%n", fMoeda.apply(folha.getValorTotalLiquido()));
+                writer.println("+----------------------------------+");
+            }
+
+        } catch (Exception e) {
+            response.setContentType("text/plain");
+            try {
+                response.sendError(500, "Erro ao gerar TXT da folha: " + e.getMessage());
+            } catch (IOException ioException) {
+                // Erro
             }
         }
     }

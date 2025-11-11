@@ -9,7 +9,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.time.Month;
+import java.time.format.TextStyle;
 import java.util.List;
+import java.util.Locale;
 
 @Service
 public class FolhaPagamentoService {
@@ -28,8 +31,7 @@ public class FolhaPagamentoService {
                 .orElse(new RegraSalario(1, "CLT Padrão", 0.0, 6.0, 500.0, 14.0, 27.5));
     }
 
-    public FolhaPagamento gerarFolhaPagamento(int mes, int ano) {
-
+    public FolhaPagamento calcularFolhaPagamento(int mes, int ano) {
         List<Funcionario> funcionariosAtivos = funcionarioService.listarAtivos();
 
         double totalBruto = 0.0;
@@ -37,10 +39,8 @@ public class FolhaPagamentoService {
         double totalLiquido = 0.0;
 
         for (Funcionario f : funcionariosAtivos) {
-
             RegraSalario regra = regraSalarialRepository.buscarPorId(f.getRegraSalarialId())
                     .orElse(getRegraPadraoFallback());
-
             f.setRegraSalario(regra);
 
             double salarioLiquido = f.calcularSalario();
@@ -52,13 +52,23 @@ public class FolhaPagamentoService {
             totalLiquido += salarioLiquido;
         }
 
+        String mesExtenso = Month.of(mes).getDisplayName(TextStyle.FULL, new Locale("pt", "BR"));
+
         FolhaPagamento folha = new FolhaPagamento.Builder(0, mes, ano, LocalDate.now(), null)
                 .valorTotalBruto(totalBruto)
                 .valorTotalDescontos(totalDescontos)
                 .valorTotalLiquido(totalLiquido)
+                .funcionarios(funcionariosAtivos)
+                .mesPorExtenso(mesExtenso)
                 .build();
 
-        return folhaPagamentoRepository.salvar(folha);
+        return folha;
+    }
+
+    public FolhaPagamento gerarFolhaPagamento(int mes, int ano) {
+        FolhaPagamento folhaCalculada = this.calcularFolhaPagamento(mes, ano);
+
+        return folhaPagamentoRepository.salvar(folhaCalculada);
     }
 
     public List<FolhaPagamento> listarTodas() {
