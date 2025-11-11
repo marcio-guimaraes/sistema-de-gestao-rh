@@ -21,7 +21,7 @@ import java.util.stream.Collectors;
 public class FuncionarioService {
 
     @Autowired
-    private FuncionarioRepository funcionarioRepository;
+    private FuncionarioRepository funcionarioRepository; // Mantido, mas não usado para I/O
 
     @Autowired
     private ContratacaoService contratacaoService;
@@ -38,14 +38,11 @@ public class FuncionarioService {
             throw new RuntimeException("Contratação não foi aprovada pelo gestor.");
         }
 
-        // Garante que os dados de candidato e vaga estão carregados
         if (contratacao.getCandidato() == null || contratacao.getVaga() == null) {
             contratacaoService.buscarEPreencher(contratacao);
         }
 
         Candidato candidato = contratacao.getCandidato();
-        Vaga vaga = contratacao.getVaga();
-
         if (candidato == null) {
             throw new RuntimeException("Falha ao carregar dados do candidato para a contratação.");
         }
@@ -55,10 +52,9 @@ public class FuncionarioService {
             throw new RuntimeException("Funcionário já cadastrado com este CPF.");
         }
 
-        Usuario usuario = usuarioService.buscarPorCpf(candidato.getCpf())
-                .orElseGet(() -> usuarioService.criarUsuarioCandidato(candidato));
+        Usuario usuario = existente.orElseGet(() -> usuarioService.criarUsuarioCandidato(candidato));
 
-        String matricula = "FUNC" + (funcionarioRepository.buscarTodos().size() + 100);
+        String matricula = "FUNC" + (this.listarTodos().size() + 100);
 
         Funcionario novoFuncionario = new Funcionario(
                 candidato.getNome(),
@@ -82,13 +78,15 @@ public class FuncionarioService {
     }
 
     public List<Funcionario> listarTodos() {
-        return funcionarioRepository.buscarTodos();
-    }
-
-    public List<Funcionario> listarAtivos() {
         return usuarioService.listarTodos().stream()
                 .filter(u -> u instanceof Funcionario)
                 .map(u -> (Funcionario) u)
+                .collect(Collectors.toList());
+    }
+
+    public List<Funcionario> listarAtivos() {
+        return this.listarTodos().stream()
+                .filter(f -> "Ativo".equalsIgnoreCase(f.getStatus()))
                 .collect(Collectors.toList());
     }
 
