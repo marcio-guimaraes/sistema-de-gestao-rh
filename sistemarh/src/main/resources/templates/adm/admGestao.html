@@ -69,24 +69,21 @@
                         <td th:text="${usuario.cpf}"></td>
                         <td th:text="${usuario.login}"></td>
 
-                        <!-- Perfil -->
                         <td>
-                            <span th:if="${T(com.example.sistemarh.financeiro.Funcionario).isInstance(usuario)}"
+                            <span th:if="${T(com.example.sistemarh.financeiro.model.Funcionario).isInstance(usuario)}"
                                   th:text="${usuario.cargo}"></span>
-                            <span th:unless="${T(com.example.sistemarh.financeiro.Funcionario).isInstance(usuario)}"
+                            <span th:unless="${T(com.example.sistemarh.financeiro.model.Funcionario).isInstance(usuario)}"
                                   th:text="'Outro'"></span>
                         </td>
 
-                        <!-- Status -->
                         <td>
-                            <span th:if="${T(com.example.sistemarh.financeiro.Funcionario).isInstance(usuario)}"
+                            <span th:if="${T(com.example.sistemarh.financeiro.model.Funcionario).isInstance(usuario)}"
                                   th:text="${usuario.status}"></span>
-                            <span th:unless="${T(com.example.sistemarh.financeiro.Funcionario).isInstance(usuario)}">
+                            <span th:unless="${T(com.example.sistemarh.financeiro.model.Funcionario).isInstance(usuario)}">
                                   N/A
                             </span>
                         </td>
 
-                        <!-- Ações -->
                         <td>
                             <a th:href="@{/Administração/Gestão/Editar/{login}(login=${usuario.login})}"
                                class="btn btn-warning btn-edit btn-sm">Editar</a>
