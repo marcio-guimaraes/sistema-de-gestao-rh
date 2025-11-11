@@ -2,8 +2,10 @@ package com.example.sistemarh.recrutamento.controller;
 
 import com.example.sistemarh.administracao.Usuario;
 import com.example.sistemarh.administracao.UsuarioService;
-import com.example.sistemarh.candidatura.Candidatura; // Importar
+import com.example.sistemarh.candidatura.Candidatura;
 import com.example.sistemarh.candidatura.CandidaturaService;
+// IMPORT ADICIONADO
+import com.example.sistemarh.financeiro.repository.RegraSalarialRepository;
 import com.example.sistemarh.recrutamento.model.Vaga;
 import com.example.sistemarh.recrutamento.service.ContratacaoService;
 import com.example.sistemarh.recrutamento.service.EntrevistaService;
@@ -42,13 +44,14 @@ public class RecrutamentoController {
     @Autowired
     private ContratacaoService contratacaoService;
 
+    @Autowired
+    private RegraSalarialRepository regraSalarialRepository;
+
     @GetMapping
     public String menuRecrutamento() {
         return "recrutamento/menu";
     }
 
-
-    // --- TASK 2: FILTROS DE VAGA ---
     @GetMapping("/gestao-vagas")
     public String gestaoVagas(Model model,
                               @RequestParam(required = false) String status,
@@ -57,23 +60,20 @@ public class RecrutamentoController {
 
         model.addAttribute("vaga", new Vaga());
 
-        // Usa o VagaService para filtrar
         List<Vaga> vagasFiltradas = vagaService.filtrarVagas(status, departamento, salarioMin);
         model.addAttribute("vagas", vagasFiltradas);
 
         model.addAttribute("editMode", false);
 
-        // Devolve os filtros para o HTML
         Map<String, String> filtrosAtuais = new HashMap<>();
         if (status != null) filtrosAtuais.put("status", status);
         if (departamento != null) filtrosAtuais.put("departamento", departamento);
         if (salarioMin != null) filtrosAtuais.put("salarioMin", salarioMin.toString());
         model.addAttribute("filtros", filtrosAtuais);
+        model.addAttribute("regrasSalariais", regraSalarialRepository.buscarTodas());
 
         return "recrutamento/gestao-vagas";
     }
-    // --- FIM DA TASK 2 ---
-
 
     @PostMapping("/gestao-vagas/salvar")
     public String salvarVaga(@ModelAttribute Vaga vaga) {
@@ -92,7 +92,9 @@ public class RecrutamentoController {
             model.addAttribute("vaga", vagaOpt.get());
             model.addAttribute("vagas", vagaService.listarTodasVagas());
             model.addAttribute("editMode", true);
-            model.addAttribute("filtros", new HashMap<String, String>()); // Mapa vazio para modo de edição
+            model.addAttribute("filtros", new HashMap<String, String>());
+            model.addAttribute("regrasSalariais", regraSalarialRepository.buscarTodas());
+
             return "recrutamento/gestao-vagas";
         }
         return "redirect:/recrutamento/gestao-vagas";
@@ -131,7 +133,6 @@ public class RecrutamentoController {
     }
 
 
-    // --- MÉTODOS ATUALIZADOS PARA A TASK 1 ---
     @GetMapping("/avaliar-candidatos")
     public String avaliarCandidatos(Model model) {
         model.addAttribute("candidaturasEmAnalise", candidaturaService.listarComFiltros(null, "Em Análise"));
@@ -149,10 +150,7 @@ public class RecrutamentoController {
             Candidatura c = candidaturaService.buscarPorId(candidaturaId)
                     .orElseThrow(() -> new RuntimeException("Candidatura não encontrada."));
 
-            // 1. Salva o resultado da entrevista
             entrevistaService.salvarResultadoEntrevista(c.getCpfCandidatoDoArquivo(), c.getIdVagaDoArquivo(), nota, feedback);
-
-            // 2. Atualiza o status da candidatura
             candidaturaService.atualizarStatus(candidaturaId, status);
 
             redirectAttributes.addFlashAttribute("success", "Candidatura " + status.toLowerCase() + " com sucesso!");
@@ -162,8 +160,6 @@ public class RecrutamentoController {
 
         return "redirect:/recrutamento/avaliar-candidatos";
     }
-    // --- FIM DOS MÉTODOS ATUALIZADOS ---
-
 
     @GetMapping("/solicitar-contratacao")
     public String solicitarContratacao(Model model) {
@@ -178,7 +174,6 @@ public class RecrutamentoController {
         try {
             contratacaoService.solicitarContratacao(candidaturaId);
         } catch (RuntimeException e) {
-            // CORREÇÃO: Enviar o erro de volta para a página
             redirectAttributes.addFlashAttribute("error", e.getMessage());
             return "redirect:/recrutamento/solicitar-contratacao";
         }

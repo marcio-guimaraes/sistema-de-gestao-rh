@@ -44,9 +44,11 @@
                             <div class="col-md-6 mb-3">
                                 <label for="regime" class="form-label">Regime</label>
                                 <select class="form-select" id="regime" th:field="*{regime}">
-                                    <option value="CLT">CLT</option>
-                                    <option value="PJ">PJ</option>
-                                    <option value="Estágio">Estágio</option>
+                                    <option value="">Selecione um regime...</option>
+                                    <option th:each="regra : ${regrasSalariais}"
+                                            th:value="${regra.nomeRegra}"
+                                            th:text="${regra.nomeRegra}">
+                                    </option>
                                 </select>
                             </div>
                             <div class="col-md-6 mb-3">
