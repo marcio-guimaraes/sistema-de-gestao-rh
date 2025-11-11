@@ -1,8 +1,10 @@
-package com.example.sistemarh.financeiro;
+package com.example.sistemarh.financeiro.service;
 
 import com.example.sistemarh.administracao.Usuario;
 import com.example.sistemarh.administracao.UsuarioService;
 import com.example.sistemarh.candidatura.Candidato;
+import com.example.sistemarh.financeiro.model.Funcionario;
+import com.example.sistemarh.financeiro.repository.FuncionarioRepository;
 import com.example.sistemarh.recrutamento.model.Contratacao;
 import com.example.sistemarh.recrutamento.model.Vaga;
 import com.example.sistemarh.recrutamento.service.ContratacaoService;
@@ -27,7 +29,7 @@ public class FuncionarioService {
     @Autowired
     private UsuarioService usuarioService;
 
-    public Funcionario admitirFuncionario(long contratacaoId, double salarioBase, String cargo, String departamento) {
+    public Funcionario admitirFuncionario(long contratacaoId, double salarioBase, String cargo, String departamento, long regraSalarialId) {
 
         Contratacao contratacao = contratacaoService.buscarPorId(contratacaoId)
                 .orElseThrow(() -> new RuntimeException("Contratação não encontrada."));
@@ -48,8 +50,8 @@ public class FuncionarioService {
             throw new RuntimeException("Falha ao carregar dados do candidato para a contratação.");
         }
 
-        Optional<Funcionario> existente = funcionarioRepository.buscarPorCpf(candidato.getCpf());
-        if (existente.isPresent()) {
+        Optional<Usuario> existente = usuarioService.buscarPorCpf(candidato.getCpf());
+        if (existente.isPresent() && existente.get() instanceof Funcionario) {
             throw new RuntimeException("Funcionário já cadastrado com este CPF.");
         }
 
@@ -68,14 +70,15 @@ public class FuncionarioService {
                 salarioBase,
                 "Ativo",
                 departamento,
-                cargo
+                cargo,
+                regraSalarialId
         );
 
         contratacao.setStatus("Efetivada");
         contratacao.setDataEfetivacao(LocalDate.now());
         contratacaoService.salvar(contratacao);
 
-        return funcionarioRepository.salvar(novoFuncionario);
+        return (Funcionario) usuarioService.salvar(novoFuncionario);
     }
 
     public List<Funcionario> listarTodos() {
@@ -83,12 +86,15 @@ public class FuncionarioService {
     }
 
     public List<Funcionario> listarAtivos() {
-        return funcionarioRepository.buscarTodos().stream()
-                .filter(f -> "Ativo".equalsIgnoreCase(f.getStatus()))
+        return usuarioService.listarTodos().stream()
+                .filter(u -> u instanceof Funcionario)
+                .map(u -> (Funcionario) u)
                 .collect(Collectors.toList());
     }
 
     public Optional<Funcionario> buscarPorCpf(String cpf) {
-        return funcionarioRepository.buscarPorCpf(cpf);
+        return usuarioService.buscarPorCpf(cpf)
+                .filter(u -> u instanceof Funcionario)
+                .map(u -> (Funcionario) u);
     }
 }

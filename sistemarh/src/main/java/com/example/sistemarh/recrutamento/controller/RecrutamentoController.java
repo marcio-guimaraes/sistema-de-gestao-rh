@@ -87,8 +87,8 @@ public class RecrutamentoController {
 
         model.addAttribute("recrutadores", usuarioService.listarTodos().stream()
                 .filter(u -> u instanceof com.example.sistemarh.administracao.Gestor ||
-                        (u instanceof com.example.sistemarh.financeiro.Funcionario &&
-                                "Recrutador".equals(((com.example.sistemarh.financeiro.Funcionario)u).getCargo()))
+                        (u instanceof com.example.sistemarh.financeiro.model.Funcionario &&
+                                "Recrutador".equals(((com.example.sistemarh.financeiro.model.Funcionario)u).getCargo()))
                 )
                 .collect(Collectors.toList()));
 

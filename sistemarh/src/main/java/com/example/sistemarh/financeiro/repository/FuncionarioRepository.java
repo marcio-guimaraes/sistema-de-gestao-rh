@@ -1,5 +1,6 @@
-package com.example.sistemarh.financeiro;
+package com.example.sistemarh.financeiro.repository;
 
+import com.example.sistemarh.financeiro.model.Funcionario;
 import org.springframework.stereotype.Repository;
 
 import java.io.BufferedWriter;
@@ -38,7 +39,7 @@ public class FuncionarioRepository {
 
             // Instancia a classe correta com base no cargo/perfil
             // (Usamos o construtor de Funcionario, mas a lógica de usuário diferencia)
-            return new Funcionario(nome, cpf, login, senha, matricula, dataAdmissao, baseSalario, status, departamento, cargo);
+            return new Funcionario(nome, cpf, login, senha, matricula, dataAdmissao, baseSalario, status, departamento, cargo, 1);
 
         } catch (Exception e) {
             System.err.println("Erro ao parsear linha do funcionário: " + linha + " -> " + e.getMessage());

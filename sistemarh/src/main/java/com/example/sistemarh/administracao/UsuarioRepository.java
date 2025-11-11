@@ -1,7 +1,7 @@
 package com.example.sistemarh.administracao;
 
 // Importe o Funcionario, pois ele agora é usado aqui
-import com.example.sistemarh.financeiro.Funcionario;
+import com.example.sistemarh.financeiro.model.Funcionario;
 import org.springframework.stereotype.Repository;
 
 import java.io.*;
@@ -65,6 +65,10 @@ public class UsuarioRepository {
             String status = dados[7];
             String departamento = dados[8];
             String cargoOuPerfil = dados[9]; // "ADMIN", "GESTOR", "RECRUTADOR", "FUNCIONÁRIO"
+            long regraId = 1;
+            if (dados.length > 10 && !dados[10].isEmpty()) {
+                regraId = Long.parseLong(dados[10]);
+            }
 
             switch (cargoOuPerfil) {
                 case "ADMIN":
@@ -73,7 +77,7 @@ public class UsuarioRepository {
                     return new Gestor(nome, cpf, login, senha, matricula, dataAdmissao, baseSalario, status);
                 case "RECRUTADOR":
                 case "FUNCIONÁRIO":
-                    return new Funcionario(nome, cpf, login, senha, matricula, dataAdmissao, baseSalario, status, departamento, cargoOuPerfil);
+                    return new Funcionario(nome, cpf, login, senha, matricula, dataAdmissao, baseSalario, status, departamento, cargoOuPerfil, regraId);
                 default:
                     // Fallback para usuário simples se o perfil for desconhecido
                     return new Usuario(nome, cpf, login, senha);
@@ -114,7 +118,8 @@ public class UsuarioRepository {
                     f.getBaseSalario().toString(),
                     f.getStatus(),
                     f.getDepartamento(),
-                    perfil // Salva o perfil/cargo
+                    perfil, // Salva o perfil/cargo
+                    String.valueOf(f.getRegraSalarialId())
             );
         }
 

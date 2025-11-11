@@ -1,5 +1,9 @@
-package com.example.sistemarh.financeiro;
+package com.example.sistemarh.financeiro.service;
 
+import com.example.sistemarh.financeiro.model.FolhaPagamento;
+import com.example.sistemarh.financeiro.model.Funcionario;
+import com.example.sistemarh.financeiro.model.RegraSalario;
+import com.example.sistemarh.financeiro.repository.FolhaPagamentoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

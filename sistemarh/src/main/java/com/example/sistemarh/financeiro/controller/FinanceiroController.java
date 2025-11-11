@@ -1,20 +1,18 @@
 package com.example.sistemarh.financeiro.controller;
 
-import com.example.sistemarh.financeiro.Funcionario;
-import com.example.sistemarh.financeiro.FuncionarioService;
-import com.example.sistemarh.financeiro.FolhaPagamentoService;
-import com.example.sistemarh.financeiro.RegraSalario;
+import com.example.sistemarh.financeiro.model.Funcionario;
+import com.example.sistemarh.financeiro.repository.RegraSalarialRepository;
+import com.example.sistemarh.financeiro.service.FuncionarioService;
+import com.example.sistemarh.financeiro.service.FolhaPagamentoService;
+import com.example.sistemarh.financeiro.model.RegraSalario;
 import com.example.sistemarh.recrutamento.service.ContratacaoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional; // Importar
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Controller
@@ -30,9 +28,12 @@ public class FinanceiroController {
     @Autowired
     private FolhaPagamentoService folhaPagamentoService;
 
-    // REGRA PADRÃO (simplificação)
+    @Autowired
+    private RegraSalarialRepository regraSalarialRepository;
+
     private RegraSalario getRegraPadrao() {
-        return new RegraSalario(1, "CLT", 0.0, 6.0, 500.0, 14.0, 27.5);
+        return regraSalarialRepository.buscarPorId(1)
+                .orElse(new RegraSalario(1, "CLT Padrão", 0.0, 6.0, 500.0, 14.0, 27.5)); // Fallback
     }
 
     @GetMapping
@@ -48,6 +49,8 @@ public class FinanceiroController {
                         .collect(Collectors.toList());
 
         model.addAttribute("contratacoesAprovadas", aprovados);
+        model.addAttribute("regrasSalariais", regraSalarialRepository.buscarTodas());
+
         return "financeiro/cadastro-funcionario";
     }
 
@@ -55,9 +58,10 @@ public class FinanceiroController {
     public String admitirFuncionario(@RequestParam long contratacaoId,
                                      @RequestParam String cargo,
                                      @RequestParam String departamento,
-                                     @RequestParam double salario) {
+                                     @RequestParam double salario,
+                                     @RequestParam long regraSalarialId) { // RECEBE O ID DA REGRA
         try {
-            funcionarioService.admitirFuncionario(contratacaoId, salario, cargo, departamento);
+            funcionarioService.admitirFuncionario(contratacaoId, salario, cargo, departamento, regraSalarialId);
         } catch (RuntimeException e) {
             return "redirect:/financeiro/cadastrar-funcionario?error=" + e.getMessage();
         }
@@ -66,8 +70,44 @@ public class FinanceiroController {
 
 
     @GetMapping("/configurar-regras")
-    public String configurarRegras() {
+    public String configurarRegras(Model model) {
+        model.addAttribute("regras", regraSalarialRepository.buscarTodas());
+        model.addAttribute("novaRegra", new RegraSalario());
+        model.addAttribute("editMode", false); // ADICIONADO: Define que não estamos em modo de edição
         return "financeiro/configurar-regras";
+    }
+
+    @GetMapping("/configurar-regras/editar/{id}")
+    public String editarRegraGet(@PathVariable("id") long id, Model model) {
+        Optional<RegraSalario> regraOpt = regraSalarialRepository.buscarPorId(id);
+
+        if (regraOpt.isPresent()) {
+            model.addAttribute("novaRegra", regraOpt.get());
+        } else {
+            return "redirect:/financeiro/configurar-regras";
+        }
+
+        model.addAttribute("regras", regraSalarialRepository.buscarTodas());
+        model.addAttribute("editMode", true);
+        return "financeiro/configurar-regras";
+    }
+
+    @PostMapping("/configurar-regras/salvar")
+    public String salvarRegra(@ModelAttribute("novaRegra") RegraSalario novaRegra) {
+        if (novaRegra.getNomeRegra() == null || novaRegra.getNomeRegra().isEmpty()) {
+            novaRegra.setNomeRegra("Regra Padrão");
+        }
+        regraSalarialRepository.salvar(novaRegra);
+        return "redirect:/financeiro/configurar-regras";
+    }
+
+    @GetMapping("/configurar-regras/excluir/{id}")
+    public String excluirRegra(@PathVariable("id") long id) {
+        if (id == 1) {
+            return "redirect:/financeiro/configurar-regras";
+        }
+        regraSalarialRepository.excluirPorId(id);
+        return "redirect:/financeiro/configurar-regras";
     }
 
     @GetMapping("/gerar-folha")

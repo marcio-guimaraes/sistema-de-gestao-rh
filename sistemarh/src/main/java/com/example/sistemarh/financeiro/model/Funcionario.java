@@ -1,7 +1,6 @@
-package com.example.sistemarh.financeiro;
+package com.example.sistemarh.financeiro.model;
 
 import com.example.sistemarh.administracao.Usuario;
-import com.example.sistemarh.financeiro.RegraSalario;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -16,11 +15,12 @@ public class Funcionario extends Usuario {
     protected String status;
     protected String departamento;
     protected String cargo;
+    protected long regraSalarialId;
 
     protected RegraSalario regraSalario;
 
     public Funcionario(String nome, String cpf, String login, String senha,
-                       String matricula, LocalDate dataAdmissao, Double baseSalario, String status, String departamento, String cargo) {
+                       String matricula, LocalDate dataAdmissao, Double baseSalario, String status, String departamento, String cargo, long regraSalarialId) {
         super(nome, cpf, login, senha);
         this.matricula = matricula;
         this.dataAdmissao = dataAdmissao;
@@ -28,7 +28,7 @@ public class Funcionario extends Usuario {
         this.status = status;
         this.departamento = departamento;
         this.cargo = cargo;
-        // O salvamento no arquivo foi REMOVIDO daqui.
+        this.regraSalarialId = regraSalarialId;
     }
 
     // Construtor simplificado
@@ -41,6 +41,7 @@ public class Funcionario extends Usuario {
         this.status = status;
         this.departamento = "N/A";
         this.cargo = "N/A";
+        this.regraSalarialId = 1;
     }
 
     // Getters
@@ -65,6 +66,9 @@ public class Funcionario extends Usuario {
     public String getCargo() {
         return cargo;
     }
+    public long getRegraSalarialId() {
+        return regraSalarialId;
+    }
 
     // Setters
     public void setStatus(String status) {
@@ -78,6 +82,7 @@ public class Funcionario extends Usuario {
     public void setBaseSalario(Double baseSalario) { this.baseSalario = baseSalario; }
     public void setDepartamento(String departamento) { this.departamento = departamento; }
     public void setCargo(String cargo) { this.cargo = cargo; }
+    public void setRegraSalarialId(long regraSalarialId) {this.regraSalarialId = regraSalarialId;}
 
 
     public double calcularSalario() {
