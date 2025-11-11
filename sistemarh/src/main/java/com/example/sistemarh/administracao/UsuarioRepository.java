@@ -16,7 +16,7 @@ import java.util.stream.Collectors;
 @Repository
 public class UsuarioRepository {
 
-    private static final String ARQUIVO_USUARIOS = "usuarios.txt";
+    private static final String ARQUIVO_USUARIOS = "sistema-de-gestao-rh/usuarios.txt";
     private static final String SEPARADOR = ";";
 
     public UsuarioRepository() {
