@@ -20,26 +20,24 @@
 
         <div class="card mb-4">
             <div class="card-body">
-                <form class="row g-3">
+                <form class="row g-3" th:action="@{/Administração/Gestão}" method="get">
                     <div class="col-md-3">
-                        <input type="text" class="form-control" placeholder="Nome">
+                        <input type="text" class="form-control" placeholder="Nome" name="nome">
                     </div>
                     <div class="col-md-3">
-                        <input type="text" class="form-control" placeholder="CPF/CNPJ">
+                        <input type="text" class="form-control" placeholder="CPF/CNPJ" name="cpf">
                     </div>
                     <div class="col-md-3">
-                        <select class="form-select">
-                            <option selected>Status</option>
-                            <option value="ativo">Ativo</option>
-                            <option value="inativo">Inativo</option>
+                        <select class="form-select" name="status">
+                            <option value="">Status (Todos)</option> <option value="ATIVO">Ativo</option>
+                            <option value="INATIVO">Inativo</option>
                         </select>
                     </div>
                     <div class="col-md-3">
-                        <select class="form-select">
-                            <option selected>Departamento</option>
-                            <option value="administracao">Administração</option>
-                            <option value="rh">RH</option>
-                            <option value="ti">TI</option>
+                        <select class="form-select" name="departamento">
+                            <option value="">Departamento (Todos)</option> <option value="Administração">Administração</option>
+                            <option value="RH">Recursos Humanos</option>
+                            <option value="TI">Tecnologia da Informação</option>
                         </select>
                     </div>
                     <div class="col-12">
