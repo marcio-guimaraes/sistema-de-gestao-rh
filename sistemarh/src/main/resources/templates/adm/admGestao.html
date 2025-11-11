@@ -83,12 +83,12 @@
                         </td>
 
                         <td>
-                            <a th:href="@{/Administração/Gestão/Editar/{login}(login=${usuario.login})}"
+                            <a th:href="@{/Administração/Gestão/Editar/{cpf}(cpf=${usuario.cpf})}"
                                class="btn btn-warning btn-edit btn-sm">Editar</a>
 
-                            <a th:href="@{/Administração/Gestão/Excluir/{login}(login=${usuario.login})}"
+                            <a th:href="@{/Administração/Gestão/Excluir/{cpf}(cpf=${usuario.cpf})}"
                                class="btn btn-danger btn-delete btn-sm"
-                               th:if="${usuario.login != 'admin'}"
+                               th:if="${usuario.cpf != 'admin'}"
                                onclick="return confirm('Tem certeza que deseja excluir este usuário?');">Excluir</a>
                         </td>
                     </tr>

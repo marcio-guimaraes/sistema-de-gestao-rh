@@ -1,21 +1,28 @@
-package com.example.sistemarh.administracao;
+package com.example.sistemarh.administracao; // Ou onde você guarda seus DTOs
 
+import java.time.LocalDate;
+
+// Este DTO agora tem todos os campos que o seu Repository precisa
 public class UsuarioDTO {
+
+    // Campos do Usuário
     private String nome;
     private String cpf;
     private String login;
     private String senha;
-    private String perfil;
+
+    // Campos do Funcionario (do seu Repository)
+    private String matricula;
+    private LocalDate dataAdmissao;
+    private Double baseSalario;
+    private String status;
     private String departamento;
+    private String perfil; // Mapeia para "cargoOuPerfil"
 
-    // Getters e Setters
-    public String getNome() {
-        return nome;
-    }
+    // Gere Getters e Setters para TODOS os campos abaixo
+    // (O Spring precisa deles para ler e escrever os dados)
 
-    public void setNome(String nome) {
-        this.nome = nome;
-    }
+    // ... getters e setters ...
 
     public String getCpf() {
         return cpf;
@@ -23,6 +30,14 @@ public class UsuarioDTO {
 
     public void setCpf(String cpf) {
         this.cpf = cpf;
+    }
+
+    public String getNome() {
+        return nome;
+    }
+
+    public void setNome(String nome) {
+        this.nome = nome;
     }
 
     public String getLogin() {
@@ -41,12 +56,36 @@ public class UsuarioDTO {
         this.senha = senha;
     }
 
-    public String getPerfil() {
-        return perfil;
+    public String getMatricula() {
+        return matricula;
     }
 
-    public void setPerfil(String perfil) {
-        this.perfil = perfil;
+    public void setMatricula(String matricula) {
+        this.matricula = matricula;
+    }
+
+    public LocalDate getDataAdmissao() {
+        return dataAdmissao;
+    }
+
+    public void setDataAdmissao(LocalDate dataAdmissao) {
+        this.dataAdmissao = dataAdmissao;
+    }
+
+    public Double getBaseSalario() {
+        return baseSalario;
+    }
+
+    public void setBaseSalario(Double baseSalario) {
+        this.baseSalario = baseSalario;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
     }
 
     public String getDepartamento() {
@@ -56,4 +95,14 @@ public class UsuarioDTO {
     public void setDepartamento(String departamento) {
         this.departamento = departamento;
     }
+
+    public String getPerfil() {
+        return perfil;
+    }
+
+    public void setPerfil(String perfil) {
+        this.perfil = perfil;
+    }
+
+    // ... etc ...
 }
