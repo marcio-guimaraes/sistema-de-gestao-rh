@@ -10,6 +10,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import java.time.LocalDate;
+import java.time.Month;
+import java.time.format.DateTimeFormatter;
+import java.time.format.TextStyle;
+import java.time.temporal.TemporalAdjusters;
+import java.util.Locale;
 
 import java.util.List;
 import java.util.Optional;
@@ -157,9 +163,27 @@ public class FinanceiroController {
     }
 
     @GetMapping("/contracheques")
-    public String contracheques(@RequestParam(required = false) String cpf, Model model) {
+    public String contracheques(@RequestParam(required = false) String cpf,
+                                @RequestParam(required = false) Integer mes,
+                                @RequestParam(required = false) Integer ano,
+                                Model model) {
+
         List<Funcionario> funcionarios = funcionarioService.listarAtivos();
         model.addAttribute("funcionarios", funcionarios);
+
+        LocalDate hoje = LocalDate.now();
+        int mesSelecionado = (mes != null) ? mes : hoje.getMonthValue();
+        int anoSelecionado = (ano != null) ? ano : hoje.getYear();
+
+        LocalDate primeiroDia = LocalDate.of(anoSelecionado, mesSelecionado, 1);
+        LocalDate ultimoDia = primeiroDia.with(TemporalAdjusters.lastDayOfMonth());
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+
+        String periodoReferencia = primeiroDia.format(formatter) + " a " + ultimoDia.format(formatter);
+
+        model.addAttribute("mesSelecionado", mesSelecionado);
+        model.addAttribute("anoSelecionado", anoSelecionado);
+        model.addAttribute("periodoReferencia", periodoReferencia);
 
         Funcionario fSelecionado = null;
 
