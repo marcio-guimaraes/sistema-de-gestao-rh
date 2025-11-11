@@ -144,8 +144,11 @@ public class RecrutamentoController {
         //         .collect(Collectors.toList());
         // model.addAttribute("candidaturasEmAnalise", candidaturas);
 
-        // Linha Original (Mantida por enquanto, mas se você pular o Passo 6, esta lista ficará vazia)
-        model.addAttribute("candidaturasEmAnalise", candidaturaService.listarComFiltros(null, "Em Análise"));
+        // ================== LINHA CORRIGIDA ==================
+        // Passa null para os novos parâmetros (formacao, experiencia) que não são usados aqui
+        model.addAttribute("candidaturasEmAnalise", candidaturaService.listarComFiltros(null, "Em Análise", null, null));
+        // ================== FIM DA CORREÇÃO ==================
+
         return "recrutamento/avaliar-candidatos";
     }
 

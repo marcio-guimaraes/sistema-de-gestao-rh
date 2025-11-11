@@ -88,13 +88,32 @@ public class CandidaturaService {
         return candidaturas;
     }
 
-    public List<Candidatura> listarComFiltros(Long vagaId, String status) {
-        List<Candidatura> candidaturas = listarTodas();
+    // ================== MÉTODO ATUALIZADO ==================
+    public List<Candidatura> listarComFiltros(Long vagaId, String status, String formacao, String experiencia) { // ATUALIZADO
+        List<Candidatura> candidaturas = listarTodas(); // Este método já chama o buscarEPreencher
+
         return candidaturas.stream()
                 .filter(c -> vagaId == null || c.getIdVagaDoArquivo() == vagaId)
                 .filter(c -> status == null || status.isEmpty() || c.getStatus().equalsIgnoreCase(status))
+
+                // --- NOVOS FILTROS ---
+                // Filtro de Formação
+                .filter(c -> formacao == null || formacao.isEmpty() ||
+                        (c.getCandidato() != null &&
+                                c.getCandidato().getFormacao() != null &&
+                                c.getCandidato().getFormacao().toLowerCase().contains(formacao.toLowerCase())))
+
+                // Filtro de Experiência
+                .filter(c -> experiencia == null || experiencia.isEmpty() ||
+                        (c.getCandidato() != null &&
+                                c.getCandidato().getExperiencia() != null &&
+                                c.getCandidato().getExperiencia().toLowerCase().contains(experiencia.toLowerCase())))
+                // --- FIM DOS NOVOS FILTROS ---
+
                 .collect(Collectors.toList());
     }
+    // ================== FIM DA ATUALIZAÇÃO ==================
+
 
     public Optional<Candidatura> buscarPorId(long id) {
         Optional<Candidatura> candidaturaOpt = candidaturaRepository.buscarPorId(id);

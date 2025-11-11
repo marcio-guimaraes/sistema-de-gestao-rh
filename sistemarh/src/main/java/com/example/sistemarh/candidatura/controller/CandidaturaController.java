@@ -113,14 +113,28 @@ public class CandidaturaController {
         return "redirect:/cadastro/status";
     }
 
+    // ================== MÉTODO ATUALIZADO ==================
     @GetMapping("/status")
     public String statusCandidatura(@RequestParam(required = false) Long vagaId,
                                     @RequestParam(required = false) String status,
+                                    @RequestParam(required = false) String formacao,    // NOVO
+                                    @RequestParam(required = false) String experiencia, // NOVO
                                     Model model) {
+
         model.addAttribute("vagas", vagaService.listarTodasVagas());
-        model.addAttribute("candidaturas", candidaturaService.listarComFiltros(vagaId, status));
+
+        // Passa os novos filtros para o service
+        model.addAttribute("candidaturas", candidaturaService.listarComFiltros(vagaId, status, formacao, experiencia)); // ATUALIZADO
+
+        // Adiciona os valores dos filtros ao model para o HTML
+        model.addAttribute("vagaFiltro", vagaId);
+        model.addAttribute("statusFiltro", status);
+        model.addAttribute("formacaoFiltro", formacao);
+        model.addAttribute("experienciaFiltro", experiencia);
+
         return "cadastro/statusCandidatura";
     }
+    // ================== FIM DA ATUALIZAÇÃO ==================
 
     @GetMapping("/candidatura/excluir/{id}")
     public String excluirCandidatura(@PathVariable("id") long id, Model model) {
