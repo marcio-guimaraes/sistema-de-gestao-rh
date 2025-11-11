@@ -21,16 +21,18 @@ public class ContratacaoService {
     @Autowired
     private CandidaturaService candidaturaService;
 
-    // ADICIONADO (necessário para o buscarEPreencher)
     @Autowired
     private VagaService vagaService;
 
-    // NOVO MÉTODO HELPER ADICIONADO
+    // --- DEPENDÊNCIA ADICIONADA ---
+    @Autowired
+    private EntrevistaService entrevistaService;
+    // --- FIM DA ADIÇÃO ---
+
     public void buscarEPreencher(Contratacao contratacao) {
         if (contratacao == null) {
             return;
         }
-        // Usa o serviço de candidatura para preencher os dados
         candidaturaService.buscarEPreencher(contratacao);
     }
 
@@ -43,6 +45,17 @@ public class ContratacaoService {
         }
 
         candidaturaService.buscarEPreencher(candidatura);
+
+        // --- VALIDAÇÃO DA REGRA DE NEGÓCIO C  ---
+        boolean teveEntrevista = entrevistaService.existeEntrevistaParaCandidatura(
+                candidatura.getCpfCandidatoDoArquivo(),
+                candidatura.getIdVagaDoArquivo()
+        );
+
+        if (!teveEntrevista) {
+            throw new RuntimeException("Não é possível solicitar contratação: Nenhuma entrevista foi registrada para esta candidatura.");
+        }
+        // --- FIM DA VALIDAÇÃO ---
 
         Contratacao contratacao = new Contratacao.Builder(candidatura.getVaga(), candidatura.getCandidato())
                 .status("Pendente de aprovação do Gestor")
@@ -86,7 +99,6 @@ public class ContratacaoService {
         return contratacaoRepository.salvar(c);
     }
 
-    // MÉTODO ADICIONADO QUE ESTAVA FALTANDO
     public Contratacao salvar(Contratacao contratacao) {
         return contratacaoRepository.salvar(contratacao);
     }
