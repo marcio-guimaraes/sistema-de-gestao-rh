@@ -135,6 +135,16 @@ public class RecrutamentoController {
 
     @GetMapping("/avaliar-candidatos")
     public String avaliarCandidatos(Model model) {
+        // MODIFICAÇÃO 1 (Opcional): Mostrar "Pendentes" E "Em Análise"
+        // Se você quiser que os candidatos "Pendentes" apareçam direto aqui (pulando o agendamento)
+        // Descomente a linha abaixo e comente a original.
+
+        // List<Candidatura> candidaturas = candidaturaService.listarTodas().stream()
+        //         .filter(c -> "Em Análise".equalsIgnoreCase(c.getStatus()) || "Pendente".equalsIgnoreCase(c.getStatus()))
+        //         .collect(Collectors.toList());
+        // model.addAttribute("candidaturasEmAnalise", candidaturas);
+
+        // Linha Original (Mantida por enquanto, mas se você pular o Passo 6, esta lista ficará vazia)
         model.addAttribute("candidaturasEmAnalise", candidaturaService.listarComFiltros(null, "Em Análise"));
         return "recrutamento/avaliar-candidatos";
     }
@@ -150,7 +160,17 @@ public class RecrutamentoController {
             Candidatura c = candidaturaService.buscarPorId(candidaturaId)
                     .orElseThrow(() -> new RuntimeException("Candidatura não encontrada."));
 
-            entrevistaService.salvarResultadoEntrevista(c.getCpfCandidatoDoArquivo(), c.getIdVagaDoArquivo(), nota, feedback);
+            // --- INÍCIO DA MODIFICAÇÃO (PASSO 7) ---
+            // Só tentamos salvar o feedback se uma entrevista REALMENTE existir.
+            // Se o Passo 6 foi pulado, isso evita o erro.
+            try {
+                entrevistaService.salvarResultadoEntrevista(c.getCpfCandidatoDoArquivo(), c.getIdVagaDoArquivo(), nota, feedback);
+            } catch (RuntimeException e) {
+                // Ignora o erro "Nenhuma entrevista agendada..."
+                System.err.println("Aviso: " + e.getMessage() + ". O status será atualizado, mas o feedback não foi salvo.");
+            }
+            // --- FIM DA MODIFICAÇÃO ---
+
             candidaturaService.atualizarStatus(candidaturaId, status);
 
             redirectAttributes.addFlashAttribute("success", "Candidatura " + status.toLowerCase() + " com sucesso!");

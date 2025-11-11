@@ -46,7 +46,10 @@ public class ContratacaoService {
 
         candidaturaService.buscarEPreencher(candidatura);
 
-        // --- VALIDAÇÃO DA REGRA DE NEGÓCIO C  ---
+        // --- INÍCIO DA MODIFICAÇÃO (PASSO 8) ---
+        // --- VALIDAÇÃO DA REGRA DE NEGÓCIO C (Comentada para remover a obrigatoriedade) ---
+
+        /*
         boolean teveEntrevista = entrevistaService.existeEntrevistaParaCandidatura(
                 candidatura.getCpfCandidatoDoArquivo(),
                 candidatura.getIdVagaDoArquivo()
@@ -55,7 +58,8 @@ public class ContratacaoService {
         if (!teveEntrevista) {
             throw new RuntimeException("Não é possível solicitar contratação: Nenhuma entrevista foi registrada para esta candidatura.");
         }
-        // --- FIM DA VALIDAÇÃO ---
+        */
+        // --- FIM DA MODIFICAÇÃO ---
 
         Contratacao contratacao = new Contratacao.Builder(candidatura.getVaga(), candidatura.getCandidato())
                 .status("Pendente de aprovação do Gestor")
