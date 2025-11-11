@@ -1,2 +1,4 @@
 1;12345678910;2;Efetivada;2025-11-10;2025-11-10;2025-11-10;CLT
 2;12345678910;2;Efetivada;2025-11-10;2025-11-10;2025-11-10;CLT
+5;12345678910;2;Pendente de aprovação do Gestor;2025-11-11;;;CLT
+6;12345678910;2;Pendente de aprovação do Gestor;2025-11-11;;;CLT
