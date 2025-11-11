@@ -31,9 +31,18 @@ public class FinanceiroController {
     @Autowired
     private RegraSalarialRepository regraSalarialRepository;
 
-    private RegraSalario getRegraPadrao() {
+    private RegraSalario getRegraPadraoFallback() {
         return regraSalarialRepository.buscarPorId(1)
-                .orElse(new RegraSalario(1, "CLT Padrão", 0.0, 6.0, 500.0, 14.0, 27.5)); // Fallback
+                .orElse(new RegraSalario(1, "Padrão", 0.0, 0.0, 0.0, 0.0, 0.0));
+    }
+
+    private void carregarRegraSalarialDoFuncionario(Funcionario f) {
+        if (f == null) return;
+
+        RegraSalario regra = regraSalarialRepository.buscarPorId(f.getRegraSalarialId())
+                .orElse(getRegraPadraoFallback()); // Usa a Regra 1 como fallback
+
+        f.setRegraSalario(regra);
     }
 
     @GetMapping
@@ -60,7 +69,7 @@ public class FinanceiroController {
                                      @RequestParam String cargo,
                                      @RequestParam String departamento,
                                      @RequestParam double salario,
-                                     @RequestParam long regraSalarialId) { // RECEBE O ID DA REGRA
+                                     @RequestParam long regraSalarialId) {
         try {
             funcionarioService.admitirFuncionario(contratacaoId, salario, cargo, departamento, regraSalarialId);
         } catch (RuntimeException e) {
@@ -87,7 +96,7 @@ public class FinanceiroController {
     public String configurarRegras(Model model) {
         model.addAttribute("regras", regraSalarialRepository.buscarTodas());
         model.addAttribute("novaRegra", new RegraSalario());
-        model.addAttribute("editMode", false); // ADICIONADO: Define que não estamos em modo de edição
+        model.addAttribute("editMode", false);
         return "financeiro/configurar-regras";
     }
 
@@ -138,10 +147,9 @@ public class FinanceiroController {
     @GetMapping("/relatorio")
     public String relatorioFinanceiro(Model model) {
         List<Funcionario> funcionarios = funcionarioService.listarAtivos();
-        RegraSalario regraPadrao = getRegraPadrao();
 
         for(Funcionario f : funcionarios) {
-            f.setRegraSalario(regraPadrao);
+            carregarRegraSalarialDoFuncionario(f);
         }
 
         model.addAttribute("funcionarios", funcionarios);
@@ -162,7 +170,7 @@ public class FinanceiroController {
         }
 
         if (fSelecionado != null) {
-            fSelecionado.setRegraSalario(getRegraPadrao());
+            carregarRegraSalarialDoFuncionario(fSelecionado);
             model.addAttribute("funcionario", fSelecionado);
 
             double salarioBruto = fSelecionado.getBaseSalario() + fSelecionado.getRegraSalario().getValorValeAlimentacao() + fSelecionado.getRegraSalario().getValorValeTransporte();

@@ -4,6 +4,7 @@ import com.example.sistemarh.financeiro.model.FolhaPagamento;
 import com.example.sistemarh.financeiro.model.Funcionario;
 import com.example.sistemarh.financeiro.model.RegraSalario;
 import com.example.sistemarh.financeiro.repository.FolhaPagamentoRepository;
+import com.example.sistemarh.financeiro.repository.RegraSalarialRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -19,19 +20,28 @@ public class FolhaPagamentoService {
     @Autowired
     private FolhaPagamentoRepository folhaPagamentoRepository;
 
+    @Autowired
+    private RegraSalarialRepository regraSalarialRepository;
+
+    private RegraSalario getRegraPadraoFallback() {
+        return regraSalarialRepository.buscarPorId(1)
+                .orElse(new RegraSalario(1, "CLT Padrão", 0.0, 6.0, 500.0, 14.0, 27.5));
+    }
+
     public FolhaPagamento gerarFolhaPagamento(int mes, int ano) {
 
         List<Funcionario> funcionariosAtivos = funcionarioService.listarAtivos();
-
-        // Regra hardcoded para simplificar
-        RegraSalario regraPadrao = new RegraSalario(1, "CLT", 0.0, 6.0, 500.0, 14.0, 27.5);
 
         double totalBruto = 0.0;
         double totalDescontos = 0.0;
         double totalLiquido = 0.0;
 
         for (Funcionario f : funcionariosAtivos) {
-            f.setRegraSalario(regraPadrao);
+
+            RegraSalario regra = regraSalarialRepository.buscarPorId(f.getRegraSalarialId())
+                    .orElse(getRegraPadraoFallback());
+
+            f.setRegraSalario(regra);
 
             double salarioLiquido = f.calcularSalario();
             double salarioBruto = f.getBaseSalario() + f.getRegraSalario().getValorValeAlimentacao() + f.getRegraSalario().getValorValeTransporte();
