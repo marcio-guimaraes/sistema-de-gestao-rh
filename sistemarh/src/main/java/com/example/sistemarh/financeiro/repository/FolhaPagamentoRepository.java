@@ -1,5 +1,6 @@
-package com.example.sistemarh.financeiro;
+package com.example.sistemarh.financeiro.repository;
 
+import com.example.sistemarh.financeiro.model.FolhaPagamento;
 import org.springframework.stereotype.Repository;
 
 import java.io.BufferedWriter;

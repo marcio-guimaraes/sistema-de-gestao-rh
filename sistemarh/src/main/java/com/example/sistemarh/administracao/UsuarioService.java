@@ -1,7 +1,7 @@
 package com.example.sistemarh.administracao;
 
 import com.example.sistemarh.candidatura.Candidato;
-import com.example.sistemarh.financeiro.Funcionario;
+import com.example.sistemarh.financeiro.model.Funcionario;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -63,7 +63,7 @@ public class UsuarioService {
                 novoUsuario = new Funcionario(
                         usuarioDTO.getNome(), usuarioDTO.getCpf(), usuarioDTO.getLogin(),
                         usuarioDTO.getSenha(), matricula, dataAdmissao, 0.0, "Ativo",
-                        usuarioDTO.getDepartamento(), perfil // Salva "RECRUTADOR" ou "FUNCIONÁRIO" como cargo
+                        usuarioDTO.getDepartamento(), perfil, 1 // Salva "RECRUTADOR" ou "FUNCIONÁRIO" como cargo
                 );
                 break;
 
@@ -151,5 +151,9 @@ public class UsuarioService {
         }
 
         usuarioRepository.salvar(usuario);
+    }
+
+    public Usuario salvar(Usuario usuario) {
+        return usuarioRepository.salvar(usuario);
     }
 }

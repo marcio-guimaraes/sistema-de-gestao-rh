@@ -1,4 +1,4 @@
-package com.example.sistemarh.financeiro;
+package com.example.sistemarh.financeiro.model;
 
 public class RegraSalario {
     private long id;
@@ -9,6 +9,7 @@ public class RegraSalario {
     private double percentualINSS;
     private double percentualRRF;
 
+    public RegraSalario() {}
     public RegraSalario(long id, String nomeRegra, double valorValeTransporte, double percentualDescVT,
                         double valorValeAlimentacao, double percentualINSS, double percentualRRF) {
         this.id = id;
@@ -50,6 +51,10 @@ public class RegraSalario {
     }
 
     // Sets
+    public void setId(long id) {
+        this.id = id;
+    }
+
     public void setNomeRegra(String nomeRegra) {
         this.nomeRegra = nomeRegra;
     }

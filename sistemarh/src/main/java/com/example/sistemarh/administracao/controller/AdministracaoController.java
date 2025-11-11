@@ -1,7 +1,7 @@
 package com.example.sistemarh.administracao.controller;
 
 import com.example.sistemarh.administracao.*;
-import com.example.sistemarh.financeiro.Funcionario; // Importar
+import com.example.sistemarh.financeiro.model.Funcionario; // Importar
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;

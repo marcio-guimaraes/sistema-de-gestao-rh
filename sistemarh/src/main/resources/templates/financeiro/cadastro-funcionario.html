@@ -1,7 +1,7 @@
 <!doctype html>
 <html lang="pt-br" xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title>Cadastro de Funcionário</title>
+    <title>Gestão de Funcionários - MeuRH</title>
     <link rel="stylesheet" th:href="@{/css/layout.css}">
     <link rel="stylesheet" th:href="@{/css/style.css}">
     <link rel="stylesheet" th:href="@{/css/financeiro.css}">
@@ -10,7 +10,8 @@
 <body>
 <header th:replace="~{layout :: header}"></header>
 <main class="container py-5">
-    <div class="card">
+
+    <div class="card mb-5">
         <div class="card-header card-financeiro"><h4 class="mb-0">Admissão de Novo Funcionário</h4></div>
         <div class="card-body">
 
@@ -43,17 +44,88 @@
                         <label for="salario" class="form-label">Salário Base (R$)</label>
                         <input type="number" step="0.01" class="form-control" id="salario" name="salario" required>
                     </div>
+
                     <div class="col-md-6 mb-3">
-                        <label for="regime" class="form-label">Regime</label>
-                        <input type="text" class="form-control" id="regime" disabled value="CLT">
+                        <label for="regraSalarialId" class="form-label">Regra Salarial</label>
+                        <select class="form-select" id="regraSalarialId" name="regraSalarialId" required>
+                            <option value="">Selecione uma regra...</option>
+                            <option th:each="r : ${regrasSalariais}"
+                                    th:value="${r.id}"
+                                    th:text="${r.nomeRegra}">
+                            </option>
+                        </select>
                     </div>
                 </div>
                 <hr>
                 <button type="submit" class="btn btn-info text-white">Efetivar Contratação</button>
-                <a th:href="@{/financeiro}" class="btn btn-secondary">Voltar</a>
             </form>
         </div>
     </div>
+
+    <div class="card">
+        <div class="card-header"><h4 class="mb-0">Atualização Cadastral de Funcionários Ativos</h4></div>
+        <div class="card-body">
+
+            <div th:if="${param.errorUpdate}" class="alert alert-danger" role="alert">
+                Erro ao atualizar: <span th:text="${param.errorUpdate}"></span>
+            </div>
+
+            <div th:if="${#lists.isEmpty(funcionarios)}" class="alert alert-secondary">
+                Nenhum funcionário ativo cadastrado para atualização.
+            </div>
+
+            <div class="table-responsive" th:if="${!#lists.isEmpty(funcionarios)}">
+                <table class="table table-striped align-middle">
+                    <thead>
+                    <tr>
+                        <th>Funcionário (CPF)</th>
+                        <th>Cargo</th>
+                        <th>Departamento</th>
+                        <th>Salário Base (R$)</th>
+                        <th>Regra Salarial</th>
+                        <th>Ação</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="f : ${funcionarios}">
+                        <form th:action="@{/financeiro/cadastrar-funcionario/atualizar}" method="post">
+                            <input type="hidden" name="cpf" th:value="${f.cpf}" />
+
+                            <td th:text="${f.nome + ' (' + f.cpf + ')'}"></td>
+
+                            <td>
+                                <input type="text" name="cargo" th:value="${f.cargo}" class="form-control form-control-sm" required>
+                            </td>
+
+                            <td>
+                                <input type="text" name="departamento" th:value="${f.departamento}" class="form-control form-control-sm" required>
+                            </td>
+
+                            <td>
+                                <input type="number" step="0.01" name="salario" th:value="${f.baseSalario}" class="form-control form-control-sm" required>
+                            </td>
+
+                            <td>
+                                <select name="regraSalarialId" class="form-select form-select-sm" required>
+                                    <option th:each="r : ${regrasSalariais}"
+                                            th:value="${r.id}"
+                                            th:text="${r.nomeRegra}"
+                                            th:selected="${r.id == f.regraSalarialId}">
+                                    </option>
+                                </select>
+                            </td>
+
+                            <td>
+                                <button type="submit" class="btn btn-warning btn-sm">Atualizar</button>
+                            </td>
+                        </form>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
 </main>
 <footer th:replace="~{layout :: footer}"></footer>
 </body>

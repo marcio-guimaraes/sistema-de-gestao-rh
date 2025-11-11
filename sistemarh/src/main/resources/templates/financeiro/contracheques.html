@@ -15,7 +15,7 @@
         <div class="card-body">
             <form th:action="@{/financeiro/contracheques}" method="get">
                 <div class="row">
-                    <div class="col-md-6 mb-3">
+                    <div class="col-md-5 mb-3">
                         <label class="form-label">Selecione o Funcionário</label>
                         <select class="form-select" name="cpf" onchange="this.form.submit()">
                             <option value="">Selecione...</option>
@@ -25,9 +25,23 @@
                                     th:selected="${funcionario != null && f.cpf == funcionario.cpf}"></option>
                         </select>
                     </div>
+
                     <div class="col-md-4 mb-3">
-                        <label class="form-label">Mês/Ano</label>
-                        <input type="text" class="form-control" value="Novembro/2025" disabled>
+                        <label for="mes" class="form-label">Mês</label>
+                        <select class="form-select" id="mes" name="mes" onchange="this.form.submit()">
+                            <option th:each="m : ${#numbers.sequence(1, 12)}"
+                                    th:value="${m}"
+                                    th:text="${T(java.time.Month).of(m).getDisplayName(T(java.time.format.TextStyle).FULL, new java.util.Locale('pt', 'BR'))}"
+                                    th:selected="${m == mesSelecionado}">
+                            </option>
+                        </select>
+                    </div>
+
+                    <div class="col-md-3 mb-3">
+                        <label for="ano" class="form-label">Ano</label>
+                        <input type="number" class="form-control" id="ano" name="ano"
+                               th:value="${anoSelecionado}"
+                               onchange="this.form.submit()">
                     </div>
                 </div>
             </form>
@@ -35,7 +49,9 @@
 
             <div th:if="${funcionario != null}">
                 <h4 class="text-center" th:text="${'Contracheque - ' + funcionario.nome}"></h4>
-                <p class="text-center text-muted">Período: 01/11/2025 a 30/11/2025</p>
+
+                <p class="text-center text-muted" th:text="${'Período: ' + periodoReferencia}"></p>
+
                 <table class="table">
                     <thead><tr><th>Descrição</th><th>Vencimentos</th><th>Descontos</th></tr></thead>
                     <tbody>
@@ -82,7 +98,17 @@
                     </tr>
                     </tfoot>
                 </table>
+
+                <div class="mt-4 text-center">
+                    <a th:href="@{/financeiro/contracheques/txt(cpf=${funcionario.cpf}, mes=${mesSelecionado}, ano=${anoSelecionado})}"
+                       class="btn btn-info text-white"
+                       target="_blank">
+                        Exportar TXT Formatado
+                    </a>
+                </div>
+
             </div>
+
             <div th:if="${funcionario == null}" class="text-center p-3">
                 <p>Nenhum funcionário selecionado.</p>
             </div>

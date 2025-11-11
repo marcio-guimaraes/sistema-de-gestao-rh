@@ -1,5 +1,6 @@
-package com.example.sistemarh.financeiro;
+package com.example.sistemarh.financeiro.repository;
 
+import com.example.sistemarh.financeiro.model.Funcionario;
 import org.springframework.stereotype.Repository;
 
 import java.io.BufferedWriter;
@@ -21,8 +22,7 @@ public class FuncionarioRepository {
 
     private Funcionario linhaParaFuncionario(String linha) {
         String[] dados = linha.split(SEPARADOR);
-        // Um funcionário sempre terá 10 campos
-        if (dados.length < 10) return null;
+        if (dados.length < 11) return null;
 
         try {
             String nome = dados[0];
@@ -34,11 +34,14 @@ public class FuncionarioRepository {
             Double baseSalario = Double.parseDouble(dados[6]);
             String status = dados[7];
             String departamento = dados[8];
-            String cargo = dados[9]; // Perfil (ADMIN, GESTOR) ou Cargo (RECRUTADOR, FUNCIONARIO)
+            String cargo = dados[9];
 
-            // Instancia a classe correta com base no cargo/perfil
-            // (Usamos o construtor de Funcionario, mas a lógica de usuário diferencia)
-            return new Funcionario(nome, cpf, login, senha, matricula, dataAdmissao, baseSalario, status, departamento, cargo);
+            long regraId = 1; // Padrão
+            if (dados.length > 10 && !dados[10].isEmpty()) {
+                regraId = Long.parseLong(dados[10]);
+            }
+
+            return new Funcionario(nome, cpf, login, senha, matricula, dataAdmissao, baseSalario, status, departamento, cargo, regraId); // ATUALIZADO
 
         } catch (Exception e) {
             System.err.println("Erro ao parsear linha do funcionário: " + linha + " -> " + e.getMessage());
@@ -57,7 +60,8 @@ public class FuncionarioRepository {
                 f.getBaseSalario().toString(),
                 f.getStatus(),
                 f.getDepartamento(),
-                f.getCargo()
+                f.getCargo(),
+                String.valueOf(f.getRegraSalarialId())
         );
     }
 
@@ -95,9 +99,8 @@ public class FuncionarioRepository {
             return funcionarios;
         }
         try {
-            // Filtra apenas linhas que são de Funcionários (e não usuários simples)
             funcionarios = Files.lines(Paths.get(ARQUIVO_FUNCIONARIOS))
-                    .filter(linha -> linha.split(SEPARADOR).length >= 10)
+                    .filter(linha -> linha.split(SEPARADOR).length >= 11)
                     .map(this::linhaParaFuncionario)
                     .filter(f -> f != null)
                     .collect(Collectors.toList());

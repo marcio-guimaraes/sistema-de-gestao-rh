@@ -1,4 +1,4 @@
-package com.example.sistemarh.financeiro;
+package com.example.sistemarh.financeiro.model;
 
 import java.io.*;
 import java.time.LocalDate;
@@ -15,7 +15,8 @@ public class FolhaPagamento {
     private double valorTotalBruto;
     private double valorTotalDescontos;
     private double valorTotalLiquido;
-    private Funcionario funcionario; // Usado para folhas individuais (não implementado)
+    private List<Funcionario> funcionarios;
+    private String mesPorExtenso;
 
     private FolhaPagamento(Builder builder) {
         this.id = builder.id;
@@ -25,7 +26,8 @@ public class FolhaPagamento {
         this.valorTotalBruto = builder.valorTotalBruto;
         this.valorTotalDescontos = builder.valorTotalDescontos;
         this.valorTotalLiquido = builder.valorTotalLiquido;
-        this.funcionario = builder.funcionario;
+        this.funcionarios = builder.funcionarios;
+        this.mesPorExtenso = builder.mesPorExtenso;
     }
 
     // Getters
@@ -50,8 +52,11 @@ public class FolhaPagamento {
     public double getValorTotalLiquido() {
         return valorTotalLiquido;
     }
-    public Funcionario getFuncionario() {
-        return funcionario;
+    public List<Funcionario> getFuncionarios() {
+        return funcionarios;
+    }
+    public String getMesPorExtenso() {
+        return mesPorExtenso;
     }
 
 
@@ -60,7 +65,8 @@ public class FolhaPagamento {
         private int mesReferencia;
         private int anoReferencia;
         private LocalDate dataProcessamento;
-        private Funcionario funcionario; // Opcional
+        private List<Funcionario> funcionarios;
+        private String mesPorExtenso; // NOVO
 
         private double valorTotalBruto;
         private double valorTotalDescontos;
@@ -71,8 +77,12 @@ public class FolhaPagamento {
             this.mesReferencia = mesReferencia;
             this.anoReferencia = anoReferencia;
             this.dataProcessamento = dataProcessamento;
-            this.funcionario = funcionario;
+            this.funcionarios = null;
         }
+
+
+        public Builder funcionarios(List<Funcionario> funcionarios) { this.funcionarios = funcionarios; return this; }
+        public Builder mesPorExtenso(String mesPorExtenso) { this.mesPorExtenso = mesPorExtenso; return this; }
 
         public FolhaPagamento.Builder valorTotalBruto(double valorTotalBruto) { this.valorTotalBruto = valorTotalBruto; return this; }
         public FolhaPagamento.Builder valorTotalDescontos(double valorTotalDescontos) { this.valorTotalDescontos = valorTotalDescontos; return this; }

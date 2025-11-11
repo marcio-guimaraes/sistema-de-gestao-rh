@@ -64,8 +64,8 @@ public class VagaRepository {
             long id = Long.parseLong(dados[0]);
             String titulo = dados[1];
             String descricao = dados[2];
-            double salarioMin = Double.parseDouble(dados[3]);
-            double salarioMax = Double.parseDouble(dados[4]);
+            double salarioMin = dados[3].isEmpty() ? 0.0 : Double.parseDouble(dados[3]);
+            double salarioMax = dados[4].isEmpty() ? 0.0 : Double.parseDouble(dados[4]);
             String regime = dados[5];
             String status = dados[6];
             String departamento = dados[7];

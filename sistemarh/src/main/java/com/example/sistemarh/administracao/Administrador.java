@@ -1,6 +1,6 @@
 package com.example.sistemarh.administracao;
 
-import com.example.sistemarh.financeiro.Funcionario;
+import com.example.sistemarh.financeiro.model.Funcionario;
 
 import java.time.LocalDate;
 
