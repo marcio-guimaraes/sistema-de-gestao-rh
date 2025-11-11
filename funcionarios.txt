@@ -1,1 +1,1 @@
-Marcin;12345678910;12345678910;senhaPadrao123;FUNC100;2025-11-10;5000.0;Ativo;TI;Desenvolvedor Pleno;1
+Marcin;12345678910;12345678910;senhaPadrao123;FUNC100;2025-11-10;1500.0;Ativo;TI;Desenvolvedor Pleno;2

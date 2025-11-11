@@ -1,4 +1,4 @@
 Administrador;00000000000;admin;admin123;ADM001;2025-11-10;0.0;Ativo;N/A;ADMIN;1
 Gestor Silva;10282109814;gestor@gmail.com;senha12345;M2;2025-11-10;0.0;Ativo;N/A;GESTOR;1
 Recrutadora Ana;12345678911;ana.rh@outlook.com;senha12345;M3;2025-11-10;0.0;Ativo;RH;RECRUTADOR;1
-Marcin;12345678910;12345678910;senhaPadrao123;FUNC103;2025-11-10;1500.0;Ativo;Departamento;Cargo;1
+Marcin;12345678910;12345678910;senhaPadrao123;FUNC103;2025-11-10;1500.0;Ativo;TI;Desenvolvedor Pleno;2

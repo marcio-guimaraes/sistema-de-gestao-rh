@@ -50,6 +50,7 @@ public class FinanceiroController {
 
         model.addAttribute("contratacoesAprovadas", aprovados);
         model.addAttribute("regrasSalariais", regraSalarialRepository.buscarTodas());
+        model.addAttribute("funcionarios", funcionarioService.listarAtivos());
 
         return "financeiro/cadastro-funcionario";
     }
@@ -65,9 +66,22 @@ public class FinanceiroController {
         } catch (RuntimeException e) {
             return "redirect:/financeiro/cadastrar-funcionario?error=" + e.getMessage();
         }
-        return "redirect:/financeiro/relatorio";
+        return "redirect:/financeiro/cadastrar-funcionario";
     }
 
+    @PostMapping("/cadastrar-funcionario/atualizar")
+    public String atualizarFuncionario(@RequestParam String cpf,
+                                       @RequestParam String cargo,
+                                       @RequestParam String departamento,
+                                       @RequestParam double salario,
+                                       @RequestParam long regraSalarialId) {
+        try {
+            funcionarioService.atualizarFuncionario(cpf, cargo, departamento, salario, regraSalarialId);
+        } catch (RuntimeException e) {
+            return "redirect:/financeiro/cadastrar-funcionario?errorUpdate=" + e.getMessage();
+        }
+        return "redirect:/financeiro/cadastrar-funcionario";
+    }
 
     @GetMapping("/configurar-regras")
     public String configurarRegras(Model model) {

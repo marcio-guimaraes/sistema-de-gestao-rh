@@ -79,8 +79,7 @@ public class UsuarioRepository {
                 case "FUNCIONÁRIO":
                     return new Funcionario(nome, cpf, login, senha, matricula, dataAdmissao, baseSalario, status, departamento, cargoOuPerfil, regraId);
                 default:
-                    // Fallback para usuário simples se o perfil for desconhecido
-                    return new Usuario(nome, cpf, login, senha);
+                    return new Funcionario(nome, cpf, login, senha, matricula, dataAdmissao, baseSalario, status, departamento, cargoOuPerfil, regraId);
             }
         } catch (Exception e) {
             System.err.println("Erro ao parsear linha de usuário/funcionário: " + linha);
@@ -108,7 +107,7 @@ public class UsuarioRepository {
             } else if (f instanceof Gestor) {
                 perfil = "GESTOR";
             } else {
-                perfil = f.getCargo(); // "RECRUTADOR" ou "FUNCIONÁRIO"
+                perfil = f.getCargo();
             }
 
             return String.join(SEPARADOR,

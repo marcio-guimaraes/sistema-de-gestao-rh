@@ -91,4 +91,34 @@ public class FuncionarioService {
     public Optional<Funcionario> buscarPorCpf(String cpf) {
         return funcionarioRepository.buscarPorCpf(cpf);
     }
+
+    public Funcionario atualizarFuncionario(String cpf, String cargo, String departamento, double salarioBase, long regraSalarialId) {
+
+        Funcionario funcionario = funcionarioRepository.buscarPorCpf(cpf)
+                .orElseThrow(() -> new RuntimeException("Funcionário não encontrado no repositorio de funcionários."));
+
+        funcionario.setCargo(cargo);
+        funcionario.setDepartamento(departamento);
+        funcionario.setBaseSalario(salarioBase);
+        funcionario.setRegraSalarialId(regraSalarialId);
+
+        funcionarioRepository.salvar(funcionario);
+
+        Usuario usuario = usuarioService.buscarPorCpf(cpf)
+                .orElseThrow(() -> new RuntimeException("Funcionário não encontrado no repositorio de usuários."));
+
+        if (usuario instanceof Funcionario) {
+            Funcionario userFunc = (Funcionario) usuario;
+            userFunc.setCargo(cargo);
+            userFunc.setDepartamento(departamento);
+            userFunc.setBaseSalario(salarioBase);
+            userFunc.setRegraSalarialId(regraSalarialId);
+
+            usuarioService.salvar(userFunc);
+        } else {
+            throw new RuntimeException("O CPF " + cpf + " pertence a um usuário, mas não a um funcionário no arquivo de usuários.");
+        }
+
+        return funcionario;
+    }
 }
