@@ -98,7 +98,17 @@
                     </tr>
                     </tfoot>
                 </table>
+
+                <div class="mt-4 text-center">
+                    <a th:href="@{/financeiro/contracheques/txt(cpf=${funcionario.cpf}, mes=${mesSelecionado}, ano=${anoSelecionado})}"
+                       class="btn btn-info text-white"
+                       target="_blank">
+                        Exportar TXT Formatado
+                    </a>
+                </div>
+
             </div>
+
             <div th:if="${funcionario == null}" class="text-center p-3">
                 <p>Nenhum funcionário selecionado.</p>
             </div>

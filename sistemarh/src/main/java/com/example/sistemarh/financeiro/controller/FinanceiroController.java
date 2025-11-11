@@ -11,13 +11,13 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import java.time.LocalDate;
-import java.time.Month;
 import java.time.format.DateTimeFormatter;
 import java.time.format.TextStyle;
 import java.time.temporal.TemporalAdjusters;
-import java.util.Locale;
-
+import jakarta.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.util.List;
+import java.util.Locale;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -206,5 +206,85 @@ public class FinanceiroController {
         }
 
         return "financeiro/contracheques";
+    }
+
+    @GetMapping("/contracheques/txt")
+    public void exportarContrachequeTXT(@RequestParam String cpf,
+                                        @RequestParam Integer mes,
+                                        @RequestParam Integer ano,
+                                        HttpServletResponse response) {
+
+        try {
+            Funcionario fSelecionado = funcionarioService.buscarPorCpf(cpf)
+                    .orElseThrow(() -> new RuntimeException("Funcionário não encontrado"));
+
+            carregarRegraSalarialDoFuncionario(fSelecionado);
+
+            LocalDate primeiroDia = LocalDate.of(ano, mes, 1);
+            String nomeMes = primeiroDia.getMonth().getDisplayName(TextStyle.FULL, new Locale("pt", "BR"));
+            String periodo = nomeMes + "/" + ano;
+
+            response.setContentType("text/plain; charset=UTF-8"); // Garante UTF-8
+            String nomeArquivo = "contracheque_" + cpf + "_" + mes + "_" + ano + ".txt";
+            response.setHeader("Content-Disposition", "attachment; filename=\"" + nomeArquivo + "\"");
+
+            java.util.function.Function<Double, String> formatarMoeda = (valor) -> String.format(new Locale("pt", "BR"), "R$ %,.2f", valor);
+
+            try (java.io.PrintWriter writer = response.getWriter()) {
+
+                // --- Cabeçalho ---
+                writer.println("+-------------------------------------------------------------------+");
+                writer.println("|                      CONTRACHEQUE DE PAGAMENTO                    |");
+                writer.println("+-------------------------------------------------------------------+");
+                writer.printf("| FUNCIONÁRIO: %-52s |%n", fSelecionado.getNome());
+                writer.printf("| CPF: %-60s |%n", fSelecionado.getCpf());
+                writer.printf("| CARGO: %-58s |%n", fSelecionado.getCargo());
+                writer.printf("| DEPTO: %-58s |%n", fSelecionado.getDepartamento());
+                writer.printf("| PERÍODO: %-56s |%n", periodo);
+                writer.println("+--------+-------------------------+-------------+------------------+");
+                writer.println("| CÓDIGO | DESCRIÇÃO               | VENCIMENTOS | DESCONTOS        |");
+                writer.println("+--------+-------------------------+-------------+------------------+");
+
+                // --- Cálculos ---
+                double base = fSelecionado.getBaseSalario();
+                RegraSalario regra = fSelecionado.getRegraSalario();
+                double va = regra.getValorValeAlimentacao();
+                double vt = regra.getValorValeTransporte();
+
+                double descInss = base * regra.getPercentualINSS() / 100;
+                double descIrrf = base * regra.getPercentualRRF() / 100;
+                double descVt = vt * regra.getPercentualDescVT() / 100;
+
+                double totalVencimentos = base + va + vt;
+                double totalDescontos = descInss + descIrrf + descVt;
+                double liquido = fSelecionado.calcularSalario();
+
+                // --- Linhas de Itens ---
+                writer.printf("| 101    | %-23s | %11s | %-16s |%n", "SALÁRIO BASE", formatarMoeda.apply(base), "");
+                writer.printf("| 102    | %-23s | %11s | %-16s |%n", "VALE-ALIMENTAÇÃO", formatarMoeda.apply(va), "");
+                writer.printf("| 103    | %-23s | %11s | %-16s |%n", "VALE-TRANSPORTE (BASE)", formatarMoeda.apply(vt), "");
+
+                writer.printf("| 901    | %-23s | %11s | %16s |%n", "INSS (" + regra.getPercentualINSS() + "%)", "", formatarMoeda.apply(descInss));
+                writer.printf("| 902    | %-23s | %11s | %16s |%n", "IRRF (" + regra.getPercentualRRF() + "%)", "", formatarMoeda.apply(descIrrf));
+                writer.printf("| 903    | %-23s | %11s | %16s |%n", "DESC. VALE-TRANSPORTE", "", formatarMoeda.apply(descVt));
+
+                // --- Rodapé ---
+                writer.println("+--------+-------------------------+-------------+------------------+");
+                writer.printf("| TOTAIS:                          | %11s | %16s |%n", formatarMoeda.apply(totalVencimentos), formatarMoeda.apply(totalDescontos));
+                writer.println("+----------------------------------+-------------+------------------+");
+
+                String liquidoStr = formatarMoeda.apply(liquido);
+                writer.printf("| LÍQUIDO A RECEBER:               | %30s |%n", liquidoStr); // 11 + 1 + 16 + 2 = 30
+                writer.println("+----------------------------------+--------------------------------+");
+
+            }
+
+        } catch (Exception e) {
+            response.setContentType("text/plain");
+            try {
+                response.sendError(500, "Erro ao gerar contracheque: " + e.getMessage());
+            } catch (IOException ioException) {
+            }
+        }
     }
 }
