@@ -4,7 +4,6 @@ import com.example.sistemarh.administracao.Usuario;
 import com.example.sistemarh.administracao.UsuarioService;
 import com.example.sistemarh.candidatura.Candidatura;
 import com.example.sistemarh.candidatura.CandidaturaService;
-// IMPORT ADICIONADO
 import com.example.sistemarh.financeiro.repository.RegraSalarialRepository;
 import com.example.sistemarh.recrutamento.model.Vaga;
 import com.example.sistemarh.recrutamento.service.ContratacaoService;
@@ -163,16 +162,11 @@ public class RecrutamentoController {
             Candidatura c = candidaturaService.buscarPorId(candidaturaId)
                     .orElseThrow(() -> new RuntimeException("Candidatura não encontrada."));
 
-            // --- INÍCIO DA MODIFICAÇÃO (PASSO 7) ---
-            // Só tentamos salvar o feedback se uma entrevista REALMENTE existir.
-            // Se o Passo 6 foi pulado, isso evita o erro.
             try {
                 entrevistaService.salvarResultadoEntrevista(c.getCpfCandidatoDoArquivo(), c.getIdVagaDoArquivo(), nota, feedback);
             } catch (RuntimeException e) {
-                // Ignora o erro "Nenhuma entrevista agendada..."
                 System.err.println("Aviso: " + e.getMessage() + ". O status será atualizado, mas o feedback não foi salvo.");
             }
-            // --- FIM DA MODIFICAÇÃO ---
 
             candidaturaService.atualizarStatus(candidaturaId, status);
 
