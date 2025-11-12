@@ -18,7 +18,7 @@ import java.util.stream.Collectors;
 @Repository
 public class ContratacaoRepository {
 
-    private static final String NOME_ARQUIVO = "contratacoes.txt";
+    private static final String NOME_ARQUIVO = "arquivos/contratacoes.txt";
     private static final String SEPARADOR = ";";
     private AtomicLong contadorId = new AtomicLong(0);
 

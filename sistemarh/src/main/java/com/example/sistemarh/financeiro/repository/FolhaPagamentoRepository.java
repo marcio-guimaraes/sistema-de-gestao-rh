@@ -18,7 +18,7 @@ import java.util.stream.Collectors;
 @Repository
 public class FolhaPagamentoRepository {
 
-    private static final String ARQUIVO_FOLHAS = "folhas_pagamento.txt";
+    private static final String ARQUIVO_FOLHAS = "arquivos/folhas_pagamento.txt";
     private static final String SEPARADOR = ";";
     private AtomicLong contadorId = new AtomicLong(0);
 

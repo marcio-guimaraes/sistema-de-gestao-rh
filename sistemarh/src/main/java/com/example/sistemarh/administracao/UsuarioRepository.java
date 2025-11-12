@@ -24,7 +24,7 @@ import java.util.stream.Collectors;
 public class UsuarioRepository {
 
     // <-- MODIFICADO: Caminho mais padrão e robusto
-    private static final String ARQUIVO_USUARIOS = "src/main/resources/usuarios.txt";
+    private static final String ARQUIVO_USUARIOS = "arquivos/usuarios.txt";
     private static final String SEPARADOR = ";";
 
     public UsuarioRepository() {

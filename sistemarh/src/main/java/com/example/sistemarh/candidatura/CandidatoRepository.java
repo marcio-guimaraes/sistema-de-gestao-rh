@@ -16,7 +16,7 @@ import java.util.stream.Collectors;
 @Repository
 public class    CandidatoRepository {
 
-    private static final String ARQUIVO_CANDIDATOS = "candidatos.txt";
+    private static final String ARQUIVO_CANDIDATOS = "arquivos/candidatos.txt";
     private static final String SEPARADOR = ";";
 
     private Candidato linhaParaCandidato(String linha) {

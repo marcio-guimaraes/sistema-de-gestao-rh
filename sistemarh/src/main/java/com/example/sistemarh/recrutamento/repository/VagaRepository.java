@@ -18,7 +18,7 @@ import java.util.stream.Collectors;
 public class VagaRepository {
 
 
-    private static final String NOME_ARQUIVO = "dados_vagas.csv";
+    private static final String NOME_ARQUIVO = "arquivos/dados_vagas.csv";
     private static final String SEPARADOR = ";";
     private AtomicLong contadorId = new AtomicLong(0);
 

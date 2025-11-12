@@ -19,7 +19,7 @@ import java.util.stream.Collectors;
 @Repository
 public class EntrevistaRepository {
 
-    private static final String NOME_ARQUIVO = "entrevistas.txt";
+    private static final String NOME_ARQUIVO = "arquivos/entrevistas.txt";
     private static final String SEPARADOR = ";";
     private AtomicLong contadorId = new AtomicLong(0);
 

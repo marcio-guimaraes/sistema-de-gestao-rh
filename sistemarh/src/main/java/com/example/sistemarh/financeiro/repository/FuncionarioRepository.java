@@ -17,7 +17,7 @@ import java.util.stream.Collectors;
 @Repository
 public class FuncionarioRepository {
 
-    private static final String ARQUIVO_FUNCIONARIOS = "funcionarios.txt";
+    private static final String ARQUIVO_FUNCIONARIOS = "arquivos/funcionarios.txt";
     private static final String SEPARADOR = ";";
 
     private Funcionario linhaParaFuncionario(String linha) {

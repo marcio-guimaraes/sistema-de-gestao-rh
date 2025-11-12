@@ -17,7 +17,7 @@ import com.example.sistemarh.financeiro.model.RegraSalario;
 @Repository
 public class RegraSalarialRepository {
 
-    private static final String NOME_ARQUIVO = "regras_salariais.txt"; // Mudei o nome para o plural
+    private static final String NOME_ARQUIVO = "arquivos/regras_salariais.txt"; // Mudei o nome para o plural
     private static final String SEPARADOR = ";";
     private AtomicLong contadorId = new AtomicLong(0);
 
