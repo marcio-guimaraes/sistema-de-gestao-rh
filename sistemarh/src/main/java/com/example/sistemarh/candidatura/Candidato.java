@@ -16,10 +16,10 @@ public class Candidato extends Pessoa {
     private LocalDate dataCadastro;
     private String documentosAdicionais;
 
-    // ADICIONADO: Construtor público sem argumentos para o Spring
+
     public Candidato() {
-        super(); // Chama o construtor vazio de Pessoa
-        this.dataCadastro = LocalDate.now(); // Define um valor padrão
+        super();
+        this.dataCadastro = LocalDate.now();
     }
 
     private Candidato(Builder builder) {
