@@ -1,2 +1,0 @@
-Administrador;00000000000;admin;admin123;ADM001;2025-11-11;0.0;Ativo;N/A;ADMIN;1
-marcin;12345678900;marcin@gmail.com;huwbsdn9812ijq;242001553;2025-11-11;8000.0;Ativo;N/A;GESTOR;1
