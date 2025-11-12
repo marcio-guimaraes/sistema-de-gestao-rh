@@ -18,7 +18,7 @@
         <h2 class="mb-4">Relatórios de Gestão</h2>
 
         <!-- Filtro de pesquisa -->
-        <div class="card-body"> <form class="row g-3" th:action="@{/Administração/Relatório}" method="get">
+        <div class="card-body"> <form class="row g-3" th:action="@{/Administracao/Relatorio}" method="get">
 
         <div class="col-md-3">
             <input type="text" class="form-control" placeholder="Nome" name="nome">
@@ -108,7 +108,7 @@
                     </tr>
                     </tbody>
                 </table>
-                <a th:href="@{/Administração/Relatório/export-csv(
+                <a th:href="@{/Administracao/Relatorio/export-csv(
                 nome=${param.nome},
                 cpf=${param.cpf},
                 status=${param.status},
@@ -117,7 +117,7 @@
                    class="btn btn-success">
                     Exportar CSV
                 </a>
-                <a th:href="@{/Administração/Relatório/export-pdf(
+                <a th:href="@{/Administracao/Relatorio/export-pdf(
                 nome=${param.nome},
                 cpf=${param.cpf},
                 status=${param.status},
