@@ -45,29 +45,82 @@ public class Entrevista {
     }
 
     // Getters
-    public long getId() { return id; }
-    public LocalDateTime getDataHora() { return dataHora; }
-    public String getLocal() { return local; }
-    public Recrutador getRecrutador() { return recrutador; }
-    public Candidato getCandidato() { return candidato; }
-    public Vaga getVaga() { return vaga; }
-    public String getFeedback() { return feedback; }
-    public Double getNota() { return nota; }
+    public long getId() {
+        return id;
+    }
 
-    public String getCpfCandidatoDoArquivo() { return cpfCandidatoDoArquivo; }
-    public long getIdVagaDoArquivo() { return idVagaDoArquivo; }
-    public String getCpfRecrutadorDoArquivo() { return cpfRecrutadorDoArquivo; }
+    public LocalDateTime getDataHora() {
+        return dataHora;
+    }
+
+    public String getLocal() {
+        return local;
+    }
+
+    public Recrutador getRecrutador() {
+        return recrutador;
+    }
+
+    public Candidato getCandidato() {
+        return candidato;
+    }
+
+    public Vaga getVaga() {
+        return vaga;
+    }
+
+    public String getFeedback() {
+        return feedback;
+    }
+
+    public Double getNota() {
+        return nota;
+    }
+
+    public String getCpfCandidatoDoArquivo() {
+        return cpfCandidatoDoArquivo;
+    }
+
+    public long getIdVagaDoArquivo() {
+        return idVagaDoArquivo;
+    }
+
+    public String getCpfRecrutadorDoArquivo() {
+        return cpfRecrutadorDoArquivo;
+    }
 
     // Setters
-    public void setFeedback(String feedback) { this.feedback = feedback; }
-    public void setNota(Double nota) { this.nota = nota; }
-    public void setDataHora(LocalDateTime dataHora) { this.dataHora = dataHora; }
-    public void setLocal(String local) { this.local = local; }
-    public void setId(long id) { this.id = id; }
+    public void setFeedback(String feedback) {
+        this.feedback = feedback;
+    }
 
-    public void setRecrutador(Recrutador recrutador) { this.recrutador = recrutador; }
-    public void setCandidato(Candidato candidato) { this.candidato = candidato; }
-    public void setVaga(Vaga vaga) { this.vaga = vaga; }
+    public void setNota(Double nota) {
+        this.nota = nota;
+    }
+
+    public void setDataHora(LocalDateTime dataHora) {
+        this.dataHora = dataHora;
+    }
+
+    public void setLocal(String local) {
+        this.local = local;
+    }
+
+    public void setId(long id) {
+        this.id = id;
+    }
+
+    public void setRecrutador(Recrutador recrutador) {
+        this.recrutador = recrutador;
+    }
+
+    public void setCandidato(Candidato candidato) {
+        this.candidato = candidato;
+    }
+
+    public void setVaga(Vaga vaga) {
+        this.vaga = vaga;
+    }
 
     public static class Builder {
         private long id;

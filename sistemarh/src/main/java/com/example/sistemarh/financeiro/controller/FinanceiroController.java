@@ -47,7 +47,7 @@ public class FinanceiroController {
         if (f == null) return;
 
         RegraSalario regra = regraSalarialRepository.buscarPorId(f.getRegraSalarialId())
-                .orElse(getRegraPadraoFallback()); // Usa a Regra 1 como fallback
+                .orElse(getRegraPadraoFallback());
 
         f.setRegraSalario(regra);
     }
@@ -192,11 +192,9 @@ public class FinanceiroController {
                 .collect(Collectors.toList());
 
         model.addAttribute("funcionarios", funcionariosFiltrados);
-
         model.addAttribute("departamentos", funcionarios.stream().map(Funcionario::getDepartamento).distinct().sorted().collect(Collectors.toList()));
         model.addAttribute("cargos", funcionarios.stream().map(Funcionario::getCargo).distinct().sorted().collect(Collectors.toList()));
         model.addAttribute("regrasSalariais", regraSalarialRepository.buscarTodas()); // Já estava injetado
-
         model.addAttribute("deptoFiltro", departamento);
         model.addAttribute("cargoFiltro", cargo);
         model.addAttribute("regraFiltro", regraSalarialId);
@@ -336,17 +334,14 @@ public class FinanceiroController {
                                  @RequestParam Integer ano,
                                  HttpServletResponse response) {
         try {
-            // 1. Calcula (sem salvar)
             FolhaPagamento folha = folhaPagamentoService.calcularFolhaPagamento(mes, ano);
 
-            // 2. Configura a resposta
             response.setContentType("text/plain; charset=UTF-8");
             String nomeArquivo = String.format("folha_pagamento_%d_%d.txt", mes, ano);
             response.setHeader("Content-Disposition", "attachment; filename=\"" + nomeArquivo + "\"");
 
             java.util.function.Function<Double, String> fMoeda = (v) -> String.format(new Locale("pt", "BR"), "R$ %,.2f", v);
 
-            // 3. Escreve o arquivo formatado
             try (java.io.PrintWriter writer = response.getWriter()) {
 
                 writer.println("+---------------------------------------------------------------------------------+");
@@ -388,7 +383,6 @@ public class FinanceiroController {
             try {
                 response.sendError(500, "Erro ao gerar TXT da folha: " + e.getMessage());
             } catch (IOException ioException) {
-                // Erro
             }
         }
     }
@@ -486,5 +480,4 @@ public class FinanceiroController {
             }
         }
     }
-
 }

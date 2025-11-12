@@ -6,7 +6,6 @@ import com.example.sistemarh.candidatura.Candidato;
 import com.example.sistemarh.financeiro.model.Funcionario;
 import com.example.sistemarh.financeiro.repository.FuncionarioRepository;
 import com.example.sistemarh.recrutamento.model.Contratacao;
-import com.example.sistemarh.recrutamento.model.Vaga;
 import com.example.sistemarh.recrutamento.service.ContratacaoService;
 
 import org.springframework.beans.factory.annotation.Autowired;

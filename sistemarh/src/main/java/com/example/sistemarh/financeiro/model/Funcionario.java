@@ -3,8 +3,6 @@ package com.example.sistemarh.financeiro.model;
 import com.example.sistemarh.administracao.Usuario;
 
 import java.io.*;
-import java.util.ArrayList;
-import java.util.List;
 import java.time.LocalDate;
 
 public class Funcionario extends Usuario {

@@ -15,20 +15,24 @@ import com.example.sistemarh.recrutamento.repository.ContratacaoRepository;
 @Service
 public class ContratacaoService {
 
+    // Repositório responsável por salvar e buscar contratações
     @Autowired
     private ContratacaoRepository contratacaoRepository;
 
+    // Serviços auxiliares usados para acessar dados relacionados
     @Autowired
     private CandidaturaService candidaturaService;
 
     @Autowired
     private VagaService vagaService;
 
-    // --- DEPENDÊNCIA ADICIONADA ---
     @Autowired
     private EntrevistaService entrevistaService;
-    // --- FIM DA ADIÇÃO ---
 
+    /**
+     * Preenche os dados relacionados a uma contratação (vaga e candidato)
+     * reutilizando a lógica do CandidaturaService.
+     */
     public void buscarEPreencher(Contratacao contratacao) {
         if (contratacao == null) {
             return;
@@ -36,41 +40,41 @@ public class ContratacaoService {
         candidaturaService.buscarEPreencher(contratacao);
     }
 
+    /**
+     * Cria uma nova solicitação de contratação a partir de uma candidatura aprovada.
+     *
+     * @param candidaturaId ID da candidatura aprovada
+     * @return Contratação criada e salva
+     */
     public Contratacao solicitarContratacao(long candidaturaId) {
+        // Busca a candidatura informada
         Candidatura candidatura = candidaturaService.buscarPorId(candidaturaId)
                 .orElseThrow(() -> new RuntimeException("Candidatura não encontrada."));
 
+        // Apenas candidaturas com status "Aprovado" podem gerar uma contratação
         if (!"Aprovado".equalsIgnoreCase(candidatura.getStatus())) {
             throw new RuntimeException("Somente candidaturas Aprovadas podem ser solicitadas.");
         }
 
+        // Preenche os dados faltantes da candidatura
         candidaturaService.buscarEPreencher(candidatura);
 
-        // --- VALIDAÇÃO DA REGRA DE NEGÓCIO C (Comentada para remover a obrigatoriedade) ---
-        /*
-        boolean teveEntrevista = entrevistaService.existeEntrevistaParaCandidatura(
-                candidatura.getCpfCandidatoDoArquivo(),
-                candidatura.getIdVagaDoArquivo()
-        );
-
-        if (!teveEntrevista) {
-            throw new RuntimeException("Não é possível solicitar contratação: Nenhuma entrevista foi registrada para esta candidatura.");
-        }
-        */
-
+        // Cria a nova contratação com status inicial "Pendente de aprovação do Gestor"
         Contratacao contratacao = new Contratacao.Builder(candidatura.getVaga(), candidatura.getCandidato())
                 .status("Pendente de aprovação do Gestor")
                 .build();
 
-        // --- INÍCIO DA CORREÇÃO ---
-        // Esta linha atualiza o status da candidatura original.
-        // Assim, ela não aparecerá mais na lista de "Aprovados".
+        // Atualiza o status da candidatura original
         candidaturaService.atualizarStatus(candidaturaId, "Pendente de Aprovação");
-        // --- FIM DA CORREÇÃO ---
 
+        // Persiste e retorna a contratação
         return contratacaoRepository.salvar(contratacao);
     }
 
+    /**
+     * Lista todas as contratações registradas, preenchendo os vínculos
+     * com vaga e candidato correspondentes.
+     */
     public List<Contratacao> listarTodas() {
         List<Contratacao> contratacoes = contratacaoRepository.buscarTodas();
         for (Contratacao c : contratacoes) {
@@ -79,6 +83,9 @@ public class ContratacaoService {
         return contratacoes;
     }
 
+    /**
+     * Busca uma contratação pelo ID, preenchendo as informações associadas.
+     */
     public Optional<Contratacao> buscarPorId(long id) {
         Optional<Contratacao> cOpt = contratacaoRepository.buscarPorId(id);
         if (cOpt.isPresent()) {
@@ -87,19 +94,24 @@ public class ContratacaoService {
         return cOpt;
     }
 
-    // ================== MÉTODO ATUALIZADO ==================
+    /**
+     * Aprova uma contratação — muda o status e registra a data da aprovação.
+     * <p>
+     * Também atualiza a candidatura correspondente para "Aprovado pelo Gestor".
+     */
     public Contratacao aprovarContratacao(long id) {
+        // Busca a contratação a ser aprovada
         Contratacao c = buscarPorId(id)
                 .orElseThrow(() -> new RuntimeException("Contratação não encontrada."));
 
+        // Atualiza status e data de aprovação
         c.setStatus("Aprovada pelo Gestor");
         c.setDataAprovacaoGestor(LocalDate.now());
 
-        // Salva a contratação
+        // Persiste a alteração
         Contratacao contratacaoSalva = contratacaoRepository.salvar(c);
 
-        // --- INÍCIO DA ATUALIZAÇÃO ---
-        // Busca a candidatura original (por CPF e Vaga) para atualizar seu status
+        // Tenta sincronizar o status da candidatura correspondente
         try {
             candidaturaService.listarTodas().stream()
                     .filter(cand -> cand.getCpfCandidatoDoArquivo().equals(c.getCpfCandidatoDoArquivo()) &&
@@ -110,46 +122,49 @@ public class ContratacaoService {
                         candidaturaService.atualizarStatus(candidaturaOriginal.getId(), "Aprovado pelo Gestor");
                     });
         } catch (Exception e) {
-            System.err.println("Aviso: Contratação " + c.getId() + " aprovada, mas falha ao atualizar status da candidatura original: " + e.getMessage());
+            // Caso a atualização da candidatura falhe, apenas registra aviso
+            System.err.println("Aviso: Contratação " + c.getId() +
+                    " aprovada, mas falha ao atualizar status da candidatura original: " + e.getMessage());
         }
-        // --- FIM DA ATUALIZAÇÃO ---
 
         return contratacaoSalva;
     }
-    // ================== FIM DA ATUALIZAÇÃO ==================
 
-
-    // ================== MÉTODO ATUALIZADO ==================
+    /**
+     * Rejeita uma contratação — atualiza o status e sincroniza a candidatura associada.
+     */
     public Contratacao rejeitarContratacao(long id) {
+        // Busca a contratação a ser rejeitada
         Contratacao c = buscarPorId(id)
                 .orElseThrow(() -> new RuntimeException("Contratação não encontrada."));
 
+        // Atualiza status
         c.setStatus("Rejeitada pelo Gestor");
 
-        // Salva a contratação
+        // Persiste a alteração
         Contratacao contratacaoSalva = contratacaoRepository.salvar(c);
 
-        // --- INÍCIO DA ATUALIZAÇÃO ---
-        // Busca a candidatura original (por CPF e Vaga) para atualizar seu status
+        // Atualiza o status da candidatura correspondente
         try {
             candidaturaService.listarTodas().stream()
                     .filter(cand -> cand.getCpfCandidatoDoArquivo().equals(c.getCpfCandidatoDoArquivo()) &&
                             cand.getIdVagaDoArquivo() == c.getIdVagaDoArquivo())
                     .findFirst()
                     .ifPresent(candidaturaOriginal -> {
-                        // Atualiza o status da candidatura para "Rejeitado" (ou "Rejeitado pelo Gestor")
+                        // Marca a candidatura como rejeitada
                         candidaturaService.atualizarStatus(candidaturaOriginal.getId(), "Rejeitado pelo Gestor");
                     });
         } catch (Exception e) {
-            System.err.println("Aviso: Contratação " + c.getId() + " rejeitada, mas falha ao atualizar status da candidatura original: " + e.getMessage());
+            System.err.println("Aviso: Contratação " + c.getId() +
+                    " rejeitada, mas falha ao atualizar status da candidatura original: " + e.getMessage());
         }
-        // --- FIM DA ATUALIZAÇÃO ---
 
         return contratacaoSalva;
     }
-    // ================== FIM DA ATUALIZAÇÃO ==================
 
-
+    /**
+     * Persiste uma contratação genérica no repositório.
+     */
     public Contratacao salvar(Contratacao contratacao) {
         return contratacaoRepository.salvar(contratacao);
     }

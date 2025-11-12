@@ -36,7 +36,7 @@ public class FuncionarioRepository {
             String departamento = dados[8];
             String cargo = dados[9];
 
-            long regraId = 1; // Padrão
+            long regraId = 1;
             if (dados.length > 10 && !dados[10].isEmpty()) {
                 regraId = Long.parseLong(dados[10]);
             }

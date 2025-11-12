@@ -79,7 +79,6 @@ public class FolhaPagamentoRepository {
     }
 
     public FolhaPagamento salvar(FolhaPagamento folha) {
-        // CORREÇÃO: IDs não podem ser 0 no builder, mas o ID 0 indica "novo"
         long id = folha.getId();
         if (id == 0) {
             id = gerarNovoId();

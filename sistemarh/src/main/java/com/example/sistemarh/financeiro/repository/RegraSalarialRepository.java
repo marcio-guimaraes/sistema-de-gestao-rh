@@ -17,7 +17,7 @@ import com.example.sistemarh.financeiro.model.RegraSalario;
 @Repository
 public class RegraSalarialRepository {
 
-    private static final String NOME_ARQUIVO = "arquivos/regras_salariais.txt"; // Mudei o nome para o plural
+    private static final String NOME_ARQUIVO = "arquivos/regras_salariais.txt";
     private static final String SEPARADOR = ";";
     private AtomicLong contadorId = new AtomicLong(0);
 
@@ -101,14 +101,14 @@ public class RegraSalarialRepository {
 
         for (int i = 0; i < regras.size(); i++) {
             if (regras.get(i).getId() == regra.getId()) {
-                regras.set(i, regra); // Atualiza a regra existente
+                regras.set(i, regra);
                 atualizou = true;
                 break;
             }
         }
 
         if (!atualizou) {
-            regras.add(regra); // Adiciona nova regra
+            regras.add(regra);
         }
 
         salvarListaNoArquivo(regras);

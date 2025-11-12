@@ -37,63 +37,74 @@ public class Vaga {
     public long getId() {
         return id;
     }
+
     public String getTitulo() {
         return titulo;
     }
+
     public String getDescricao() {
         return descricao;
     }
+
     public double getSalarioMin() {
         return salarioMin;
     }
+
     public double getSalarioMax() {
         return salarioMax;
     }
+
     public String getRegime() {
         return regime;
     }
+
     public String getStatus() {
         return status;
     }
+
     public String getDepartamento() {
         return departamento;
     }
+
     public String getRequisitos() {
         return requisitos;
     }
+
     public LocalDate getDataCriacao() {
         return dataCriacao;
     }
 
-    // Setters
-
-    // --- MÉTODO ADICIONADO QUE FALTAVA ---
     public void setId(long id) {
         this.id = id;
     }
-    // --- FIM DA CORREÇÃO ---
-
     public void setTitulo(String titulo) {
         this.titulo = titulo;
     }
+
     public void setDescricao(String descricao) {
         this.descricao = descricao;
     }
+
     public void setSalarioMin(double salarioMin) {
         this.salarioMin = salarioMin;
     }
+
     public void setSalarioMax(double salarioMax) {
         this.salarioMax = salarioMax;
     }
+
     public void setRegime(String regime) {
         this.regime = regime;
     }
+
     public void setStatus(String status) {
         this.status = status;
     }
+
     public void setDepartamento(String departamento) {
         this.departamento = departamento;
     }
+
     public void setRequisitos(String requisitos) {
         this.requisitos = requisitos;
     }
@@ -124,31 +135,38 @@ public class Vaga {
             this.descricao = descricao;
             return this;
         }
+
         public Builder salario(double min, double max) {
             this.salarioMin = min;
             this.salarioMax = max;
             return this;
         }
+
         public Builder regime(String regime) {
             this.regime = regime;
             return this;
         }
+
         public Builder status(String status) {
             this.status = status;
             return this;
         }
+
         public Builder departamento(String departamento) {
             this.departamento = departamento;
             return this;
         }
+
         public Builder requisitos(String requisitos) {
             this.requisitos = requisitos;
             return this;
         }
+
         public Builder dataCriacao(LocalDate dataCriacao) {
             this.dataCriacao = dataCriacao;
             return this;
         }
+
         public Vaga build() {
             return new Vaga(this);
         }
