@@ -57,11 +57,6 @@
             <textarea class="form-control" id="documentos" th:field="*{documentosAdicionais}" rows="2"></textarea>
         </div>
 
-        <div class="mb-3">
-            <label for="dataCadastro" class="form-label">Data de Cadastro</label>
-            <input type="date" class="form-control" id="dataCadastro" th:field="*{dataCadastro}" required>
-        </div>
-
         <button type="submit" class="btn btn-primary">Salvar Candidato</button>
         <a th:href="@{/cadastro/gestao-candidatos}" class="btn btn-secondary">Cancelar</a>
     </form>
