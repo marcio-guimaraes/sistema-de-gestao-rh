@@ -65,7 +65,6 @@ public class EntrevistaService {
 
     // --- NOVO MÉTODO ADICIONADO ---
     public Entrevista salvarResultadoEntrevista(String cpfCandidato, long idVaga, Double nota, String feedback) {
-        // Encontra a entrevista mais recente para essa candidatura
         Optional<Entrevista> entrevistaOpt = entrevistaRepository.buscarTodas().stream()
                 .filter(e -> e.getCpfCandidatoDoArquivo().equals(cpfCandidato) && e.getIdVagaDoArquivo() == idVaga)
                 .max(Comparator.comparing(Entrevista::getDataHora)); // Pega a mais recente
@@ -80,8 +79,6 @@ public class EntrevistaService {
 
         return entrevistaRepository.salvar(entrevista);
     }
-    // --- FIM DO NOVO MÉTODO ---
-
 
     public List<Entrevista> listarTodas() {
         List<Entrevista> entrevistas = entrevistaRepository.buscarTodas();

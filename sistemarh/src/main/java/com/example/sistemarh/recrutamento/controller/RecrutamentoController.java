@@ -114,7 +114,7 @@ public class RecrutamentoController {
         model.addAttribute("recrutadores", usuarioService.listarTodos().stream()
                 .filter(u -> u instanceof com.example.sistemarh.administracao.Gestor ||
                         (u instanceof com.example.sistemarh.financeiro.model.Funcionario &&
-                                "Recrutador".equals(((com.example.sistemarh.financeiro.model.Funcionario)u).getCargo()))
+                                "Recrutador".equals(((com.example.sistemarh.financeiro.model.Funcionario) u).getCargo()))
                 )
                 .collect(Collectors.toList()));
 
@@ -134,26 +134,15 @@ public class RecrutamentoController {
 
     @GetMapping("/avaliar-candidatos")
     public String avaliarCandidatos(Model model) {
-        // MODIFICAÇÃO 1 (Opcional): Mostrar "Pendentes" E "Em Análise"
-        // Se você quiser que os candidatos "Pendentes" apareçam direto aqui (pulando o agendamento)
-        // Descomente a linha abaixo e comente a original.
 
-        // List<Candidatura> candidaturas = candidaturaService.listarTodas().stream()
-        //         .filter(c -> "Em Análise".equalsIgnoreCase(c.getStatus()) || "Pendente".equalsIgnoreCase(c.getStatus()))
-        //         .collect(Collectors.toList());
-        // model.addAttribute("candidaturasEmAnalise", candidaturas);
-
-        // ================== LINHA CORRIGIDA ==================
-        // Passa null para os novos parâmetros (formacao, experiencia) que não são usados aqui
         model.addAttribute("candidaturasEmAnalise", candidaturaService.listarComFiltros(null, "Em Análise", null, null));
-        // ================== FIM DA CORREÇÃO ==================
 
         return "recrutamento/avaliar-candidatos";
     }
 
     @PostMapping("/avaliar/salvar")
     public String salvarAvaliacao(@RequestParam long candidaturaId,
-                                  @RequestParam String status, // "Aprovado" ou "Reprovado"
+                                  @RequestParam String status,
                                   @RequestParam(required = false) Double nota,
                                   @RequestParam(required = false) String feedback,
                                   RedirectAttributes redirectAttributes) {

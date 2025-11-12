@@ -24,10 +24,8 @@ public class ContratacaoService {
     @Autowired
     private VagaService vagaService;
 
-    // --- DEPENDÊNCIA ADICIONADA ---
     @Autowired
     private EntrevistaService entrevistaService;
-    // --- FIM DA ADIÇÃO ---
 
     public void buscarEPreencher(Contratacao contratacao) {
         if (contratacao == null) {
@@ -46,27 +44,12 @@ public class ContratacaoService {
 
         candidaturaService.buscarEPreencher(candidatura);
 
-        // --- VALIDAÇÃO DA REGRA DE NEGÓCIO C (Comentada para remover a obrigatoriedade) ---
-        /*
-        boolean teveEntrevista = entrevistaService.existeEntrevistaParaCandidatura(
-                candidatura.getCpfCandidatoDoArquivo(),
-                candidatura.getIdVagaDoArquivo()
-        );
-
-        if (!teveEntrevista) {
-            throw new RuntimeException("Não é possível solicitar contratação: Nenhuma entrevista foi registrada para esta candidatura.");
-        }
-        */
 
         Contratacao contratacao = new Contratacao.Builder(candidatura.getVaga(), candidatura.getCandidato())
                 .status("Pendente de aprovação do Gestor")
                 .build();
 
-        // --- INÍCIO DA CORREÇÃO ---
-        // Esta linha atualiza o status da candidatura original.
-        // Assim, ela não aparecerá mais na lista de "Aprovados".
         candidaturaService.atualizarStatus(candidaturaId, "Pendente de Aprovação");
-        // --- FIM DA CORREÇÃO ---
 
         return contratacaoRepository.salvar(contratacao);
     }
@@ -87,7 +70,6 @@ public class ContratacaoService {
         return cOpt;
     }
 
-    // ================== MÉTODO ATUALIZADO ==================
     public Contratacao aprovarContratacao(long id) {
         Contratacao c = buscarPorId(id)
                 .orElseThrow(() -> new RuntimeException("Contratação não encontrada."));
@@ -95,11 +77,9 @@ public class ContratacaoService {
         c.setStatus("Aprovada pelo Gestor");
         c.setDataAprovacaoGestor(LocalDate.now());
 
-        // Salva a contratação
         Contratacao contratacaoSalva = contratacaoRepository.salvar(c);
 
-        // --- INÍCIO DA ATUALIZAÇÃO ---
-        // Busca a candidatura original (por CPF e Vaga) para atualizar seu status
+
         try {
             candidaturaService.listarTodas().stream()
                     .filter(cand -> cand.getCpfCandidatoDoArquivo().equals(c.getCpfCandidatoDoArquivo()) &&
@@ -112,25 +92,20 @@ public class ContratacaoService {
         } catch (Exception e) {
             System.err.println("Aviso: Contratação " + c.getId() + " aprovada, mas falha ao atualizar status da candidatura original: " + e.getMessage());
         }
-        // --- FIM DA ATUALIZAÇÃO ---
 
         return contratacaoSalva;
     }
-    // ================== FIM DA ATUALIZAÇÃO ==================
 
 
-    // ================== MÉTODO ATUALIZADO ==================
     public Contratacao rejeitarContratacao(long id) {
         Contratacao c = buscarPorId(id)
                 .orElseThrow(() -> new RuntimeException("Contratação não encontrada."));
 
         c.setStatus("Rejeitada pelo Gestor");
 
-        // Salva a contratação
         Contratacao contratacaoSalva = contratacaoRepository.salvar(c);
 
-        // --- INÍCIO DA ATUALIZAÇÃO ---
-        // Busca a candidatura original (por CPF e Vaga) para atualizar seu status
+
         try {
             candidaturaService.listarTodas().stream()
                     .filter(cand -> cand.getCpfCandidatoDoArquivo().equals(c.getCpfCandidatoDoArquivo()) &&
@@ -143,12 +118,9 @@ public class ContratacaoService {
         } catch (Exception e) {
             System.err.println("Aviso: Contratação " + c.getId() + " rejeitada, mas falha ao atualizar status da candidatura original: " + e.getMessage());
         }
-        // --- FIM DA ATUALIZAÇÃO ---
 
         return contratacaoSalva;
     }
-    // ================== FIM DA ATUALIZAÇÃO ==================
-
 
     public Contratacao salvar(Contratacao contratacao) {
         return contratacaoRepository.salvar(contratacao);
