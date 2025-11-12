@@ -14,65 +14,81 @@
 <main class="container py-5">
     <h2 class="mb-4">Status da Candidatura</h2>
 
-    <!-- Filtros de busca -->
+    <div th:if="${param.error}" class="alert alert-danger" role="alert">
+        Erro ao excluir: <span th:text="${param.error}"></span>
+    </div>
+
     <form method="get" th:action="@{/cadastro/status}" class="row g-3 mb-4">
         <div class="col-md-3">
             <label for="vaga" class="form-label">Vaga</label>
             <select class="form-select" id="vaga" name="vagaId">
                 <option value="">Todas</option>
-                <option th:each="v : ${vagas}" th:value="${v.id}" th:text="${v.titulo}"></option>
+                <option th:each="v : ${vagas}"
+                        th:value="${v.id}"
+                        th:text="${v.titulo}"
+                        th:selected="${v.id == vagaFiltro}"></option>
             </select>
         </div>
-
-        <div class="col-md-3">
-            <label for="formacao" class="form-label">Formação</label>
-            <input type="text" class="form-control" id="formacao" name="formacao">
-        </div>
-
-        <div class="col-md-3">
-            <label for="experiencia" class="form-label">Experiência</label>
-            <input type="text" class="form-control" id="experiencia" name="experiencia">
-        </div>
-
         <div class="col-md-3">
             <label for="status" class="form-label">Status</label>
             <select class="form-select" id="status" name="status">
                 <option value="">Todos</option>
-                <option value="PENDENTE">Pendente</option>
-                <option value="EM_ANALISE">Em Análise</option>
-                <option value="APROVADO">Aprovado</option>
-                <option value="REPROVADO">Reprovado</option>
+                <option value="Pendente" th:selected="${'Pendente' == statusFiltro}">Pendente</option>
+                <option value="Em Análise" th:selected="${'Em Análise' == statusFiltro}">Em Análise</option>
+                <option value="Aprovado" th:selected="${'Aprovado' == statusFiltro}">Aprovado</option>
+                <option value="Reprovado" th:selected="${'Reprovado' == statusFiltro}">Reprovado</option>
             </select>
         </div>
-
-        <div class="col-12 text-end">
+        <div class="col-md-3">
+            <label for="formacao" class="form-label">Formação (Contém)</label>
+            <input type="text" class="form-control" id="formacao" name="formacao" th:value="${formacaoFiltro}" />
+        </div>
+        <div class="col-md-3">
+            <label for="experiencia" class="form-label">Experiência (Contém)</label>
+            <input type="text" class="form-control" id="experiencia" name="experiencia" th:value="${experienciaFiltro}" />
+        </div>
+        <div class="col-12 align-self-end">
             <button type="submit" class="btn btn-primary">Filtrar</button>
+            <a th:href="@{/cadastro/status}" class="btn btn-secondary">Limpar Filtros</a>
         </div>
     </form>
-
-    <!-- Tabela de resultados -->
-    <table class="table table-bordered table-hover">
-        <thead class="table-light">
-        <tr>
-            <th>Nome do Candidato</th>
-            <th>Vaga</th>
-            <th>Formação</th>
-            <th>Experiência</th>
-            <th>Status</th>
-            <th>Data</th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr th:each="c : ${candidaturas}">
-            <td th:text="${c.candidato.nome}"></td>
-            <td th:text="${c.vaga.titulo}"></td>
-            <td th:text="${c.candidato.formacao}"></td>
-            <td th:text="${c.candidato.experiencia}"></td>
-            <td th:text="${c.status}"></td>
-            <td th:text="${#dates.format(c.data, 'dd/MM/yyyy')}"></td>
-        </tr>
-        </tbody>
-    </table>
+    <div class="card">
+        <div class="card-header">
+            Candidaturas Registradas
+        </div>
+        <div class="card-body table-responsive">
+            <table class="table table-bordered table-hover">
+                <thead class="table-light">
+                <tr>
+                    <th>Candidato</th>
+                    <th>Vaga</th>
+                    <th>Status</th>
+                    <th>Data</th>
+                    <th>Ação</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:if="${#lists.isEmpty(candidaturas)}">
+                    <td colspan="5" class="text-center">Nenhuma candidatura registrada.</td>
+                </tr>
+                <tr th:each="c : ${candidaturas}">
+                    <td th:text="${c.candidato != null ? c.candidato.nome : c.cpfCandidatoDoArquivo}"></td>
+                    <td th:text="${c.vaga != null ? c.vaga.titulo : c.idVagaDoArquivo}"></td>
+                    <td th:text="${c.status}"></td>
+                    <td th:text="${#temporals.format(c.dataCandidatura, 'dd/MM/yyyy')}"></td>
+                    <td>
+                        <a th:href="@{/cadastro/candidatura/excluir/{id}(id=${c.id})}"
+                           class="btn btn-danger btn-sm"
+                           th:if="${c.status == 'Pendente'}"
+                           onclick="return confirm('Tem certeza que deseja excluir esta candidatura?');">
+                            Excluir
+                        </a>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
 </main>
 
 <footer th:replace="~{layout :: footer}"></footer>

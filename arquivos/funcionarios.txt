@@ -1,0 +1,16 @@
+Marcin;12345678910;12345678910;senhaPadrao123;FUNC100;2025-11-10;1500.0;Ativo;TI;Desenvolvedor Pleno;2
+Ana Silva;11122233344;11122233344;senhaPadrao123;FUNC101;2024-01-15;7500.0;Ativo;TI;Desenvolvedora Sênior;2
+Bruno Costa;22233344455;22233344455;senhaPadrao123;FUNC102;2023-05-20;4500.0;Ativo;RH;Analista de RH;2
+Carla Dias;33344455566;33344455566;senhaPadrao123;FUNC103;2022-03-10;5200.0;Ativo;Financeiro;Analista Financeiro;2
+Daniel Moreira;44455566677;44455566677;senhaPadrao123;FUNC104;2021-11-01;3000.0;Inativo;TI;Desenvolvedor Júnior;2
+Elisa Fernandes;55566677788;55566677788;senhaPadrao123;FUNC105;2024-02-28;2800.0;Ativo;Administração;Assistente Administrativo;2
+Felipe Guedes;66677788899;66677788899;senhaPadrao123;FUNC106;2023-01-15;9000.0;Ativo;TI;Arquiteto de Software;1
+Gabriela Lins;77788899900;77788899900;senhaPadrao123;FUNC107;2025-01-10;1500.0;Ativo;RH;Estagiário de Recrutamento;3
+Heitor Ramos;88899900011;88899900011;senhaPadrao123;FUNC108;2024-08-05;4800.0;Ativo;Financeiro;Analista de Contas;2
+Isis Moreira;99900011122;99900011122;senhaPadrao123;FUNC109;2023-07-14;5000.0;Ativo;TI;Analista de QA;2
+Julio Cesar;10101010101;10101010101;senhaPadrao123;FUNC110;2022-06-01;8500.0;Inativo;TI;Desenvolvedor Backend Sênior;1
+Karina Oliveira;20202020202;20202020202;senhaPadrao123;FUNC111;2025-03-01;1400.0;Ativo;Administração;Estagiário Administrativo;3
+Lucas Martins;30303030303;30303030303;senhaPadrao123;FUNC112;2024-10-10;3100.0;Ativo;Financeiro;Assistente Financeiro;2
+Manuela Pinto;40404040404;40404040404;senhaPadrao123;FUNC113;2023-11-15;4600.0;Ativo;RH;Analista de Pessoal;2
+Nataniel Alves;50505050505;50505050505;senhaPadrao123;FUNC114;2024-11-20;1800.0;Ativo;TI;Estagiário de DevOps;3
+Olivia Pereira;60606060606;60606060606;senhaPadrao123;FUNC115;2022-09-01;5100.0;Ativo;TI;Analista de BI;2

@@ -16,7 +16,11 @@ public class Candidato extends Pessoa {
     private LocalDate dataCadastro;
     private String documentosAdicionais;
 
-    private static final String ARQUIVO_CANDIDATOS = "candidatos.txt";
+    // ADICIONADO: Construtor público sem argumentos para o Spring
+    public Candidato() {
+        super(); // Chama o construtor vazio de Pessoa
+        this.dataCadastro = LocalDate.now(); // Define um valor padrão
+    }
 
     private Candidato(Builder builder) {
         super(builder.nome, builder.cpf);
@@ -26,19 +30,7 @@ public class Candidato extends Pessoa {
         this.disponibilidade = builder.disponibilidade;
         this.dataCadastro = builder.dataCadastro;
         this.documentosAdicionais = builder.documentosAdicionais;
-        salvarCandidatoNoArquivo();
     }
-
-    //metodo de salvar funcionario
-    public void salvarCandidatoNoArquivo() {
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter(ARQUIVO_CANDIDATOS, true))) {
-            writer.write(toString());
-            writer.newLine();
-        } catch (IOException e) {
-            System.err.println("Erro ao salvar Candidato: " + e.getMessage());
-        }
-    }
-
 
     //sets
     public void setFormacao(String formacao) {
@@ -88,9 +80,7 @@ public class Candidato extends Pessoa {
     }
 
     //print
-    @Override
-    public String toString() {
-
+    public String toLinhaArquivo() {
         return String.join(";",
                 this.getNome(),
                 this.getCpf(),
@@ -101,6 +91,11 @@ public class Candidato extends Pessoa {
                 dataCadastro.toString(),
                 documentosAdicionais
         );
+    }
+
+    @Override
+    public String toString() {
+        return toLinhaArquivo();
     }
 
 
@@ -161,8 +156,5 @@ public class Candidato extends Pessoa {
         public Candidato build() {
             return new Candidato(this);
         }
-
     }
-
-
 }

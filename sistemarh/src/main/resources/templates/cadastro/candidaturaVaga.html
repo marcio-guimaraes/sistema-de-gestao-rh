@@ -13,13 +13,17 @@
 
 <main class="container py-5">
     <h2 class="mb-4">Candidatura à Vaga</h2>
+
+    <div th:if="${param.error}" class="alert alert-danger" role="alert">
+        Erro ao registrar: <span th:text="${param.error}"></span>
+    </div>
+
     <form method="post" th:action="@{/cadastro/registrar-candidatura}">
         <div class="mb-3">
             <label for="candidato" class="form-label">Candidato</label>
-            <select class="form-select" id="candidato" name="candidatoId" required>
+            <select class="form-select" id="candidato" name="candidatoCpf" required>
                 <option value="">Selecione um candidato</option>
-                <!-- Exemplo de preenchimento dinâmico -->
-                <option th:each="c : ${candidatos}" th:value="${c.id}" th:text="${c.nome}"></option>
+                <option th:each="c : ${candidatos}" th:value="${c.cpf}" th:text="${c.nome + ' (CPF: ' + c.cpf + ')'}"></option>
             </select>
         </div>
 
@@ -27,18 +31,13 @@
             <label for="vaga" class="form-label">Vaga</label>
             <select class="form-select" id="vaga" name="vagaId" required>
                 <option value="">Selecione uma vaga</option>
-                <option th:each="v : ${vagas}" th:value="${v.id}" th:text="${v.titulo}"></option>
+                <option th:each="v : ${vagas}" th:value="${v.id}" th:text="${v.titulo + ' (Dep: ' + v.departamento + ')'}"></option>
             </select>
         </div>
 
         <div class="mb-3">
             <label for="status" class="form-label">Status da Candidatura</label>
-            <select class="form-select" id="status" name="status">
-                <option value="PENDENTE">Pendente</option>
-                <option value="EM_ANALISE">Em Análise</option>
-                <option value="APROVADO">Aprovado</option>
-                <option value="REPROVADO">Reprovado</option>
-            </select>
+            <input type="text" class="form-control" id="status" name="status" value="Pendente (Automático)" disabled />
         </div>
 
         <button type="submit" class="btn btn-primary">Registrar Candidatura</button>

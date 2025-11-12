@@ -18,7 +18,7 @@ import java.util.stream.Collectors;
 public class VagaRepository {
 
 
-    private static final String NOME_ARQUIVO = "dados_vagas.csv";
+    private static final String NOME_ARQUIVO = "arquivos/dados_vagas.csv";
     private static final String SEPARADOR = ";";
     private AtomicLong contadorId = new AtomicLong(0);
 
@@ -47,7 +47,7 @@ public class VagaRepository {
     }
 
     private long gerarNovoId() {
-        return contadorId.incrementAndGet(); // Incrementa e retorna o novo valor
+        return contadorId.incrementAndGet();
     }
 
     private String vagaParaLinhaCsv(Vaga vaga) {
@@ -64,8 +64,8 @@ public class VagaRepository {
             long id = Long.parseLong(dados[0]);
             String titulo = dados[1];
             String descricao = dados[2];
-            double salarioMin = Double.parseDouble(dados[3]);
-            double salarioMax = Double.parseDouble(dados[4]);
+            double salarioMin = dados[3].isEmpty() ? 0.0 : Double.parseDouble(dados[3]);
+            double salarioMax = dados[4].isEmpty() ? 0.0 : Double.parseDouble(dados[4]);
             String regime = dados[5];
             String status = dados[6];
             String departamento = dados[7];
@@ -84,8 +84,8 @@ public class VagaRepository {
         boolean atualizou = false;
 
         for (int i = 0; i < todasVagas.size(); i++) {
-            if (todasVagas.get(i).getId() == vaga.getId() && vaga.getId() != 0) { // ID 0 significa nova vaga
-                todasVagas.set(i, vaga); // Substitui a vaga antiga pela nova
+            if (todasVagas.get(i).getId() == vaga.getId() && vaga.getId() != 0) {
+                todasVagas.set(i, vaga);
                 atualizou = true;
                 break;
             }
@@ -96,21 +96,19 @@ public class VagaRepository {
 
                 vaga = new Vaga.Builder(gerarNovoId(), vaga.getTitulo()).descricao(vaga.getDescricao()).salario(vaga.getSalarioMin(), vaga.getSalarioMax()).regime(vaga.getRegime()).status(vaga.getStatus()).departamento(vaga.getDepartamento()).requisitos(vaga.getRequisitos()).dataCriacao(vaga.getDataCriacao()).build();
             }
-            todasVagas.add(vaga); // Adiciona a nova vaga à lista
+            todasVagas.add(vaga);
         }
 
-        try (PrintWriter writer = new PrintWriter(new FileWriter(NOME_ARQUIVO, false))) { // false para sobrescrever
+        try (PrintWriter writer = new PrintWriter(new FileWriter(NOME_ARQUIVO, false))) {
             for (Vaga v : todasVagas) {
                 writer.println(vagaParaLinhaCsv(v));
             }
         } catch (IOException e) {
             System.err.println("Erro ao salvar vaga no arquivo: " + e.getMessage());
-            // throw new PersistenciaException("Erro ao salvar vaga", e);
         }
         return vaga;
     }
 
-    // Método para BUSCAR TODAS as vagas do arquivo
     public List<Vaga> buscarTodas() {
         List<Vaga> vagas = new ArrayList<>();
         if (!Files.exists(Paths.get(NOME_ARQUIVO))) {
@@ -124,19 +122,16 @@ public class VagaRepository {
         return vagas;
     }
 
-    // Método para BUSCAR UMA vaga pelo ID
     public Optional<Vaga> buscarPorId(long id) {
         return buscarTodas().stream().filter(vaga -> vaga.getId() == id).findFirst();
     }
 
-    // Método para EXCLUIR uma vaga pelo ID
     public boolean excluirPorId(long id) {
         List<Vaga> todasVagas = buscarTodas();
         boolean removeu = todasVagas.removeIf(vaga -> vaga.getId() == id);
 
-
         if (removeu) {
-            try (PrintWriter writer = new PrintWriter(new FileWriter(NOME_ARQUIVO, false))) { // false para sobrescrever
+            try (PrintWriter writer = new PrintWriter(new FileWriter(NOME_ARQUIVO, false))) {
                 for (Vaga v : todasVagas) {
                     writer.println(vagaParaLinhaCsv(v));
                 }

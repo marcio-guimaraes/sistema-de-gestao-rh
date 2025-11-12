@@ -14,6 +14,12 @@ public class Vaga {
     private String requisitos;
     private LocalDate dataCriacao;
 
+    public Vaga() {
+        this.dataCriacao = LocalDate.now();
+        this.status = "Aberta";
+        this.regime = "CLT";
+    }
+
     public Vaga(Builder builder) {
         this.id = builder.id;
         this.titulo = builder.titulo;
@@ -68,6 +74,9 @@ public class Vaga {
         return dataCriacao;
     }
 
+    public void setId(long id) {
+        this.id = id;
+    }
     public void setTitulo(String titulo) {
         this.titulo = titulo;
     }

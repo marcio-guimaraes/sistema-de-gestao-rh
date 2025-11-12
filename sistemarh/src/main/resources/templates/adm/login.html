@@ -1,9 +1,8 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-
 
     <link rel="stylesheet" th:href="@{/css/layout.css}">
     <link rel="stylesheet" th:href="@{/css/style.css}">
@@ -18,7 +17,12 @@
         <div class="card rounded-3">
             <div class="card-body">
                 <h5 class="card-title text-center mb-4">Login</h5>
-                <form th:action="@{/login}" method="post">
+
+                <div th:if="${param.error}" class="alert alert-danger" role="alert">
+                    Usuário ou senha inválidos.
+                </div>
+
+                <form th:action="@{/Administracao/Login}" method="post">
                     <div class="mb-3">
                         <label for="username" class="form-label">Usuário</label>
                         <input type="text" class="form-control" id="username" name="username" placeholder="Digite seu usuário" required>

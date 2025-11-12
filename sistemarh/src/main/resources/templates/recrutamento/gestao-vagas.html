@@ -1,0 +1,150 @@
+<!doctype html>
+<html lang="pt-br" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Gestão de Vagas - MeuRH</title>
+    <link rel="stylesheet" th:href="@{/css/layout.css}">
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <link rel="stylesheet" th:href="@{/css/recrutamento.css}">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+<header th:replace="~{layout :: header}"></header>
+
+<main class="container py-5">
+    <div class="row">
+        <div class="col-md-5">
+            <div class="card">
+                <div class="card-header card-recrutamento">
+                    <h4 class="mb-0" th:text="${editMode} ? 'Editar Vaga' : 'Criar Nova Vaga'"></h4>
+                </div>
+                <div class="card-body">
+                    <form th:action="@{/recrutamento/gestao-vagas/salvar}" th:object="${vaga}" method="post">
+                        <input type="hidden" th:field="*{id}" />
+                        <input type="hidden" th:field="*{dataCriacao}" />
+
+                        <div class="mb-3">
+                            <label for="titulo" class="form-label">Título da Vaga</label>
+                            <input type="text" class="form-control" id="titulo" th:field="*{titulo}" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="descricao" class="form-label">Descrição</label>
+                            <textarea class="form-control" id="descricao" th:field="*{descricao}" rows="3"></textarea>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="salarioMin" class="form-label">Salário Mínimo</label>
+                                <input type="number" step="0.01" class="form-control" id="salarioMin" th:field="*{salarioMin}">
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="salarioMax" class="form-label">Salário Máximo</label>
+                                <input type="number" step="0.01" class="form-control" id="salarioMax" th:field="*{salarioMax}">
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="regime" class="form-label">Regime</label>
+                                <select class="form-select" id="regime" th:field="*{regime}">
+                                    <option value="">Selecione um regime...</option>
+                                    <option th:each="regra : ${regrasSalariais}"
+                                            th:value="${regra.nomeRegra}"
+                                            th:text="${regra.nomeRegra}">
+                                    </option>
+                                </select>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="status" class="form-label">Status</label>
+                                <select class="form-select" id="status" th:field="*{status}">
+                                    <option value="Aberta">Aberta</option>
+                                    <option value="Fechada">Fechada</option>
+                                    <option value="Pausada">Pausada</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="departamento" class="form-label">Departamento</label>
+                            <input type="text" class="form-control" id="departamento" th:field="*{departamento}">
+                        </div>
+                        <div class="mb-3">
+                            <label for="requisitos" class="form-label">Requisitos</label>
+                            <textarea class="form-control" id="requisitos" th:field="*{requisitos}" rows="2"></textarea>
+                        </div>
+
+                        <hr>
+                        <button type="submit" class="btn btn-primary">Salvar Vaga</button>
+                        <a th:href="@{/recrutamento/gestao-vagas}" class="btn btn-secondary">Cancelar</a>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-7">
+            <div class="card">
+                <div class="card-header">
+                    Lista de Vagas
+                </div>
+
+                <div class="card-body border-bottom">
+                    <form th:action="@{/recrutamento/gestao-vagas}" method="get" class="row g-3">
+                        <div class="col-md-4">
+                            <label for="filtroStatus" class="form-label">Status</label>
+                            <select id="filtroStatus" name="status" class="form-select form-select-sm">
+                                <option value="">Todos</option>
+                                <option value="Aberta" th:selected="${filtros['status'] == 'Aberta'}">Aberta</option>
+                                <option value="Fechada" th:selected="${filtros['status'] == 'Fechada'}">Fechada</option>
+                                <option value="Pausada" th:selected="${filtros['status'] == 'Pausada'}">Pausada</option>
+                            </select>
+                        </div>
+                        <div class="col-md-4">
+                            <label for="filtroDepto" class="form-label">Departamento</label>
+                            <input type="text" class="form-control form-control-sm" name="departamento" id="filtroDepto" th:value="${filtros['departamento']}">
+                        </div>
+                        <div class="col-md-4">
+                            <label for="filtroSalario" class="form-label">Salário Mín. (R$)</label>
+                            <input type="number" step="0.01" class="form-control form-control-sm" name="salarioMin" id="filtroSalario" th:value="${filtros['salarioMin']}">                        </div>
+                        <div class="col-12 text-end">
+                            <a th:href="@{/recrutamento/gestao-vagas}" class="btn btn-secondary btn-sm">Limpar</a>
+                            <button type="submit" class="btn btn-primary btn-sm">Filtrar</button>
+                        </div>
+                    </form>
+                </div>
+
+                <div class="card-body table-responsive">
+                    <table class="table table-striped table-hover">
+                        <thead class="table-dark">
+                        <tr>
+                            <th>Título</th>
+                            <th>Status</th>
+                            <th>Departamento</th>
+                            <th>Salário</th>
+                            <th>Ações</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:if="${#lists.isEmpty(vagas)}">
+                            <td colspan="5" class="text-center">Nenhuma vaga encontrada.</td>
+                        </tr>
+                        <tr th:each="v : ${vagas}">
+                            <td th:text="${v.titulo}"></td>
+                            <td>
+                                <span class="badge"
+                                      th:classappend="${v.status == 'Aberta' ? 'bg-success' : (v.status == 'Fechada' ? 'bg-danger' : 'bg-warning text-dark')}"
+                                      th:text="${v.status}"></span>
+                            </td>
+                            <td th:text="${v.departamento}"></td>
+                            <td th:text="${'R$ ' + #numbers.formatDecimal(v.salarioMin, 1, 'POINT', 2, 'COMMA')}"></td>
+                            <td>
+                                <a th:href="@{/recrutamento/gestao-vagas/editar/{id}(id=${v.id})}" class="btn btn-warning btn-sm">Editar</a>
+                                <a th:href="@{/recrutamento/gestao-vagas/excluir/{id}(id=${v.id})}" class="btn btn-danger btn-sm" onclick="return confirm('Tem certeza que deseja excluir esta vaga?');">Excluir</a>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+<footer th:replace="~{layout :: footer}"></footer>
+</body>
+</html>
