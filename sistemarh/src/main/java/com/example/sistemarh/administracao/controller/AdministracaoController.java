@@ -3,8 +3,13 @@ import com.example.sistemarh.financeiro.model.Funcionario;
 
 import com.example.sistemarh.administracao.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.propertyeditors.CustomDateEditor;
+import org.springframework.beans.propertyeditors.CustomNumberEditor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
+import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -12,6 +17,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -39,18 +46,23 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
-@RequestMapping("/Administração")
+@RequestMapping("/Administracao")
 public class AdministracaoController {
 
     @Autowired
     private UsuarioService usuarioService;
+
+    @InitBinder
+    public void initBinder(WebDataBinder binder) {
+        binder.registerCustomEditor(Double.class, new CustomNumberEditor(Double.class, true));
+    }
 
     @GetMapping
     public String menuAdministracao() {
         return "adm/menu";
     }
 
-    @GetMapping("/Gestão")
+    @GetMapping("/Gestao")
     public String gestaoDeUsuarios(Model model,
                                    // Parâmetros de busca
                                    @RequestParam(name = "nome", required = false) String nomeParam,
@@ -121,7 +133,7 @@ public class AdministracaoController {
         return "adm/admGestao";
     }
 
-    @GetMapping("/Relatório")
+    @GetMapping("/Relatorio")
     public String gerarRelatorioAdm(Model model,
                                     // Parâmetros de busca
                                     @RequestParam(name = "nome", required = false) String nomeParam,
@@ -283,7 +295,7 @@ public class AdministracaoController {
         writer.close();
     }
 
-    @GetMapping("/Relatório/export-pdf") // URL NOVA para o export
+    @GetMapping("/Relatorio/export-pdf") // URL NOVA para o export
     public void exportarRelatorioPDF(HttpServletResponse response,
                                      // 1. Recebe EXATAMENTE os mesmos parâmetros de filtro
                                      @RequestParam(name = "nome", required = false) String nomeParam,
@@ -401,7 +413,7 @@ public class AdministracaoController {
     public String realizaLoginPost(@RequestParam String username, @RequestParam String password) {
         // Correção: Adicionado tratamento para senha nula/vazia
         if (password == null || password.isEmpty()) {
-            return "redirect:/Administração/Login?error=true";
+            return "redirect:/Administracao/Login?error=true";
         }
 
         boolean loginValido = usuarioService.validarLogin(username, password);
@@ -409,7 +421,7 @@ public class AdministracaoController {
         if (loginValido) {
             return "redirect:/";
         } else {
-            return "redirect:/Administração/Login?error=true";
+            return "redirect:/Administracao/Login?error=true";
         }
     }
 
@@ -424,7 +436,7 @@ public class AdministracaoController {
     /**
      * 2. GET (EDITAR): Mostra o formulário preenchido
      */
-    @GetMapping("/Gestão/Editar/{cpf}")
+    @GetMapping("/Gestao/Editar/{cpf}")
     public String mostrarFormularioEdicao(@PathVariable("cpf") String cpf, Model model) {
 
         // 1. Busca o usuário no seu service/repository
@@ -432,7 +444,7 @@ public class AdministracaoController {
 
         if (usuarioOpt.isEmpty()) {
             // Se não achar, volta para a lista
-            return "redirect:/Administração/Gestão";
+            return "redirect:/Administracao/Gestao";
         }
 
         Usuario usuario = usuarioOpt.get();
@@ -463,7 +475,7 @@ public class AdministracaoController {
         return "adm/cadastroNovoUsuario";
     }
 
-    @GetMapping("/Gestão/Excluir/{cpf}")
+    @GetMapping("/Gestao/Excluir/{cpf}")
     public String handleDelete(@PathVariable("cpf") String cpf) {
 
         try {
@@ -474,7 +486,7 @@ public class AdministracaoController {
         }
 
         // Volta para a lista de gestão
-        return "redirect:/Administração/Gestão";
+        return "redirect:/Administracao/Gestao";
     }
 
     /**
@@ -482,23 +494,47 @@ public class AdministracaoController {
      */
     @PostMapping("/Salvar")
     public String salvar(@ModelAttribute("usuarioDTO") UsuarioDTO dto,
-                         RedirectAttributes ra) {
+                         BindingResult bindingResult, // <-- Apanha os erros de conversão
+                         RedirectAttributes ra,
+                         Model model) { // <-- Adicionado para o caso de erro
+
+        // 3. Verifica se o BindingResult apanhou algum erro (ex: "" para Double)
+        if (bindingResult.hasErrors()) {
+            System.err.println("### ERRO DE BINDING (400) DETETADO ###");
+            // Itera pelos erros e imprime no console (para depuração)
+            for (FieldError error : bindingResult.getFieldErrors()) {
+                System.err.println("Campo: " + error.getField() + " - Erro: " + error.getDefaultMessage());
+            }
+
+            // Se deu erro, não tenta salvar. Devolve o utilizador ao formulário.
+
+            // Verifica se estávamos no modo de edição para devolver o utilizador corretamente
+            if (dto.getCpf() != null && !dto.getCpf().isEmpty()) {
+                model.addAttribute("editMode", true);
+            } else {
+                model.addAttribute("editMode", false);
+            }
+
+            // Adiciona os erros ao Model para que o HTML os possa mostrar
+            model.addAttribute("bindingResult", bindingResult);
+            // Retorna o utilizador PARA O FORMULÁRIO (não um redirect)
+            return "adm/cadastroNovoUsuario";
+        }
+
+        // 4. Se não houve erros de binding, a sua lógica de salvar continua
         try {
-            // ✅ A lógica complexa foi movida para o Service!
-            // O Controller apenas chama o service.
             usuarioService.salvarDto(dto);
 
         } catch (Exception e) {
-            // Em caso de erro, volta ao formulário com uma mensagem
             ra.addFlashAttribute("error", "Erro ao salvar: " + e.getMessage());
-            ra.addFlashAttribute("usuarioDTO", dto); // Manda o DTO de volta
+            ra.addFlashAttribute("usuarioDTO", dto);
 
             if (usuarioService.buscarPorCpf(dto.getCpf()).isPresent()) {
-                return "redirect:/Administração/Gestão/Editar/" + dto.getCpf();
+                return "redirect:/Administracao/Gestao/Editar/" + dto.getCpf();
             }
-            return "redirect:/Administração/Cadastro";
+            return "redirect:/Administracao/Cadastro";
         }
 
-        return "redirect:/Administração/Gestão"; // Sucesso!
+        return "redirect:/Administracao/Gestao"; // Sucesso!
     }
 }

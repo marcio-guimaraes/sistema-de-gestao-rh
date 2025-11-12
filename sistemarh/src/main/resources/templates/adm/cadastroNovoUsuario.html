@@ -23,17 +23,19 @@
 
             <div id="formCadastro" class="card">
                 <div class="card-header bg-primary text-white p-3">
-                    <h5 class="mb-0" th:text="${editMode} ? 'Editando ' + usuarioDTO.nome : 'Formulário de Cadastro'"></h5>
+                    <h5 class="mb-0"
+                        th:text="${editMode} ? 'Editando ' + usuarioDTO.nome : 'Formulário de Cadastro'"></h5>
                 </div>
                 <div class="card-body">
 
-                    <form th:action="@{/Administração/Salvar}"
+                    <form th:action="@{/Administracao/Salvar}"
                           th:object="${usuarioDTO}" method="post">
 
                         <fieldset id="cadastroFields">
                             <div class="mb-3">
                                 <label class="form-label">Nome Completo</label>
-                                <input type="text" class="form-control" placeholder="Digite o nome" th:field="*{nome}" required>
+                                <input type="text" class="form-control" placeholder="Digite o nome" th:field="*{nome}"
+                                       required>
                             </div>
                             <div class="mb-3">
                                 <label class="form-label">CPF</label>
@@ -42,7 +44,8 @@
                             </div>
                             <div class="mb-3">
                                 <label class="form-label">Login (Email)</label>
-                                <input type="email" class="form-control" placeholder="exemplo@email.com" th:field="*{login}" required>
+                                <input type="email" class="form-control" placeholder="exemplo@email.com"
+                                       th:field="*{login}" required>
                             </div>
                             <div class="mb-3">
                                 <label class="form-label">Senha</label>
@@ -71,10 +74,19 @@
                                 <div class="col-md-6 mb-3">
                                     <label class="form-label">Data de Admissão</label>
                                     <input type="date" class="form-control" th:field="*{dataAdmissao}" required>
+                                    <span class="text-danger"
+                                          th:if="${bindingResult != null && bindingResult.hasFieldErrors('dataAdmissao')}"
+                                          th:text="${bindingResult.getFieldError('dataAdmissao').getDefaultMessage()}">
+                                    </span>
                                 </div>
                                 <div class="col-md-6 mb-3">
                                     <label class="form-label">Salário Base</label>
-                                    <input type="number" step="0.01" class="form-control" th:field="*{baseSalario}" required>
+                                    <input type="number" step="0.01" class="form-control" th:field="*{baseSalario}"
+                                           required>
+                                    <span class="text-danger"
+                                          th:if="${bindingResult != null && bindingResult.hasFieldErrors('baseSalario')}"
+                                          th:text="${bindingResult.getFieldError('baseSalario').getDefaultMessage()}">
+                                    </span>
                                 </div>
                             </div>
                             <div class="row">
@@ -99,7 +111,7 @@
                             </div>
                         </fieldset>
                         <button type="submit" class="btn btn-success" id="salvarBtn">Salvar</button>
-                        <a th:href="@{/Administração/Gestão}" class="btn btn-secondary">Cancelar</a>
+                        <a th:href="@{/Administracao/Gestao}" class="btn btn-secondary">Cancelar</a>
                     </form>
                 </div>
             </div>

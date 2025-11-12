@@ -15,12 +15,12 @@
         <h3 class="mb-4">Gestão de Usuários</h3>
 
         <div class="mb-3">
-            <a th:href="@{/Administração/Cadastro}" class="btn btn-primary btn-add">+ Novo Usuário</a>
+            <a th:href="@{/Administracao/Cadastro}" class="btn btn-primary btn-add">+ Novo Usuário</a>
         </div>
 
         <div class="card mb-4">
             <div class="card-body">
-                <form class="row g-3" th:action="@{/Administração/Gestão}" method="get">
+                <form class="row g-3" th:action="@{/Administracao/Gestao}" method="get">
                     <div class="col-md-3">
                         <input type="text" class="form-control" placeholder="Nome" name="nome">
                     </div>
@@ -35,7 +35,7 @@
                     </div>
                     <div class="col-md-3">
                         <select class="form-select" name="departamento">
-                            <option value="">Departamento (Todos)</option> <option value="Administração">Administração</option>
+                            <option value="">Departamento (Todos)</option> <option value="Administracao">Administração</option>
                             <option value="RH">Recursos Humanos</option>
                             <option value="TI">Tecnologia da Informação</option>
                         </select>
@@ -83,10 +83,10 @@
                         </td>
 
                         <td>
-                            <a th:href="@{/Administração/Gestão/Editar/{cpf}(cpf=${usuario.cpf})}"
+                            <a th:href="@{/Administracao/Gestao/Editar/{cpf}(cpf=${usuario.cpf})}"
                                class="btn btn-warning btn-edit btn-sm">Editar</a>
 
-                            <a th:href="@{/Administração/Gestão/Excluir/{cpf}(cpf=${usuario.cpf})}"
+                            <a th:href="@{/Administracao/Gestao/Excluir/{cpf}(cpf=${usuario.cpf})}"
                                class="btn btn-danger btn-delete btn-sm"
                                th:if="${usuario.cpf != 'admin'}"
                                onclick="return confirm('Tem certeza que deseja excluir este usuário?');">Excluir</a>
