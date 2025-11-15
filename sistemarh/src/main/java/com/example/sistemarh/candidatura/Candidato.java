@@ -84,12 +84,12 @@ public class Candidato extends Pessoa {
         return String.join(";",
                 this.getNome(),
                 this.getCpf(),
-                formacao,
-                experiencia,
+                (formacao == null) ? "" : formacao,
+                (experiencia == null) ? "" : experiencia,
                 String.valueOf(pretensaoSalarial),
-                disponibilidade,
+                (disponibilidade == null) ? "" : disponibilidade,
                 dataCadastro.toString(),
-                documentosAdicionais
+                (documentosAdicionais == "") ? "a" : documentosAdicionais
         );
     }
 

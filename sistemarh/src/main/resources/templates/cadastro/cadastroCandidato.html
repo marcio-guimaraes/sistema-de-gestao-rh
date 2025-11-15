@@ -34,7 +34,7 @@
 
         <div class="mb-3">
             <label for="formacao" class="form-label">Formação</label>
-            <input type="text" class="form-control" id="formacao" th:field="*{formacao}">
+            <input type="text" class="form-control" id="formacao" th:field="*{formacao}" th:readonly="${editMode}" required>
         </div>
 
         <div class="mb-3">

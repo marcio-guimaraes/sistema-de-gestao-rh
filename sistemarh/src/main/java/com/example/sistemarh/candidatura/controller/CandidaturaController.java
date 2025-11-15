@@ -38,21 +38,13 @@ public class CandidaturaController {
         return "cadastro/cadastroCandidato";
     }
 
-    /**
-     * ATUALIZADO:
-     * 1. Recebe o @RequestParam "isEditMode" do formulário.
-     * 2. Repassa o "isEditMode" para o service.
-     * 3. Corrige o bloco catch para redirecionar com base no "isEditMode".
-     */
     @PostMapping("/candidato/salvar")
     public String cadastroCandidatoPost(@ModelAttribute Candidato candidato,
                                         @RequestParam(defaultValue = "false") boolean isEditMode) {
         try {
-            // Passa o flag de edição para o service
             candidatoService.salvarCandidato(candidato, isEditMode);
         } catch (RuntimeException e) {
 
-            // Redireciona corretamente em caso de erro
             String redirectUrl = isEditMode
                     ? "/cadastro/candidato/editar/" + candidato.getCpf()
                     : "/cadastro/candidato";

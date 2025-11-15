@@ -38,11 +38,11 @@
                     <td colspan="6" class="text-center">Nenhum candidato cadastrado.</td>
                 </tr>
                 <tr th:each="c : ${candidatos}">
-                    <td th:text="${c.nome}"></td>
-                    <td th:text="${c.cpf}"></td>
-                    <td th:text="${c.formacao}"></td>
-                    <td th:text="${'R$ ' + #numbers.formatDecimal(c.pretensaoSalarial, 1, 'POINT', 2, 'COMMA')}"></td>
-                    <td th:text="${#temporals.format(c.dataCadastro, 'dd/MM/yyyy')}"></td>
+                    <td th:text="${c.nome ?: ''}"></td>
+                    <td th:text="${c.cpf ?: ''}"></td>
+                    <td th:text="${c.formacao ?: ''}"></td>
+                    <td th:text="${c.pretensaoSalarial != null ? 'R$ ' + #numbers.formatDecimal(c.pretensaoSalarial, 1, 'POINT', 2, 'COMMA') : ''}"></td>
+                    <td th:text="${c.dataCadastro != null ? #temporals.format(c.dataCadastro, 'dd/MM/yyyy') : ''}"></td>
                     <td>
                         <a th:href="@{/cadastro/candidato/editar/{cpf}(cpf=${c.cpf})}" class="btn btn-warning btn-sm">Editar</a>
                         <a th:href="@{/cadastro/candidato/excluir/{cpf}(cpf=${c.cpf})}" class="btn btn-danger btn-sm" onclick="return confirm('Tem certeza que deseja excluir este candidato?');">Excluir</a>
