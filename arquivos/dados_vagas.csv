@@ -1,3 +1,10 @@
-1;Teste;Tem que saber escrever;0.5;500.0;CLT;Pausada;RH;Mais de 18 anos;2025-11-10
-2;Dev Java Pleno;;5000.0;8000.0;CLT;Aberta;TI;Sabem digitar em java;2025-11-10
-3;Escrivão;Tem que saber escrever;200.0;500.0;CLT;Fechada;TI;Mais de 18 anos;2025-11-10
+1;Dev;Desenvolver;1500.0;3000.0;CLT;Aberta;TI;CIC;2025-11-15
+2;Analista de sistemas;Testar sistemas;2500.0;5000.0;PJ;Aberta;TI;ADS;2025-11-15
+3;Designer UI/UX;Criar interfaces e protótipos;2000.0;4000.0;CLT;Aberta;Design;Asa Sul;2025-11-15
+4;Gerente de Projetos;Gerenciar equipes e cronogramas;4500.0;9000.0;CLT;Aberta;TI;Asa Norte;2025-11-15
+5;Tech Lead;Liderar time de desenvolvimento;7000.0;12000.0;PJ;Aberta;TI;Sudoeste;2025-11-15
+6;QA Tester;Garantir qualidade do software;1800.0;3500.0;CLT;Aberta;TI;Guará;2025-11-15
+7;Administrador de Redes;Manter redes e servidores;3000.0;6000.0;CLT;Aberta;Infra;Taguatinga;2025-11-15
+8;Analista de Dados;Criar relatórios e análises;2500.0;5500.0;PJ;Aberta;Dados;Águas Claras;2025-11-15
+9;Cientista de Dados;Modelagem e predições;5000.0;12000.0;CLT;Aberta;Dados;Plano Piloto;2025-11-15
+10;Desenvolvedor Mobile;Criar apps Android/iOS;3000.0;8000.0;PJ;Aberta;TI;Lago Sul;2025-11-15

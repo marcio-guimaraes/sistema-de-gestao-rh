@@ -30,7 +30,7 @@ public class CandidaturaController {
         return "cadastro/menu";
     }
 
-    // --- Gestão de Candidatos ---
+
     @GetMapping("/candidato")
     public String cadastroCandidatoGet(Model model) {
         model.addAttribute("candidato", new Candidato());
@@ -65,7 +65,7 @@ public class CandidaturaController {
         Optional<Candidato> candidatoOpt = candidatoService.buscarPorCpf(cpf);
         if (candidatoOpt.isPresent()) {
             model.addAttribute("candidato", candidatoOpt.get());
-            model.addAttribute("editMode", true); // <-- Envia "true" para o HTML
+            model.addAttribute("editMode", true);
             return "cadastro/cadastroCandidato";
         }
         return "redirect:/cadastro/gestao-candidatos";
@@ -86,7 +86,7 @@ public class CandidaturaController {
         return "redirect:/cadastro/gestao-candidatos";
     }
 
-    // --- Gestão de Candidaturas ---
+
     @GetMapping("/candidatura")
     public String candidaturaVagaGet(Model model) {
         model.addAttribute("candidatos", candidatoService.listarTodos());
@@ -105,7 +105,7 @@ public class CandidaturaController {
         return "redirect:/cadastro/status";
     }
 
-    // ================== MÉTODO ATUALIZADO ==================
+
     @GetMapping("/status")
     public String statusCandidatura(@RequestParam(required = false) Long vagaId,
                                     @RequestParam(required = false) String status,
@@ -115,10 +115,10 @@ public class CandidaturaController {
 
         model.addAttribute("vagas", vagaService.listarTodasVagas());
 
-        // Passa os novos filtros para o service
+
         model.addAttribute("candidaturas", candidaturaService.listarComFiltros(vagaId, status, formacao, experiencia)); // ATUALIZADO
 
-        // Adiciona os valores dos filtros ao model para o HTML
+
         model.addAttribute("vagaFiltro", vagaId);
         model.addAttribute("statusFiltro", status);
         model.addAttribute("formacaoFiltro", formacao);
@@ -126,7 +126,7 @@ public class CandidaturaController {
 
         return "cadastro/statusCandidatura";
     }
-    // ================== FIM DA ATUALIZAÇÃO ==================
+
 
     @GetMapping("/candidatura/excluir/{id}")
     public String excluirCandidatura(@PathVariable("id") long id, Model model) {

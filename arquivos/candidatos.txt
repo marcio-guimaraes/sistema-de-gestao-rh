@@ -1,4 +1,15 @@
-Marcin;12345678910;CIC;não tem;50.0;todos;2025-11-11;asdasd
-carol;1245678911;fjsf;alkfja;0.05;asfç;2025-11-11;lkad
-Ana;04088529170;la;a;0.05;5;2025-11-11;5
-ana;22345678910;a;a;0.05;a;2025-11-11;a
+Julliano;99999999999;CIC;;0.0;;2025-11-15;a
+Agnaldo;77777777777;ADS;2 anos;6000.0;Total;2025-11-15;Nenhum
+Marcin;55555555555;CIC;0;3000.0;Total;2025-11-15;Nenhum
+Camila;11122233344;TI;1 ano;2500.0;Parcial;2025-11-15;Inglês básico
+Rogério;22233344455;CIC;3 anos;4500.0;Total;2025-11-15;Nenhum
+Patrícia;33344455566;ADS;6 meses;1800.0;Parcial;2025-11-15;Pacote Office
+Fernanda;44455566677;ADM;5 anos;5200.0;Total;2025-11-15;Excel avançado
+Gustavo;66677788899;TI;2 anos;3200.0;Total;2025-11-15;Nenhum
+Larissa;77788899900;CIC;1 ano;2100.0;Parcial;2025-11-15;Espanhol básico
+Henrique;88899900011;ADS;4 anos;7000.0;Total;2025-11-15;Inglês avançado
+Clara;99900011122;TI;0;1500.0;Parcial;2025-11-15;Nenhum
+Roberta;12121212121;ADM;8 anos;6200.0;Total;2025-11-15;Liderança
+Thiago;13131313131;CIC;2 anos;3500.0;Total;2025-11-15;Nenhum
+Leonardo;14141414141;ADS;1 ano;2600.0;Parcial;2025-11-15;Inglês intermediário
+Beatriz;15151515151;TI;3 anos;4800.0;Total;2025-11-15;Nenhum
