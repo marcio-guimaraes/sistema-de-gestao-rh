@@ -1,4 +1,4 @@
-Marcin;12345678910;12345678910;senhaPadrao123;FUNC100;2025-11-10;1500.0;Ativo;TI;Desenvolvedor Pleno;2
+Marcin;12345678910;12345678910;senhaPadrao123;FUNC100;2025-11-10;4000.0;Ativo;TI;Desenvolvedor Junior;4
 Ana Silva;11122233344;11122233344;senhaPadrao123;FUNC101;2024-01-15;7500.0;Ativo;TI;Desenvolvedora Sênior;2
 Bruno Costa;22233344455;22233344455;senhaPadrao123;FUNC102;2023-05-20;4500.0;Ativo;RH;Analista de RH;2
 Carla Dias;33344455566;33344455566;senhaPadrao123;FUNC103;2022-03-10;5200.0;Ativo;Financeiro;Analista Financeiro;2

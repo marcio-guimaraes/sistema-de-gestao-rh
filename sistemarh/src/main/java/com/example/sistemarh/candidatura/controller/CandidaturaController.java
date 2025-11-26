@@ -109,16 +109,12 @@ public class CandidaturaController {
     @GetMapping("/status")
     public String statusCandidatura(@RequestParam(required = false) Long vagaId,
                                     @RequestParam(required = false) String status,
-                                    @RequestParam(required = false) String formacao,    // NOVO
-                                    @RequestParam(required = false) String experiencia, // NOVO
+                                    @RequestParam(required = false) String formacao,
+                                    @RequestParam(required = false) String experiencia,
                                     Model model) {
 
         model.addAttribute("vagas", vagaService.listarTodasVagas());
-
-
-        model.addAttribute("candidaturas", candidaturaService.listarComFiltros(vagaId, status, formacao, experiencia)); // ATUALIZADO
-
-
+        model.addAttribute("candidaturas", candidaturaService.listarComFiltros(vagaId, status, formacao, experiencia));
         model.addAttribute("vagaFiltro", vagaId);
         model.addAttribute("statusFiltro", status);
         model.addAttribute("formacaoFiltro", formacao);
