@@ -44,7 +44,7 @@ public class CandidaturaController {
         try {
             candidatoService.salvarCandidato(candidato, isEditMode);
         } catch (RuntimeException e) {
-
+        //caso ele receba a exceção do cpf invalido ou de ja cadastrado decide qual pagina e para ir dependendo do editmode
             String redirectUrl = isEditMode
                     ? "/cadastro/candidato/editar/" + candidato.getCpf()
                     : "/cadastro/candidato";
@@ -73,6 +73,7 @@ public class CandidaturaController {
 
     @GetMapping("/candidato/excluir/{cpf}")
     public String excluirCandidato(@PathVariable("cpf") String cpf) {
+        //antes de excluir o candidato, ele filtra as candidaturas por cpf pra poder excluir
         candidaturaService.listarTodas().stream()
                 .filter(c -> c.getCpfCandidatoDoArquivo().equals(cpf))
                 .forEach(c -> {
